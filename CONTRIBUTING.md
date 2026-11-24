@@ -58,14 +58,14 @@ git log --format='%h %s' --grep='Refs: tk-1'
 ## Verificación
 
 La verificación es proporcional al cambio y se contrasta con el criterio del PRD: los
-criterios de aceptación de la PoC ([`PRD.md`](PRD.md) §6) y la puerta del experimento
-([`PRD.md`](PRD.md) §7). Mientras el repositorio no tenga código, la comprobación es
+criterios de aceptación de la PoC ([`PRD.md`](docs/PRD.md) §6) y la puerta del experimento
+([`PRD.md`](docs/PRD.md) §7). Mientras el repositorio no tenga código, la comprobación es
 documental: cada enlace relativo resuelve y ninguna afirmación contradice a PRD, RESEARCH
 o EXPERIMENT. Toda verificación no ejecutada se declara.
 
 Cuando exista código ejecutable, su batería se fija aquí antes de la primera entrega; no
 se improvisa en el commit. La PoC no se declara correcta sin que sus fixtures pasen al
-100 % según [PRD.md](PRD.md) §6.
+100 % según [PRD.md](docs/PRD.md) §6.
 
 ## Integración
 

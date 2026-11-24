@@ -29,10 +29,12 @@ entrada con sus propias reglas, sin confiar en los metadatos que declare el agen
 
 La secuencia acordada es RESEARCH → PRD → experimento → GO / NO-GO / INCONCLUSO →
 Specification → PoC con fixtures; no hay etapa de documento SDD (decisión D-09 del
-PO: el desarrollo sigue el flujo ODD del proyecto). No se inicia la Specification sin un GO
-explícito del PO. El alcance v0.1 son tres entregables condicionados a esa puerta:
-especificación mínima y perfil CLI, implementación de referencia con fixtures de
-conformidad, y PoC aislada con ACM. No se modifica ACM de producción.
+PO: el desarrollo sigue el flujo ODD del proyecto). El experimento quedó **INCONCLUSO**;
+el PO decidió continuar asumiendo la incertidumbre residual, y la Specification v0.1.1 y el
+MVP v0.1 se prepararon por encargo propio, sin que ello equivalga a un GO experimental. El
+alcance v0.1 cubre tres entregables, ya materializados: especificación mínima y perfil CLI,
+implementación de referencia con fixtures de conformidad, y PoC aislada con ACM. No se
+modifica ACM de producción.
 
 ## Implementación de referencia (MVP v0.1)
 
@@ -83,25 +85,25 @@ bash poc/acm/run.sh      # PoC aislada de extremo a extremo (4 escenarios)
 ```
 
 La CLI no es interactiva: la petición llega por stdin, la respuesta es un único
-objeto JSON en stdout y los diagnósticos van en stderr. `SPECIFICATION.md`
+objeto JSON en stdout y los diagnósticos van en stderr. `docs/SPECIFICATION.md`
 permanece como única fuente normativa del contrato; este README no lo duplica.
 
 ## Documentos base
 
 | Documento | Qué contiene |
 |---|---|
-| [PRD.md](PRD.md) | Visión, usuarios, alcance, requisitos, criterios de aceptación de la PoC y la puerta GO/NO-GO de §7 |
-| [RESEARCH.md](RESEARCH.md) | Investigación previa: antecedentes, evidencia propia de ACM, hueco diferencial y riesgos |
-| [EXPERIMENT.md](EXPERIMENT.md) | Protocolo aprobado del experimento: diseño, métricas, interpretación y plazo |
-| [EXPERIMENT-PLAN.md](EXPERIMENT-PLAN.md) | Plan de preparación original; **histórico y superado** por EXPERIMENT.md y el runbook |
-| [EXPERIMENT-RUNBOOK.md](EXPERIMENT-RUNBOOK.md) | Guía operativa para quien ejecute el experimento en la máquina de desarrollo |
+| [PRD.md](docs/PRD.md) | Visión, usuarios, alcance, requisitos, criterios de aceptación de la PoC y la puerta GO/NO-GO de §7 |
+| [RESEARCH.md](docs/RESEARCH.md) | Investigación previa: antecedentes, evidencia propia de ACM, hueco diferencial y riesgos |
+| [EXPERIMENT.md](docs/experiment/EXPERIMENT.md) | Protocolo aprobado del experimento: diseño, métricas, interpretación y plazo |
+| [EXPERIMENT-PLAN.md](docs/experiment/EXPERIMENT-PLAN.md) | Plan de preparación original; **histórico y superado** por EXPERIMENT.md y el runbook |
+| [EXPERIMENT-RUNBOOK.md](docs/experiment/EXPERIMENT-RUNBOOK.md) | Guía operativa para quien ejecute el experimento en la máquina de desarrollo |
 
 ## Evidencia de partida
 
 ACM demuestra viabilidad, no superioridad. Su registro informa de 22.900 tokens AIF frente
 a 12.700 de una interfaz convencional (+80,3 %) y 106.000 de db-ai directo, con n=1 por
 variante. No existe todavía una línea base comparable frente a una CLI JSON competente; el
-experimento de [EXPERIMENT.md](EXPERIMENT.md) es el filtro de inversión que debe producirla
+experimento de [EXPERIMENT.md](docs/experiment/EXPERIMENT.md) es el filtro de inversión que debe producirla
 antes de construir infraestructura.
 
 ## Trabajo en el repositorio

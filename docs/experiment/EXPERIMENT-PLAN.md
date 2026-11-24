@@ -1,6 +1,6 @@
 # AIF — Plan de preparación del experimento
 
-**Estado: superado.** Este plan es histórico: sus decisiones aprobadas se recogen en [EXPERIMENT.md](EXPERIMENT.md) §4 y la guía operativa es [EXPERIMENT-RUNBOOK.md](EXPERIMENT-RUNBOOK.md). Las versiones de aislamiento, registro y tokens de este plan fueron sustituidas por otras más ligeras. Estado original: propuesta bloqueada; no autoriza mediciones. La puerta canónica es [PRD.md](PRD.md) §7 y el procedimiento de partida es [EXPERIMENT.md](EXPERIMENT.md). La aprobación previa del PO es obligatoria.
+**Estado: superado.** Este plan es histórico: sus decisiones aprobadas se recogen en [EXPERIMENT.md](EXPERIMENT.md) §4 y la guía operativa es [EXPERIMENT-RUNBOOK.md](EXPERIMENT-RUNBOOK.md). Las versiones de aislamiento, registro y tokens de este plan fueron sustituidas por otras más ligeras. Estado original: propuesta bloqueada; no autoriza mediciones. La puerta canónica es [PRD.md](../PRD.md) §7 y el procedimiento de partida es [EXPERIMENT.md](EXPERIMENT.md). La aprobación previa del PO es obligatoria.
 
 **Etiquetas:** **[Hecho]** = contenido observado en una fuente o comprobación, no necesariamente comportamiento ejecutado; **[Inferencia]** = conclusión o propuesta no aprobada; **[Desconocido]** = falta evidencia o decisión. Las instrucciones propuestas son **[Inferencia]**. Las rutas de ACM son relativas al árbol `database-virtual-filesystem-main`, facilitado como fuente.
 

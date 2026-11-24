@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Documentación técnica de AIF v0.1: contrato JSON agent-first con ocho resultados, campos reparables, JSON Schema 2020-12, continuación sin estado, perfil CLI, biblioteca Go, fixtures de conformidad y PoC con ACM.">
+<meta name="color-scheme" content="light dark">
+<title>AIF · contrato de interacción agente-herramienta</title>
+<script>
+(function () {
+  try {
+    var p = JSON.parse(localStorage.getItem("aif-docs:prefs") || "{}");
+    var t = p.theme || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", t);
+  } catch (e) { document.documentElement.setAttribute("data-theme", "light"); }
+})();
+</script>
+<style>/* Documentación de AIF. Misma identidad visual que la guía de skills:
+     teal y azul sobre fondo claro/oscuro, ámbar para lo reparable y violeta
+     para el dominio. Sin tipografías ni recursos de red. */
+  :root {--bg: #f8fafc;
+    --bg-elev: #ffffff;
+    --bg-soft: #f1f5f9;
+    --text: #0f172a;
+    --muted: #5f6b80;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --accent: #0f766e;
+    --accent-2: #2563eb;
+    --accent-3: #0891b2;
+    --accent-4: #7c3aed;
+    --accent-soft: rgba(15, 118, 110, .10);
+    --ok: #10b981;
+    --ok-text: #047857;
+    --warn-text: #b45309;
+    --error-text: #b91c1c;
+    --guide: #b45309;
+    --guide-2: #ea580c;
+    --guide-ink: color-mix(in srgb, var(--guide) 58%, var(--text));
+    --code-bg: #0a0f1c;
+    --code-text: #e5e7eb;
+    --code-border: #1f2937;
+    --shadow: 0 1px 2px rgba(15, 23, 42, .05), 0 8px 24px -12px rgba(15, 23, 42, .18);
+    --shadow-lg: 0 20px 60px -30px rgba(15, 23, 42, .35);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --font: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+}:root[data-theme="dark"] {--bg: #0a0f1c;
+    --bg-elev: #111827;
+    --bg-soft: #1f2937;
+    --text: #e5e7eb;
+    --muted: #94a3b8;
+    --border: #334155;
+    --border-strong: #475569;
+    --accent: #2dd4bf;
+    --accent-2: #60a5fa;
+    --accent-3: #22d3ee;
+    --accent-4: #a78bfa;
+    --accent-soft: rgba(45, 212, 191, .14);
+    --ok: #34d399;
+    --ok-text: #34d399;
+    --warn-text: #fbbf24;
+    --error-text: #f87171;
+    --guide: #fbbf24;
+    --guide-2: #fb923c;
+    --guide-ink: color-mix(in srgb, var(--guide) 58%, var(--text));
+    --code-bg: #070b16;
+    --code-text: #e5e7eb;
+    --code-border: #1f2937;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 12px 32px -18px rgba(0, 0, 0, .8);
+    --shadow-lg: 0 24px 70px -34px rgba(0, 0, 0, .9);
+}* {box-sizing: border-box;
+}html {scroll-behavior: smooth; scroll-padding-top: 88px;
+}body {margin: 0;
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}a {color: var(--accent); text-decoration: none;
+}a:hover {text-decoration: underline; text-underline-offset: 3px;
+}a:focus-visible,button:focus-visible,summary:focus-visible {outline: 2px solid var(--guide); outline-offset: 3px; border-radius: 6px;
+}code,pre,kbd {font-family: var(--mono);
+}p code,li code,td code,.card code,.details-body code {background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: .08em .42em;
+    font-size: .88em;
+}.skip-link {position: absolute;
+    left: 16px; top: -60px;
+    z-index: 100;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-elev);
+    border: 1px solid var(--guide);
+    color: var(--text);
+    font-weight: 650;
+    font-size: 14px;
+}.skip-link:focus {top: 12px;
+}.topbar {position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px clamp(16px, 4vw, 40px);
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    backdrop-filter: saturate(180%) blur(14px);
+    border-bottom: 1px solid var(--border);
+}.brand {display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text);
+}.brand:hover {text-decoration: none;
+}.brand-mark {display: block;
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    flex: none;
+}.brand-mark svg {width: 100%; height: 100%; display: block;
+}.brand-name {font-weight: 750; letter-spacing: -.02em; font-size: 15px;
+}.brand-name small {display: block; font-weight: 500; color: var(--muted); font-size: 11px; letter-spacing: .04em; text-transform: uppercase;
+}.topbar-spacer {flex: 1;
+}.topnav {display: none;
+}@media (min-width: 900px){.topnav {display: flex; align-items: center; gap: 2px;
+}.topnav a {padding: 7px 11px;
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      white-space: nowrap;
+}.topnav a:hover {color: var(--text); text-decoration: none; background: var(--bg-soft);
+}.topnav a.active {color: var(--accent); background: var(--accent-soft);
+}
+  }.icon-btn {display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-elev);
+    color: var(--text);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color .15s, background .15s, transform .1s;
+}.icon-btn:hover {border-color: var(--border-strong);
+}.icon-btn:active {transform: translateY(1px);
+}.icon-btn svg {width: 16px; height: 16px;
+}.icon-btn.only-icon {width: 36px; padding: 0;
+}:root[data-theme="light"] .icon-sun {display: none;
+}:root[data-theme="dark"] .icon-moon {display: none;
+}.hero {position: relative;
+    overflow: hidden;
+    padding: clamp(44px, 7vw, 84px) clamp(16px, 4vw, 40px) clamp(44px, 6vw, 72px);
+    border-bottom: 1px solid var(--border);
+}.hero::before {content: "";
+    position: absolute;
+    inset: -40% -10% auto -10%;
+    height: 460px;
+    background:
+      radial-gradient(58% 58% at 18% 30%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 70%),
+      radial-gradient(48% 48% at 66% 6%, color-mix(in srgb, var(--accent-2) 20%, transparent), transparent 70%),
+      radial-gradient(40% 40% at 94% 34%, color-mix(in srgb, var(--accent-4) 16%, transparent), transparent 70%);
+    filter: blur(6px);
+    pointer-events: none;
+}.hero::after {content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, color-mix(in srgb, var(--border-strong) 45%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--border-strong) 45%, transparent) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(70% 65% at 50% 20%, #000 0%, transparent 78%);
+    mask-image: radial-gradient(70% 65% at 50% 20%, #000 0%, transparent 78%);
+    opacity: .45;
+    pointer-events: none;
+}.hero-inner {position: relative;
+    z-index: 1;
+    max-width: 1180px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    align-items: center;
+}@media (min-width: 960px){.hero-inner {grid-template-columns: minmax(0, 1.06fr) minmax(0, .94fr); gap: 52px;
+}
+  }.pill {display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    max-width: 100%;
+    gap: 8px;
+    padding: 5px 12px;
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
+    border-radius: 999px;
+    background: var(--bg-elev);
+    color: color-mix(in srgb, var(--accent) 62%, var(--text));
+    font-size: 12.5px;
+    font-weight: 650;
+    letter-spacing: .01em;
+}.pill .dot {width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+}.hero h1 {margin: 22px 0 0;
+    font-size: clamp(34px, 5.3vw, 60px);
+    line-height: 1.04;
+    letter-spacing: -.035em;
+    font-weight: 800;
+}.hero h1 .grad {background: linear-gradient(112deg, var(--accent) 0%, var(--accent-2) 55%, var(--accent-4) 110%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}.hero p.lead {margin: 20px 0 0;
+    max-width: 640px;
+    font-size: clamp(15.5px, 2vw, 18px);
+    color: var(--muted);
+}.hero p.lead strong {color: var(--text);
+}.hero-actions {display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px;
+}.btn {display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 18px;
+    border-radius: var(--radius-sm);
+    font-weight: 650;
+    font-size: 14.5px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform .12s, box-shadow .2s, border-color .15s;
+}.btn:hover {text-decoration: none; transform: translateY(-1px);
+}.btn svg {width: 16px; height: 16px;
+}.btn-primary {background: linear-gradient(135deg, #0f766e, #0e7490); color: #ffffff; box-shadow: var(--shadow);
+}.btn-primary:hover {box-shadow: var(--shadow-lg);
+}.btn-ghost {background: var(--bg-elev); border-color: var(--border-strong); color: var(--text);
+}.hero-feats {display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin: 26px 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+}.hero-feats li {display: inline-flex; align-items: center; gap: 7px;
+}.hero-feats svg {width: 14px; height: 14px; color: var(--accent); flex: none;
+}.hero-art {position: relative;
+    display: none;
+    min-height: 356px;
+}@media (min-width: 960px){.hero-art {display: block;
+}
+  }.art-blob {position: absolute;
+    width: 310px; height: 310px;
+    top: 10px; left: 50%;
+    transform: translateX(-48%);
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 32% 30%, color-mix(in srgb, var(--accent) 38%, transparent), transparent 62%),
+      radial-gradient(circle at 74% 70%, color-mix(in srgb, var(--accent-2) 33%, transparent), transparent 64%);
+    filter: blur(28px);
+    opacity: .55;
+}.fm-card {position: relative;
+    border-radius: 16px;
+    background: linear-gradient(160deg, #111827, #0a0f1c);
+    border: 1px solid #1f2937;
+    box-shadow: 0 30px 70px -30px rgba(0, 0, 0, .7);
+    overflow: hidden;
+    transform: rotate(-1.4deg);
+}.fm-head {display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 15px;
+    border-bottom: 1px solid #1f2937;
+    color: #cbd5e1;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 650;
+}.fm-head .dot {width: 7px; height: 7px; border-radius: 50%; background: #2dd4bf; box-shadow: 0 0 0 3px rgba(45, 212, 191, .15);
+}.fm-badge {margin-left: auto;
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, .35);
+    background: rgba(251, 191, 36, .1);
+    border-radius: 999px;
+    padding: 1px 7px;
+    font-family: var(--font);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}.fm-code {padding: 15px 16px;
+    font-family: var(--mono);
+    font-size: 11.6px;
+    line-height: 1.8;
+    color: #e5e7eb;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}.fm-code .punc {color: #64748b;
+}.fm-code .key {color: #5eead4;
+}.fm-code .val {color: #fbbf24;
+}.fm-code .str {color: #93c5fd;
+}.fm-foot {display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 15px;
+    border-top: 1px solid #1f2937;
+    color: #a7f3d0;
+    font-size: 10.6px;
+    font-weight: 650;
+    letter-spacing: .02em;
+}.fm-foot svg {width: 12px; height: 12px; color: #34d399; flex: none;
+}.fm-tags {display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 13px;
+    padding-left: 14px;
+}.fm-tags span {font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 650;
+    color: var(--muted);
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px 9px;
+    box-shadow: var(--shadow);
+}.hero-copy {animation: rise .6s ease-out both;
+}.hero-art {animation: rise .8s .1s ease-out both;
+}@keyframes rise {from {opacity: 0; transform: translateY(14px); } to {opacity: 1; transform: none; }
+}.layout {max-width: 1180px;
+    margin: 0 auto;
+    padding: clamp(32px, 5vw, 58px) clamp(16px, 4vw, 40px) 80px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 44px;
+}@media (min-width: 1020px){.layout {grid-template-columns: 214px minmax(0, 1fr); gap: 56px;
+}
+  }.toc {display: none;
+}@media (min-width: 1020px){.toc {display: block; position: sticky; top: 84px; align-self: start;
+}.toc h2 {font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin: 0 0 12px;
+}.toc a {display: block;
+      padding: 7px 12px;
+      border-left: 2px solid var(--border);
+      color: var(--muted);
+      font-size: 13.5px;
+      font-weight: 550;
+}.toc a:hover {color: var(--text); text-decoration: none;
+}.toc a.active {color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0;
+}.toc .toc-extra {margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border);
+}.toc .toc-extra a {color: var(--accent);
+}
+  }main {min-width: 0;
+}section {scroll-margin-top: 88px;
+}section + section {margin-top: clamp(48px, 6vw, 68px);
+}.section-head {display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 8px;
+}.section-num {display: grid; place-items: center;
+    width: 30px; height: 30px;
+    border-radius: 9px;
+    background: color-mix(in srgb, var(--num, var(--accent)) 13%, transparent);
+    color: color-mix(in srgb, var(--num, var(--accent)) 58%, var(--text));
+    font-size: 13px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    flex: none;
+}h2.title {margin: 0; font-size: clamp(22px, 3vw, 29px); letter-spacing: -.02em;
+}.section > p.sub {margin: 6px 0 24px; color: var(--muted); max-width: 78ch;
+}.chip-repo {margin-left: auto;
+    flex: none;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    color: var(--muted);
+    border: 1px dashed color-mix(in srgb, var(--muted) 45%, transparent);
+    border-radius: 999px;
+    padding: 3px 10px;
+    white-space: nowrap;
+}.prose p {margin: 0 0 14px; max-width: 80ch;
+}.prose p:last-child {margin-bottom: 0;
+}.prose h3 {margin: 30px 0 10px; font-size: 17px; letter-spacing: -.01em;
+}.prose h3:first-child {margin-top: 0;
+}.prose strong {color: var(--text);
+}.prose ul,.prose ol {margin: 0 0 16px; padding-left: 22px; max-width: 80ch;
+}.prose li {margin: 0 0 7px;
+}.prose li:last-child {margin-bottom: 0;
+}.prose li::marker {color: var(--accent); font-weight: 700;
+}.prose em {color: var(--text);
+}.cards {display: grid; gap: 14px;
+}.cards + .cards,.cards + .compare,.cards + .note,.compare + .note,.table-wrap + .note,.note + .table-wrap {margin-top: 18px;
+}@media (min-width: 640px){.cards.c2 {grid-template-columns: repeat(2, minmax(0, 1fr));
+}.cards.c3 {grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+  }@media (min-width: 1050px){.cards.c3 {grid-template-columns: repeat(3, minmax(0, 1fr));
+}.cards.c4 {grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+  }.card {padding: 17px 18px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: linear-gradient(168deg, color-mix(in srgb, var(--accent) 4%, var(--bg-elev)), var(--bg-elev) 55%);
+    box-shadow: var(--shadow);
+}.card h3 {margin: 0 0 6px; font-size: 14.5px; letter-spacing: -.01em;
+}.card h3 code {font-size: 13px;
+}.card p {margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55;
+}.card p + p {margin-top: 7px;
+}.card ul {margin: 7px 0 0; padding-left: 17px; color: var(--muted); font-size: 12.8px; line-height: 1.55;
+}.card li + li {margin-top: 4px;
+}.card .k {display: inline-flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--accent);
+}.rules {margin: 0 0 20px; padding: 0; list-style: none; display: grid; gap: 10px;
+}.rules li {position: relative; padding: 13px 15px 13px 42px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-elev); font-size: 13.6px;
+}.rules li::before {content: ""; position: absolute; left: 15px; top: 17px; width: 14px; height: 14px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 16%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+}.rules li::after {content: ""; position: absolute; left: 19px; top: 21px; width: 6px; height: 3px; border-left: 1.8px solid var(--accent); border-bottom: 1.8px solid var(--accent); transform: rotate(-45deg);
+}.rules strong {color: var(--text);
+}.rules code {font-size: 12.2px;
+}.compare {display: grid; gap: 14px;
+}@media (min-width: 720px){.compare {grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr);
+}
+  }.example {padding: 15px 17px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg-elev);
+}.example.bad {border-left: 3px solid var(--error-text);
+}.example.good {border-left: 3px solid var(--ok);
+}.ex-label {display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase;
+}.example.bad .ex-label {color: var(--error-text);
+}.example.good .ex-label {color: var(--ok-text);
+}.example p {margin: 7px 0 0; font-size: 13.4px; color: var(--text);
+}.example.bad p {color: var(--muted);
+}.example .ex-note {font-size: 12px; color: var(--muted);
+}.table-wrap {overflow-x: auto; margin: 16px 0 22px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-elev); box-shadow: var(--shadow);
+}table {width: 100%; border-collapse: collapse; font-size: 13.3px; min-width: 600px;
+}caption {text-align: left; padding: 12px 16px; color: var(--muted); font-size: 12.5px; border-bottom: 1px solid var(--border);
+}th {text-align: left; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; background: var(--bg-soft); border-bottom: 1px solid var(--border); vertical-align: bottom;
+}td {padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top;
+}tr:last-child td {border-bottom: 0;
+}td code,th code {font-size: 12px;
+}td ul {margin: 0; padding-left: 16px;
+}td li {margin: 0 0 3px;
+}td li:last-child {margin: 0;
+}.r-ok {color: var(--ok-text); font-weight: 700;
+}.r-repair {color: var(--guide-ink); font-weight: 700;
+}.r-deny {color: var(--error-text); font-weight: 700;
+}.r-fail {color: var(--error-text); font-weight: 700;
+}.r-contract {color: var(--accent-4); font-weight: 700;
+}.code {position: relative; margin: 16px 0 20px;
+}.code pre {margin: 0;
+    padding: 17px 52px 17px 18px;
+    background: var(--code-bg);
+    color: var(--code-text);
+    border: 1px solid var(--code-border);
+    border-radius: var(--radius);
+    overflow-x: auto;
+    font-size: 12.6px;
+    line-height: 1.7;
+    box-shadow: var(--shadow);
+}.code pre code {background: none; padding: 0; color: inherit; font-size: inherit; border: 0;
+}.code .comment {color: #7c8ba4;
+}.code .copy {position: absolute;
+    top: 10px; right: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 29px;
+    padding: 0 9px;
+    border: 1px solid var(--code-border);
+    border-radius: 8px;
+    background: #111827;
+    color: #c8d2e8;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .15s, border-color .15s;
+}.code:hover .copy,.code .copy:focus-visible {opacity: 1;
+}.code .copy:hover {border-color: #3b4c72;
+}@media (hover: none){.code .copy {opacity: 1;
+} }.code .copy.copied {color: var(--ok); border-color: var(--ok);
+}.code .copy svg {width: 12px; height: 12px;
+}.note {display: flex;
+    gap: 12px;
+    padding: 14px 16px;
+    border-left: 2px solid var(--guide);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    background: color-mix(in srgb, var(--guide) 9%, transparent);
+    font-size: 13.6px;
+    margin: 18px 0;
+}.note strong {color: var(--text);
+}.note p {margin: 0;
+}.note p + p {margin-top: 8px;
+}.note a {color: var(--guide-ink); font-weight: 650;
+}.note.accent {border-left-color: var(--accent); background: color-mix(in srgb, var(--accent) 9%, transparent);
+}.note.accent a {color: var(--accent);
+}.details {border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-elev); margin: 16px 0 20px; padding: 0 16px; box-shadow: var(--shadow);
+}.details summary {display: flex; align-items: center; gap: 9px; padding: 13px 0; cursor: pointer; font-weight: 650; font-size: 14px; list-style: none;
+}.details summary::-webkit-details-marker {display: none;
+}.details summary::before {content: "+"; display: grid; place-items: center; width: 18px; height: 18px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); font-weight: 800; font-size: 13px; flex: none;
+}.details[open] summary::before {content: "−";
+}.details[open] summary {border-bottom: 1px solid var(--border); margin-bottom: 12px;
+}.details-body {padding-bottom: 14px; color: var(--muted); font-size: 13.5px; max-width: 80ch;
+}.details-body p {margin: 0 0 10px;
+}.details-body p:last-child {margin: 0;
+}.details-body strong {color: var(--text);
+}.diagram {margin: 18px 0 24px; padding: 12px 12px 4px; border: 1px solid var(--border); border-radius: var(--radius); background: linear-gradient(165deg, color-mix(in srgb, var(--accent) 3%, var(--bg-elev)), var(--bg-elev) 60%); box-shadow: var(--shadow); overflow-x: auto;
+}.diagram svg {display: block; width: 100%; min-width: 660px; height: auto;
+}.diagram figcaption {margin: 8px 4px 8px; color: var(--muted); font-size: 12.5px;
+}.diagram .box {fill: var(--bg-elev); stroke: var(--border-strong); stroke-width: 1.4;
+}.diagram .box-soft {fill: var(--bg-soft); stroke: var(--border); stroke-width: 1.2;
+}.diagram .box-teal {fill: color-mix(in srgb, var(--accent) 10%, var(--bg-elev)); stroke: color-mix(in srgb, var(--accent) 55%, var(--border)); stroke-width: 1.5;
+}.diagram .box-blue {fill: color-mix(in srgb, var(--accent-2) 9%, var(--bg-elev)); stroke: color-mix(in srgb, var(--accent-2) 50%, var(--border)); stroke-width: 1.5;
+}.diagram .box-violet {fill: color-mix(in srgb, var(--accent-4) 9%, var(--bg-elev)); stroke: color-mix(in srgb, var(--accent-4) 50%, var(--border)); stroke-width: 1.5;
+}.diagram .box-amber {fill: color-mix(in srgb, var(--guide) 9%, var(--bg-elev)); stroke: color-mix(in srgb, var(--guide) 50%, var(--border)); stroke-width: 1.5;
+}.diagram .box-red {fill: color-mix(in srgb, var(--error-text) 8%, var(--bg-elev)); stroke: color-mix(in srgb, var(--error-text) 45%, var(--border)); stroke-width: 1.5;
+}.diagram .t {font-family: var(--font); font-size: 13px; font-weight: 700; fill: var(--text);
+}.diagram .s {font-family: var(--font); font-size: 10.7px; fill: var(--muted);
+}.diagram .m {font-family: var(--mono); font-size: 10.4px; fill: var(--text);
+}.diagram .muted {fill: var(--muted);
+}.diagram .lbl {font-family: var(--font); font-size: 10.2px; font-weight: 650; fill: var(--muted); letter-spacing: .02em;
+}.diagram .arrow {stroke: var(--muted); stroke-width: 1.5; fill: none;
+}.diagram .arrow-teal {stroke: var(--accent); stroke-width: 1.7; fill: none;
+}.diagram .arrow-amber {stroke: var(--guide); stroke-width: 1.5; fill: none; stroke-dasharray: 5 4;
+}.diagram .arrow-blue {stroke: var(--accent-2); stroke-width: 1.5; fill: none;
+}.diagram .dot-t {fill: var(--accent);
+}.diagram .dot-a {fill: var(--guide);
+}.diagram .dot-v {fill: var(--accent-4);
+}.diagram .dot-r {fill: var(--error-text);
+}.diagram .divider {stroke: var(--border); stroke-width: 1; stroke-dasharray: 3 5;
+}.kbd {display: inline-block; padding: 1px 6px; border: 1px solid var(--border-strong); border-bottom-width: 2px; border-radius: 6px; background: var(--bg-soft); font-family: var(--mono); font-size: 11.5px;
+}.footer {border-top: 1px solid var(--border);
+    margin-top: clamp(52px, 7vw, 84px);
+}.footer-inner {max-width: 1180px;
+    margin: 0 auto;
+    padding: 30px clamp(16px, 4vw, 40px) 34px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px 28px;
+    align-items: center;
+    justify-content: space-between;
+}.footer .brand-name small {text-transform: none; letter-spacing: .02em;
+}.footer-nav {display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; font-weight: 650;
+}.footer-nav a {color: var(--muted);
+}.footer-nav a:hover {color: var(--accent);
+}.footer-note {width: 100%;
+    color: var(--muted);
+    font-size: 12.5px;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+}.footer-note code {background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px;
+}.to-top {position: fixed;
+    right: clamp(16px, 3vw, 28px);
+    bottom: clamp(16px, 3vw, 28px);
+    z-index: 60;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--border-strong);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--bg-elev) 92%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    color: var(--muted);
+    box-shadow: var(--shadow);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity .2s, transform .2s, visibility .2s, border-color .15s, color .15s;
+}.to-top.is-visible {opacity: 1; visibility: visible; transform: none;
+}.to-top:hover {color: var(--accent); border-color: var(--accent); text-decoration: none;
+}.to-top svg {width: 18px; height: 18px;
+}::selection {background: color-mix(in srgb, var(--accent) 26%, transparent);
+}@keyframes fade {from {opacity: 0; } to {opacity: 1; }
+}@media screen and (prefers-reduced-motion: no-preference){
+  .cards.is-ready .card:not(.is-in), .rules.is-ready li:not(.is-in), .section-head.is-ready:not(.is-in), .section > .sub.is-ready:not(.is-in), .note.is-ready:not(.is-in), .code.is-ready:not(.is-in), .section > .prose.is-ready:not(.is-in), .diagram.is-ready:not(.is-in), .table-wrap.is-ready:not(.is-in) {opacity: 0;
+  }.cards .card.is-in, .rules li.is-in {animation: rise .55s cubic-bezier(.16, 1, .3, 1) backwards;
+    animation-delay: calc(var(--d, 0) * 70ms);
+  }.section-head.is-in, .section > .sub.is-in, .note.is-in, .code.is-in, .section > .prose.is-in, .diagram.is-in, .table-wrap.is-in {animation: fade .5s ease-out backwards;
+  }
+}@media (prefers-reduced-motion: reduce){* {scroll-behavior: auto !important; transition: none !important; animation: none !important;
+}
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#que-es">Saltar al contenido</a>
+
+<header class="topbar">
+  <a class="brand" href="#top">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32" role="presentation">
+        <defs>
+          <linearGradient id="brand-grad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#0f766e"></stop>
+            <stop offset="1" stop-color="#2563eb"></stop>
+          </linearGradient>
+        </defs>
+        <rect width="32" height="32" fill="url(#brand-grad)"></rect>
+        <path d="M9 22V10h7a5 5 0 0 1 0 10H9" fill="none" stroke="#ffffff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M9 15h7" stroke="#ffffff" stroke-width="2.3" stroke-linecap="round"></path>
+      </svg>
+    </span>
+    <span class="brand-name">AIF<small>contrato de interacción</small></span>
+  </a>
+  <span class="topbar-spacer"></span>
+  <nav class="topnav" aria-label="Secciones principales">
+    <a href="#que-es">Contrato</a>
+    <a href="#resultados">Resultados</a>
+    <a href="#mensajes">Mensajes</a>
+    <a href="#campos">Campos</a>
+    <a href="#biblioteca">Biblioteca</a>
+    <a href="#experimento">Experimento</a>
+  </nav>
+  <a class="icon-btn only-icon" href="https://github.com/fred66sp/agent-interaction-forms" aria-label="Repositorio en GitHub" title="Repositorio en GitHub">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"></path></svg>
+  </a>
+  <button class="icon-btn" id="theme-toggle" type="button" aria-label="Cambiar a tema oscuro">
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+    <span>Tema</span>
+  </button>
+</header>
+
+<section class="hero" id="top">
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <span class="pill"><span class="dot" aria-hidden="true"></span>contrato v0.1 · 13 secciones · referencia en Go</span>
+      <h1>La interacción agente-herramienta, <span class="grad">en un solo contrato</span></h1>
+      <p class="lead">AIF define qué devuelve una herramienta cuando puede ejecutar, cuando le falta un dato y cuando lo recibido no sirve. Un sobre JSON, <strong>ocho resultados exigibles</strong> y una continuación sin estado que el agente puede decidir sin interpretar prosa.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#que-es">Entender el contrato
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"></path></svg>
+        </a>
+        <a class="btn btn-ghost" href="#resultados">Ver los ocho resultados</a>
+        <a class="btn btn-ghost" href="../SPECIFICATION.md">Especificación</a>
+      </div>
+      <ul class="hero-feats">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>JSON Schema 2020-12 sin motor propio</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>límites declarados: 256 KiB · 32</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Sin sesiones ni estado</li>
+      </ul>
+    </div>
+
+    <div class="hero-art" aria-hidden="true">
+      <div class="art-blob"></div>
+      <div class="fm-card">
+        <div class="fm-head"><span class="dot"></span>respuesta.json<span class="fm-badge">input_needed</span></div>
+        <div class="fm-code"><span class="punc">{</span><span class="key">"aif"</span><span class="punc">:</span> <span class="str">"0.1"</span><span class="punc">,</span>
+ <span class="key">"operation"</span><span class="punc">:</span> <span class="str">"record_observation"</span><span class="punc">,</span>
+ <span class="key">"result"</span><span class="punc">:</span> <span class="val">"input_needed"</span><span class="punc">,</span>
+ <span class="key">"missing"</span><span class="punc">:</span> <span class="punc">[</span><span class="str">"title"</span><span class="punc">,</span> <span class="str">"confidence"</span><span class="punc">],</span>
+ <span class="key">"collected"</span><span class="punc">:</span> <span class="punc">{</span><span class="key">"kind"</span><span class="punc">:</span> <span class="str">"learning"</span><span class="punc">}</span>
+<span class="punc">}</span></div>
+        <div class="fm-foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>un sobre idéntico para los ocho resultados</div>
+      </div>
+      <div class="fm-tags"><span>result</span><span>fields</span><span>collected</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="layout">
+  <nav class="toc" aria-label="Índice de la documentación">
+    <h2>En esta página</h2>
+    <a href="#que-es">1. Qué es AIF</a>
+    <a href="#modelo">2. Modelo agent-first</a>
+    <a href="#ciclo">3. Ciclo y continuación</a>
+    <a href="#resultados">4. Los ocho resultados</a>
+    <a href="#mensajes">5. Mensajes JSON</a>
+    <a href="#campos">6. Campos y schema</a>
+    <a href="#biblioteca">7. Biblioteca Go</a>
+    <a href="#cli">8. Perfil CLI</a>
+    <a href="#conformidad">9. Conformidad</a>
+    <a href="#poc">10. PoC con ACM</a>
+    <a href="#responsabilidades">11. Seguridad y límites</a>
+    <a href="#experimento">12. Experimento</a>
+    <a href="#referencias">13. Referencias</a>
+    <div class="toc-extra"><a href="../../README.md">README del proyecto</a></div>
+  </nav>
+
+  <main id="contenido">
+    <section id="que-es" class="section">
+      <div class="section-head"><span class="section-num" style="--num:#0f766e">1</span><h2 class="title">Qué es AIF y qué problema resuelve</h2><span class="chip-repo">SPECIFICATION §0–§2</span></div>
+      <p class="sub">AIF es un contrato de interacción entre un agente (el <em>consumidor</em>) y una herramienta (el <em>ejecutor</em>). No es un framework: no orquesta, no almacena, no autoriza ni ejecuta nada por sí mismo. Solo fija el vocabulario con el que la herramienta comunica lo que el agente necesita saber para decidir el siguiente paso.</p>
+
+      <div class="prose">
+        <p>Una herramienta expuesta a un agente suele resolver tres situaciones de forma distinta y, a menudo, con prosa: ejecutar, pedir datos o rechazar. El agente entonces interpreta mensajes de error, adivina qué campo falló o reenvía la operación completa a ciegas. AIF sustituye esa interpretación por un <strong>resultado discreto</strong> y unos miembros de datos que se pueden comprobar de forma mecánica.</p>
+      </div>
+
+      <div class="cards c3">
+        <div class="card">
+          <span class="k">Operación completa</span>
+          <h3>Se ejecuta</h3>
+          <p>Los datos bastan y son válidos. El ejecutor realiza el efecto de dominio y responde <code>executed</code> con un <code>outcome</code> opaco para AIF.</p>
+        </div>
+        <div class="card">
+          <span class="k">Operación incompleta</span>
+          <h3>Devuelve el formulario</h3>
+          <p>Responde <code>input_needed</code> con los campos ausentes, su obligatoriedad y restricciones, más <code>collected</code> con lo que ya era válido.</p>
+        </div>
+        <div class="card">
+          <span class="k">Operación inválida</span>
+          <h3>Permite corregir</h3>
+          <p>Responde <code>invalid</code> con el problema de cada campo y conserva los valores válidos no sensibles: no hay que reconstruir la petición.</p>
+        </div>
+      </div>
+
+      <div class="compare">
+        <div class="example bad">
+          <span class="ex-label">Sin contrato</span>
+          <p>«Error: los datos no son correctos»</p>
+          <p class="ex-note">El agente no sabe qué campo corregir, si falta algo o si la operación llegó a ejecutarse.</p>
+        </div>
+        <div class="example good">
+          <span class="ex-label">Con AIF</span>
+          <p><code>invalid</code> nombra <code>kind</code>, su <code>value</code>, el <code>reason</code> y los <code>allowed</code>; <code>collected</code> devuelve <code>title</code> y <code>confidence</code>.</p>
+          <p class="ex-note">La siguiente petición se compone con datos, sin analizar el texto del error.</p>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>El alcance es el vocabulario, no la autoridad.</strong> Las reglas de negocio, los permisos, la validación efectiva, la persistencia y las garantías de idempotencia pertenecen al ejecutor y a su dominio. AIF v0.1 tampoco define sesiones, identificadores de formulario, expiración, reintentos garantizados, servidores MCP ni perfiles HTTP.</p>
+      </div>
+    </section>
+
+    <section id="modelo" class="section">
+      <div class="section-head"><span class="section-num" style="--num:#2563eb">2</span><h2 class="title">Modelo de interacción y filosofía agent-first</h2><span class="chip-repo">SPECIFICATION §1, §5, §6</span></div>
+      <p class="sub">La interacción es una secuencia de intercambios sin estado para el contrato: cada petición contiene todo lo que el ejecutor necesita y el ejecutor revalida siempre. No hay sesión, identificador de formulario ni correlación entre llamadas.</p>
+
+      <div class="table-wrap">
+        <table>
+          <caption>Los dos papeles del contrato</caption>
+          <thead><tr><th>Papel</th><th>Qué hace</th><th>Qué no decide</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Consumidor</strong> · agente</td><td>Compone la petición, lee el <code>result</code>, corrige o completa el <code>input</code> y reenvía la operación completa.</td><td>No concede permisos ni sustituye la validación del dominio.</td></tr>
+            <tr><td><strong>Ejecutor</strong> · herramienta</td><td>Declara operaciones y campos, valida, ejecuta el efecto y elige el resultado que describe lo ocurrido.</td><td>No puede declarar <code>executed</code> si el efecto no se completó.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ul class="rules">
+        <li><strong>Camino directo.</strong> Si el consumidor ya dispone de todos los datos, invoca la operación y recibe <code>executed</code> sin ningún intercambio previo impuesto por AIF.</li>
+        <li><strong>Una sola forma.</strong> Todos los resultados usan el mismo sobre JSON y <code>result</code> es el discriminante. El agente aprende una estructura, no ocho.</li>
+        <li><strong>Datos, no prosa.</strong> Solo <code>result</code> y los miembros exigidos por la especificación son fiables para decidir cómo continuar. Interpretar texto libre es un error de conformidad.</li>
+        <li><strong>Revalidación total.</strong> El <code>result</code> de la ronda anterior no da ningún derecho: el ejecutor vuelve a validar el <code>input</code> completo en cada petición.</li>
+        <li><strong>Ni permisos ni pruebas de ejecución.</strong> Una respuesta AIF no autoriza ni demuestra que algo se ejecutó; esas garantías se obtienen del dominio.</li>
+        <li><strong>Rechazo explícito.</strong> Los miembros desconocidos de <code>input</code> se rechazan como <code>invalid</code>; el silencio ante un nombre mal escrito ocultaría errores del consumidor. En las respuestas, en cambio, las extensiones son toleradas y el consumidor debe ignorar lo que no reconozca.</li>
+      </ul>
+
+      <div class="note accent">
+        <p><strong>Agent-first no significa «para humanos también».</strong> El contrato existe para que un agente decida con campos comprobables: qué falta, qué es inválido, qué se conservó y cuál fue el resultado real. La documentación de la operación sigue siendo del dominio.</p>
+      </div>
+    </section>
+
+    <section id="ciclo" class="section">
+      <div class="section-head"><span class="section-num" style="--num:#0891b2">3</span><h2 class="title">Ciclo de petición, respuesta y continuación</h2><span class="chip-repo">SPECIFICATION §5, §7 CL-06</span></div>
+      <p class="sub">Toda petición recorre la misma secuencia. La diferencia entre ejecutar y reparar no está en el camino, sino en el resultado que el ejecutor puede afirmar.</p>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 880 470" role="img" aria-labelledby="d1-title d1-desc">
+          <title id="d1-title">Flujo de una petición AIF</title>
+          <desc id="d1-desc">La petición pasa por la validación estructural, de versión, de operación y de campos. Si es válida se ejecuta en el dominio y produce executed, denied o failed. Si faltan datos o son inválidos vuelve una respuesta reparable con collected, y el consumidor reenvía el input completo. Si el contrato no se establece, responde malformed_request, unsupported_version o unknown_operation sin efecto de dominio.</desc>
+          <defs>
+            <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--muted)"></path></marker>
+            <marker id="ah-t" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--accent)"></path></marker>
+            <marker id="ah-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--guide)"></path></marker>
+            <marker id="ah-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--accent-2)"></path></marker>
+          </defs>
+          <text class="lbl" x="20" y="24">EL CONSUMIDOR COMPONE</text>
+          <text class="lbl" x="300" y="24">EL EJECUTOR DECIDE</text>
+          <text class="lbl" x="650" y="24">RESULTADO</text>
+
+          <rect class="box-teal" x="20" y="118" width="190" height="104" rx="12"></rect>
+          <text class="t" x="36" y="146">Petición</text>
+          <text class="m" x="36" y="170">aif: "0.1"</text>
+          <text class="m" x="36" y="188">operation: id</text>
+          <text class="m" x="36" y="206">input: { … }</text>
+
+          <rect class="box-blue" x="300" y="86" width="210" height="168" rx="12"></rect>
+          <text class="t" x="318" y="114">Validación</text>
+          <text class="s" x="318" y="136">1 · estructura y versión</text>
+          <text class="s" x="318" y="156">2 · operación conocida</text>
+          <text class="s" x="318" y="176">3 · campos, uno a uno</text>
+          <text class="s" x="318" y="204" style="fill: var(--guide)">missing · invalid</text>
+          <text class="s" x="318" y="222">se informa de todo</text>
+          <text class="s" x="318" y="240">en un solo intercambio</text>
+
+          <rect class="box-violet" x="620" y="118" width="210" height="104" rx="12"></rect>
+          <text class="t" x="638" y="146">Ejecución en el dominio</text>
+          <text class="s" x="638" y="168">reglas · permisos · efecto</text>
+          <text class="s" x="638" y="186">persistencia y garantías</text>
+          <text class="s" x="638" y="204">del ejecutor</text>
+
+          <path class="arrow-teal" d="M210 170 H 288" marker-end="url(#ah-t)"></path>
+          <path class="arrow-teal" d="M510 152 H 608" marker-end="url(#ah-t)"></path>
+          <text class="lbl" x="538" y="142">válida</text>
+
+          <rect class="box-soft" x="680" y="272" width="150" height="88" rx="10"></rect>
+          <text class="m" x="694" y="296" style="fill: var(--ok-text)">executed</text>
+          <text class="m" x="694" y="316" style="fill: var(--error-text)">denied</text>
+          <text class="m" x="694" y="336" style="fill: var(--error-text)">failed</text>
+          <path class="arrow" d="M725 222 V 260" marker-end="url(#ah)"></path>
+
+          <rect class="box-amber" x="290" y="316" width="240" height="112" rx="12"></rect>
+          <text class="t" x="308" y="344">Respuesta reparable</text>
+          <text class="m" x="308" y="366" style="fill: var(--guide-ink)">input_needed · invalid</text>
+          <text class="m" x="308" y="386">missing · invalid</text>
+          <text class="m" x="308" y="404">fields · collected</text>
+          <path class="arrow-amber" d="M385 254 V 304" marker-end="url(#ah-a)"></path>
+          <text class="lbl" x="396" y="286" style="fill: var(--guide-ink)">falta o no es válido</text>
+
+          <rect class="box-red" x="600" y="316" width="260" height="112" rx="12"></rect>
+          <text class="t" x="618" y="344">Contrato no establecido</text>
+          <text class="m" x="618" y="366" style="fill: var(--accent-4)">malformed_request</text>
+          <text class="m" x="618" y="386" style="fill: var(--accent-4)">unsupported_version</text>
+          <text class="m" x="618" y="406" style="fill: var(--accent-4)">unknown_operation</text>
+          <path class="arrow" d="M470 254 V 286 H 700 V 304" marker-end="url(#ah)"></path>
+          <text class="lbl" x="500" y="280">no interpretable</text>
+
+          <rect class="box-soft" x="20" y="330" width="210" height="84" rx="10"></rect>
+          <text class="t" x="36" y="356" style="font-size: 12px">Nueva petición</text>
+          <text class="s" x="36" y="376">mismo operation</text>
+          <text class="s" x="36" y="394">input completo y corregido</text>
+          <path class="arrow-amber" d="M288 372 H 244" marker-end="url(#ah-a)"></path>
+          <path class="arrow" d="M125 330 V 234" marker-end="url(#ah)" stroke-dasharray="4 4"></path>
+          <text class="lbl" x="132" y="300">reenvía</text>
+
+          <text class="s" x="20" y="452">Sin efecto de dominio en reparable, denegado, fallido y errores de contrato. Solo executed afirma un efecto completado.</text>
+        </svg>
+        <figcaption>Una petición, una respuesta. La rama de reparación no reutiliza estado: devuelve datos y el consumidor compone una petición nueva.</figcaption>
+      </figure>
+
+      <div class="prose">
+        <h3>Qué define la continuación</h3>
+      </div>
+      <ul class="rules">
+        <li><strong>Tras <code>input_needed</code> o <code>invalid</code></strong>, la siguiente petición válida es la misma operación con un <code>input</code> completo: los valores de <code>collected</code>, los que el consumidor añada y una corrección por cada campo de <code>invalid</code>.</li>
+        <li><strong><code>collected</code> es copia fiable</strong> de lo que el consumidor ya aportó. <code>fields</code> y <code>description</code> son información para elegir valores, no datos que reenviar.</li>
+        <li><strong>Tras <code>denied</code>, <code>failed</code></strong> o un error de contrato, AIF no define continuación: decide el consumidor con la información del resultado y la documentación del dominio.</li>
+        <li><strong>Reenviar no es idempotente.</strong> Es una petición nueva con el efecto que determine el dominio. Ninguna respuesta AIF garantiza autenticidad, ejecución única ni reintento seguro.</li>
+      </ul>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 880 380" role="img" aria-labelledby="d3-title d3-desc">
+          <title id="d3-title">Continuación sin estado</title>
+          <desc id="d3-desc">La primera petición devuelve input_needed con collected. El consumidor compone una segunda petición completa añadiendo los datos que faltan y el ejecutor revalida todo. Entre llamadas no hay sesión, ni input recordado, ni identificador de formulario.</desc>
+          <defs>
+            <marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--muted)"></path></marker>
+            <marker id="ah3-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--guide)"></path></marker>
+          </defs>
+          <text class="lbl" x="20" y="24">INTERCAMBIO 1</text>
+          <text class="lbl" x="20" y="252">INTERCAMBIO 2 · PETICIÓN NUEVA</text>
+
+          <rect class="box-teal" x="20" y="40" width="210" height="86" rx="10"></rect>
+          <text class="t" x="36" y="66">Petición 1</text>
+          <text class="m" x="36" y="88">input: { kind }</text>
+          <text class="s" x="36" y="108">sin title ni confidence</text>
+
+          <rect class="box-amber" x="340" y="40" width="230" height="86" rx="10"></rect>
+          <text class="t" x="356" y="66">Respuesta 1</text>
+          <text class="m" x="356" y="88" style="fill: var(--guide-ink)">input_needed</text>
+          <text class="m" x="356" y="108">collected: { kind }</text>
+
+          <path class="arrow" d="M230 83 H 328" marker-end="url(#ah3)"></path>
+
+          <rect class="box-teal" x="20" y="274" width="230" height="86" rx="10"></rect>
+          <text class="t" x="36" y="300">Petición 2</text>
+          <text class="m" x="36" y="322">input: { kind, title,</text>
+          <text class="m" x="36" y="340">confidence }</text>
+
+          <rect class="box-soft" x="340" y="274" width="230" height="86" rx="10"></rect>
+          <text class="t" x="356" y="300">Respuesta 2</text>
+          <text class="m" x="356" y="322" style="fill: var(--ok-text)">executed</text>
+          <text class="s" x="356" y="342">el efecto lo decide el dominio</text>
+
+          <path class="arrow" d="M250 317 H 328" marker-end="url(#ah3)"></path>
+          <path class="arrow-amber" d="M455 126 V 262" marker-end="url(#ah3-a)"></path>
+          <text class="lbl" x="300" y="196" style="fill: var(--guide-ink)">el consumidor compone</text>
+          <text class="lbl" x="300" y="212" style="fill: var(--guide-ink)">con collected + corrección</text>
+
+          <rect x="620" y="40" width="240" height="320" rx="14" fill="none" stroke="var(--border-strong)" stroke-width="1.5" stroke-dasharray="6 5"></rect>
+          <text class="t" x="640" y="70">Entre llamadas no hay estado</text>
+          <text class="s" x="640" y="100">✕ sesión o conversación</text>
+          <text class="s" x="640" y="128">✕ input recordado por el ejecutor</text>
+          <text class="s" x="640" y="156">✕ identificador de formulario</text>
+          <text class="s" x="640" y="184">✕ caducidad o revisión</text>
+          <text class="s" x="640" y="212">✕ correlación entre llamadas</text>
+          <line class="divider" x1="640" y1="232" x2="840" y2="232"></line>
+          <text class="s" x="640" y="256">El ejecutor revalida el input</text>
+          <text class="s" x="640" y="274">completo en cada petición.</text>
+          <text class="s" x="640" y="308">La ronda anterior no da</text>
+          <text class="s" x="640" y="326">ningún derecho.</text>
+        </svg>
+        <figcaption>La continuidad vive en el consumidor y en los datos de la respuesta, no en una sesión del ejecutor.</figcaption>
+      </figure>
+
+      <div class="note">
+        <p><strong>El camino directo manda.</strong> El modelo no impone un formulario previo: si el agente ya tiene los datos, ejecuta. La rama reparable existe para cuando la petición no puede afirmar un efecto, no como peaje de toda operación.</p>
+      </div>
+    </section>
+
+    <section id="resultados" class="section">
+      <div class="section-head"><span class="section-num" style="--num:#7c3aed">4</span><h2 class="title">Los ocho resultados del contrato</h2><span class="chip-repo">aif.go · response.go</span></div>
+      <p class="sub">Son exactamente ocho y cada uno tiene contenido exigible. Una respuesta afirma un solo sentido: o ejecutó, o informa de por qué no pudo. Los miembros de la tabla son los que emite <code>Response.MarshalJSON</code>; el código de salida es el del perfil CLI.</p>
+
+      <div class="table-wrap">
+        <table>
+          <caption>Resultados de AIF v0.1 y miembros propios de cada uno</caption>
+          <thead><tr><th><code>result</code></th><th>Cuándo</th><th>Miembros propios</th><th>CLI</th></tr></thead>
+          <tbody>
+            <tr><td><span class="r-ok">executed</span></td><td>La operación completó su efecto de dominio.</td><td><code>outcome</code> (opaco, del dominio)</td><td>0</td></tr>
+            <tr><td><span class="r-repair">input_needed</span></td><td>Faltan campos obligatorios; nada se ejecutó.</td><td><code>missing</code>, <code>fields</code>, <code>collected</code></td><td>2</td></tr>
+            <tr><td><span class="r-repair">invalid</span></td><td>Hay campos inválidos; nada se ejecutó. Puede acompañar a <code>missing</code>.</td><td><code>invalid</code>, <code>fields</code>, <code>collected</code> y, si los hay, <code>missing</code></td><td>2</td></tr>
+            <tr><td><span class="r-deny">denied</span></td><td>El dominio niega la operación; nada se ejecutó.</td><td><code>reason</code></td><td>4</td></tr>
+            <tr><td><span class="r-fail">failed</span></td><td>La ejecución no se completó o su estado es desconocido.</td><td><code>message</code> y, si el dominio lo aporta, <code>code</code></td><td>1</td></tr>
+            <tr><td><span class="r-contract">unsupported_version</span></td><td>La versión de <code>aif</code> no es soportada; <code>input</code> no se procesa.</td><td><code>supported</code>; sin eco de <code>operation</code></td><td>3</td></tr>
+            <tr><td><span class="r-contract">malformed_request</span></td><td>La entrada no se puede interpretar como petición conforme.</td><td><code>reason</code> y, opcionalmente, <code>supported</code>; sin <code>operation</code></td><td>3</td></tr>
+            <tr><td><span class="r-contract">unknown_operation</span></td><td>El identificador no corresponde a ninguna operación del ejecutor.</td><td><code>known_operations</code> y eco de <code>operation</code></td><td>3</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="prose">
+        <p>Las respuestas de descubrimiento son la excepción deliberada: se producen cuando la petición omite <code>operation</code> y no llevan <code>result</code> ni <code>operation</code>. No son un noveno resultado, sino otra forma del sobre (§7, CL-05).</p>
+        <h3>Forma de los resultados que no reparan</h3>
+        <p>Los cinco resultados restantes no comparten miembros de campos: cada uno informa de lo que el agente necesita para decidir si detenerse, informar o cambiar de contrato.</p>
+      </div>
+
+      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"record_observation","result":"denied",
+ "reason":"el consumidor no tiene permiso de escritura sobre el dominio"}</code></pre></div>
+
+      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"record_observation","result":"failed",
+ "message":"el almacenamiento rechazó la escritura; estado desconocido, la observación no queda registrada",
+ "code":"storage_unavailable"}</code></pre></div>
+
+      <div class="code"><pre><code class="language-json">{"aif":"0.1","result":"unsupported_version","supported":["0.1"]}</code></pre></div>
+
+      <div class="code"><pre><code class="language-json">{"aif":"0.1","result":"malformed_request",
+ "reason":"carece de aif",
+ "supported":["0.1"]}</code></pre></div>
+
+      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"no_existe","result":"unknown_operation",
+ "known_operations":["record_observation"]}</code></pre></div>
+
+      <div class="details">
+        <summary>¿Por qué ocho resultados y no un código de error con subcódigos?</summary>
+        <div class="details-body">
+          <p><strong>Porque cada resultado cambia la decisión del agente.</strong> Reparar (<code>input_needed</code>, <code>invalid</code>), detenerse (<code>denied</code>), informar de un fallo real (<code>failed</code>) y corregir el contrato (<code>unsupported_version</code>, <code>malformed_request</code>, <code>unknown_operation</code>) son continuaciones distintas. Un código anidado obligaría al consumidor a interpretar una jerarquía que el contrato no define.</p>
+          <p>La separación entre <code>unsupported_version</code> y <code>malformed_request</code> es de causa: la primera declara una versión que el ejecutor no soporta; la segunda ni siquiera establece el contrato. Y <code>unknown_operation</code> existe para que el agente pueda elegir entre las operaciones declaradas en <code>known_operations</code>.</p>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>Una respuesta, un sentido.</strong> <code>input_needed</code>, <code>invalid</code>, <code>denied</code> y los tres errores de contrato no producen efecto de dominio. <code>failed</code> tampoco puede presentarse como <code>executed</code>: si el ejecutor duda, lo dice.</p>
+      </div>
+    </section>
+
+    <section id="mensajes" class="section">
+      <div class="section-head"><span class="section-num" style="--num:#b45309">5</span><h2 class="title">Estructura de los mensajes JSON</h2><span class="chip-repo">SPECIFICATION §1, §7 CL-05</span></div>
+      <p class="sub">La petición y la respuesta son objetos JSON (RFC 8259). No hay XML, ni formularios binarios, ni un lenguaje de expresiones: el mismo sobre sirve para una CLI, una función local o cualquier transporte que el integrador elija.</p>
+
+      <div class="table-wrap">
+        <table>
+          <caption>Petición · miembros del sobre</caption>
+          <thead><tr><th>Miembro</th><th>Condición</th><th>Contenido</th></tr></thead>
+          <tbody>
+            <tr><td><code>aif</code></td><td>DEBE</td><td>Versión del contrato. Literal <code>"0.1"</code> en esta versión.</td></tr>
+            <tr><td><code>operation</code></td><td>PUEDE faltar solo para descubrimiento</td><td>Identificador textual de la operación.</td></tr>
+            <tr><td><code>input</code></td><td>PUEDE faltar</td><td>Objeto con los datos, campo a campo. Puede ser <code>null</code>: equivale a vacío.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <caption>Respuesta de operación · miembros comunes</caption>
+          <thead><tr><th>Miembro</th><th>Condición</th><th>Contenido</th></tr></thead>
+          <tbody>
+            <tr><td><code>aif</code></td><td>DEBE</td><td>Versión empleada para responder.</td></tr>
+            <tr><td><code>operation</code></td><td>DEBE, salvo en <code>unsupported_version</code> y <code>malformed_request</code></td><td>Eco del identificador solicitado.</td></tr>
+            <tr><td><code>result</code></td><td>DEBE</td><td>Uno de los ocho resultados de §2.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"record_observation",
+ "input":{"title":"Perfil CLI decidido","kind":"decision","confidence":"confirmed"}}</code></pre></div>
+
+      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"record_observation","result":"executed",
+ "outcome":{"id":"obs_0142","recorded_at":"2026-11-24T19:41:00Z"}}</code></pre></div>
+
+      <div class="prose">
+        <p>El <code>outcome</code> es territorio del dominio: AIF no define su estructura interna. El consumidor lo trata como datos opacos o lo usa según la documentación de la operación. Continuar tras <code>executed</code> también corresponde al dominio, no a AIF.</p>
+        <h3>Descubrimiento</h3>
+        <p>Si la petición omite <code>operation</code>, el ejecutor responde con la lista de operaciones y una descripción de una línea. Esta respuesta no es una operación: no lleva <code>result</code> ni <code>operation</code>.</p>
+      </div>
+
+      <div class="code"><pre><code class="language-json">{"aif":"0.1"}</code></pre></div>
+
+      <div class="code"><pre><code class="language-json">{"aif":"0.1","operations":[
+  {"id":"record_observation",
+   "description":"Registra una observación con título, tipo y confianza."}]}</code></pre></div>
+
+      <div class="note">
+        <p><strong>Extensiones toleradas, miembros críticos acotados.</strong> Una respuesta puede incluir miembros que AIF no define; el consumidor debe ignorar los que no reconozca. Lo que el ejecutor no puede hacer es colocar fuera de los miembros definidos información de la que dependa la decisión del agente. En <code>input</code> ocurre lo contrario: un miembro desconocido invalida la petición.</p>
+      </div>
+    </section>
+
+    <section id="campos" class="section">
+      <div class="section-head"><span class="section-num" style="--num:#0f766e">6</span><h2 class="title">Campos, restricciones, schema y conservación</h2><span class="chip-repo">SPECIFICATION §3.2, §4</span></div>
+      <p class="sub">Los resultados reparables describen campos con un vocabulario mínimo y reglas mecánicas. La garantía central es doble: el agente sabe exactamente qué corregir y no pierde los valores que ya eran válidos.</p>
+
+      <div class="table-wrap">
+        <table>
+          <caption>Descriptor de campo (§4) y problema de campo (§3.2)</caption>
+          <thead><tr><th>Miembro</th><th>Clase</th><th>Sentido</th></tr></thead>
+          <tbody>
+            <tr><td><code>required</code></td><td>imprescindible</td><td><code>true</code> si el ejecutor no puede ejecutar sin el valor.</td></tr>
+            <tr><td><code>value</code></td><td>contextual</td><td>Valor recibido en esta petición, salvo que sea sensible.</td></tr>
+            <tr><td><code>reason</code></td><td>contextual</td><td>Por qué el valor es inválido; solo dentro de <code>invalid</code>.</td></tr>
+            <tr><td><code>type</code></td><td>opcional</td><td><code>string</code>, <code>number</code>, <code>boolean</code>, <code>object</code> o <code>array</code>.</td></tr>
+            <tr><td><code>allowed</code></td><td>opcional</td><td>Valores permitidos cuando el conjunto es cerrado.</td></tr>
+            <tr><td><code>description</code></td><td>opcional</td><td>Indicación contextual en texto; no sustituye a una regla mecánica.</td></tr>
+            <tr><td><code>schema</code></td><td>opcional</td><td>Fragmento JSON Schema 2020-12 de la regla. Obligatorio cuando la regla comprobada no se expresa con <code>type</code> ni <code>allowed</code>.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 880 430" role="img" aria-labelledby="d2-title d2-desc">
+          <title id="d2-title">Anatomía de una respuesta AIF reparable</title>
+          <desc id="d2-desc">La respuesta conserva el sobre aif, operation y result. En input_needed e invalid añade missing con los campos ausentes, invalid con un descriptor por campo incorrecto, fields con la descripción de los campos y collected con los valores válidos no sensibles. missing e invalid son excluyentes por campo, invalid tiene precedencia sobre input_needed y los valores sensibles nunca aparecen.</desc>
+          <rect class="box-teal" x="20" y="34" width="250" height="344" rx="14"></rect>
+          <text class="t" x="38" y="62">Sobre de respuesta</text>
+          <line class="divider" x1="38" y1="76" x2="252" y2="76"></line>
+          <text class="m" x="38" y="104">aif: "0.1"</text>
+          <text class="m" x="38" y="132">operation: "…"</text>
+          <text class="m" x="38" y="160" style="fill: var(--guide-ink)">result: "input_needed"</text>
+          <text class="s" x="38" y="184">o "invalid"</text>
+          <text class="s" x="38" y="220">El mismo sobre que usan</text>
+          <text class="s" x="38" y="238">los otros seis resultados;</text>
+          <text class="s" x="38" y="256">solo cambian los miembros</text>
+          <text class="s" x="38" y="274">propios del resultado.</text>
+          <text class="s" x="38" y="310">El consumidor decide con</text>
+          <text class="s" x="38" y="328">result y estos datos, no</text>
+          <text class="s" x="38" y="346">con prosa del ejecutor.</text>
+
+          <line class="divider" x1="270" y1="80" x2="310" y2="80"></line>
+          <line class="divider" x1="270" y1="190" x2="310" y2="190"></line>
+          <line class="divider" x1="270" y1="300" x2="310" y2="300"></line>
+
+          <rect class="box-amber" x="310" y="34" width="550" height="92" rx="12"></rect>
+          <text class="t" x="328" y="60">missing · campos ausentes</text>
+          <text class="s" x="328" y="80">Campo no presente o null. false, 0, "" y [] no son ausencia: se validan.</text>
+          <text class="m" x="328" y="104" style="fill: var(--guide-ink)">["title", "confidence"]</text>
+
+          <rect class="box-red" x="310" y="144" width="550" height="92" rx="12"></rect>
+          <text class="t" x="328" y="170">invalid · campo → problema</text>
+          <text class="s" x="328" y="190">value (si no es sensible), reason determinista y allowed/schema cuando aplican.</text>
+          <text class="m" x="328" y="214">{ "kind": { "value": "Learning", "reason": "valor no permitido", "allowed": [ … ] } }</text>
+
+          <rect class="box-blue" x="310" y="254" width="550" height="92" rx="12"></rect>
+          <text class="t" x="328" y="280">fields · descriptor mínimo</text>
+          <text class="s" x="328" y="300">Al menos cada campo de missing e invalid, con required, type, allowed, description y schema.</text>
+          <text class="m" x="328" y="324">collected · valores válidos no sensibles que el consumidor ya aportó</text>
+
+          <line class="divider" x1="310" y1="366" x2="860" y2="366"></line>
+          <text class="lbl" x="310" y="392">excluyentes por campo</text>
+          <text class="lbl" x="470" y="392">invalid tiene precedencia</text>
+          <text class="lbl" x="650" y="392">el valor sensible nunca vuelve</text>
+          <text class="lbl" x="310" y="412">schema = JSON Schema 2020-12</text>
+        </svg>
+        <figcaption>Anatomía de <code>input_needed</code> e <code>invalid</code>. La exclusividad es por campo; una misma respuesta puede informar de ausentes e inválidos a la vez.</figcaption>
+      </figure>
+
+      <div class="prose">
+        <h3>Reglas que no admiten interpretación</h3>
+      </div>
+      <ul class="rules">
+        <li><strong>Ausencia frente a invalidez.</strong> <code>missing</code> e <code>invalid</code> son excluyentes por campo: un campo no figura en ambos. Una petición puede tener los dos problemas y recibe <strong>una única respuesta</strong> con ambos informes.</li>
+        <li><strong>Precedencia determinista.</strong> Si hay al menos un campo inválido, el resultado es <code>invalid</code>; si no lo hay y faltan obligatorios, <code>input_needed</code>.</li>
+        <li><strong>Todo valor proporcionado se valida</strong>, sea de un campo obligatorio u opcional. El fallo de un opcional se reporta igual que el de un obligatorio.</li>
+        <li><strong><code>collected</code> es obligatorio</strong> en las respuestas reparables. Conserva los valores válidos no sensibles de esa misma petición. La <strong>única omisión legítima</strong> es la de un valor sensible; omitir otro valor válido rompe la garantía y es un defecto de conformidad.</li>
+        <li><strong>Los valores sensibles no vuelven</strong> en ningún miembro: ni en <code>collected</code>, ni en <code>value</code>, ni en <code>reason</code>, ni en <code>message</code>, ni en <code>outcome</code>, ni en <code>description</code>.</li>
+        <li><strong><code>schema</code> se publica, no se evalúa.</strong> Su sintaxis es la de JSON Schema 2020-12, reutilizada tal cual. AIF no añade un lenguaje de validación ni un motor; quien valida es el dominio. Lo declarado debe expresar el comportamiento que realmente se comprueba.</li>
+      </ul>
+
+      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"record_observation","result":"input_needed",
+ "missing":["title","confidence"],
+ "fields":{"title":{"required":true,"type":"string",
+                   "description":"Título breve de la observación"},
+           "confidence":{"required":true,"type":"string",
+                         "allowed":["hypothesis","confirmed"]}},
+ "collected":{"kind":"learning"}}</code></pre></div>
+
+      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"record_observation","result":"invalid",
+ "invalid":{"kind":{"value":"Learning",
+                    "reason":"valor no permitido",
+                    "allowed":["learning","decision","discovery","bugfix"]}},
+ "fields":{"kind":{"required":true,"type":"string",
+                   "allowed":["learning","decision","discovery","bugfix"]}},
+ "collected":{"title":"Perfil CLI decidido","confidence":"confirmed"}}</code></pre></div>
+
+      <div class="prose">
+        <p>Cuando la petición mezcla campos ausentes e inválidos, la respuesta sigue siendo una sola. La exclusividad se aplica campo a campo, no al documento:</p>
+      </div>
+
+      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"record_observation","result":"invalid",
+ "missing":["confidence"],
+ "invalid":{"kind":{"value":"Learning",
+                    "reason":"valor no permitido",
+                    "allowed":["learning","decision","discovery","bugfix"]}},
+ "fields":{"title":{"required":true,"type":"string",
+                    "description":"Título breve de la observación"},
+           "kind":{"required":true,"type":"string",
+                   "allowed":["learning","decision","discovery","bugfix"]},
+           "confidence":{"required":true,"type":"string",
+                         "allowed":["hypothesis","confirmed"]}},
+ "collected":{"title":"Perfil CLI decidido"}}</code></pre></div>
+
+      <div class="details">
+        <summary>¿Por qué <code>collected</code> no es opcional?</summary>
+        <div class="details-body">
+          <p><strong>Porque el objetivo es corregir sin reconstruir.</strong> Si el ejecutor pudiera omitir valores válidos sin explicación, el agente no sabría si el dato se perdió, si no se leyó o si debe volver a enviarlo. La omisión solo se permite por sensibilidad, y esa omisión no significa nada más: no convierte el valor en inválido ni en ausente.</p>
+          <p><code>collected</code> es copia fiable de lo aportado; <code>fields</code> es información para elegir valores nuevos, no datos que reenviar.</p>
+        </div>
+      </div>
+
+      <div class="prose">
+        <p>La restricción fina se declara con <code>schema</code>. Este ejemplo publica la regla que produjo el rechazo porque no cabe en <code>type</code> ni en <code>allowed</code>:</p>
+      </div>
+
+      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"record_observation","result":"invalid",
+ "invalid":{"title":{"value":"Perfil CLI decidido durante la revisión final de la especificación",
+                     "reason":"supera la longitud máxima",
+                     "schema":{"maxLength":40}}},
+ "fields":{"title":{"required":true,"type":"string",
+                    "schema":{"maxLength":40}}},
+ "collected":{"kind":"learning","confidence":"confirmed"}}</code></pre></div>
+
+      <div class="note">
+        <p><strong>Los valores legítimos no se confunden con ausencia.</strong> <code>false</code>, <code>0</code>, <code>""</code> y <code>[]</code> se validan como cualquier otro valor. Solo la ausencia del miembro o su valor <code>null</code> cuentan como campo no aportado.</p>
+      </div>
+    </section>
+
+    <section id="biblioteca" class="section">
+      <div class="section-head"><span class="section-num" style="--num:#2563eb">7</span><h2 class="title">Uso e integración de la biblioteca Go</h2><span class="chip-repo">aif.go · handle.go · response.go</span></div>
+      <p class="sub">La implementación de referencia es un paquete Go sin dependencias externas. El integrador declara sus operaciones, delega la validación estructural en <code>Handle</code> y conserva en su dominio las reglas, los permisos y la persistencia.</p>
+
+      <div class="table-wrap">
+        <table>
+          <caption>API pública de la biblioteca</caption>
+          <thead><tr><th>Símbolo</th><th>Responsabilidad</th></tr></thead>
+          <tbody>
+            <tr><td><code>aif.Operation</code></td><td>Identificador, descripción de una línea, campos y función <code>Execute</code>.</td></tr>
+            <tr><td><code>aif.Field</code></td><td><code>Required</code>, <code>Type</code>, <code>Allowed</code>, <code>Description</code>, <code>Schema</code>, <code>Sensitive</code> y el hook <code>Validate</code> para reglas finas.</td></tr>
+            <tr><td><code>aif.Executor{Operations}</code></td><td>Conjunto fijo de operaciones que el ejecutor atiende.</td></tr>
+            <tr><td><code>(*Executor).Handle([]byte)</code></td><td>Parsea el sobre, comprueba límites y versión, valida campos y ejecuta. Nunca entra en pánico con entrada malformada.</td></tr>
+            <tr><td><code>aif.Response</code></td><td>Resultado tipado. <code>json.Marshal</code> usa su <code>MarshalJSON</code>, que emite solo los miembros del resultado.</td></tr>
+            <tr><td><code>aif.DeniedError</code></td><td>Convierte un error de <code>Execute</code> en <code>denied</code> con <code>reason</code>.</td></tr>
+            <tr><td><code>aif.DomainError</code></td><td>Convierte un error de <code>Execute</code> en <code>failed</code> con <code>message</code> y <code>code</code>.</td></tr>
+            <tr><td><code>aif.MaxInputBytes</code> · <code>aif.MaxDepth</code></td><td>Límites declarados por esta implementación: 256 KiB y profundidad 32.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code"><pre><code class="language-go">package main
+
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/fred66sp/agent-interaction-forms"
+)
+
+func main() {
+	op := &amp;aif.Operation{
+		ID:          "record_observation",
+		Description: "Registra una observación con título y tipo.",
+		Fields: []aif.Field{
+			{Name: "title", Required: true, Type: "string",
+				Schema: json.RawMessage(`{"maxLength":40}`)},
+			{Name: "kind", Required: true, Type: "string",
+				Allowed: []string{"learning", "decision", "discovery", "bugfix"}},
+			{Name: "contact", Type: "string", Sensitive: true},
+		},
+		Execute: func(input map[string]json.RawMessage) (json.RawMessage, error) {
+			<span class="comment">// El dominio ejecuta su efecto y devuelve datos opacos.</span>
+			return json.RawMessage(`{"id":"obs_0001"}`), nil
+		},
+	}
+	executor := aif.Executor{Operations: []*aif.Operation{op}}
+
+	<span class="comment">// La petición llega como bytes: CLI, HTTP o cola; el contrato no cambia.</span>
+	raw := []byte(`{"aif":"0.1","operation":"record_observation",
+		"input":{"kind":"learning"}}`)
+	resp := executor.Handle(raw)
+
+	<span class="comment">// MarshalJSON emite exactamente los miembros que exige §3.</span>
+	out, err := json.Marshal(resp)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(out))
+}</code></pre></div>
+
+      <div class="prose">
+        <p>Con esa petición, el programa escribe una respuesta <code>input_needed</code>: <code>missing</code> contiene <code>title</code>, <code>collected</code> conserva <code>kind</code> y <code>fields</code> describe los tres campos declarados, incluido el opcional y sensible <code>contact</code>. El nombre de <code>contact</code> aparece como descriptor; su valor nunca se devuelve.</p>
+        <h3>Qué pone el integrador y qué pone AIF</h3>
+      </div>
+
+      <div class="cards c2">
+        <div class="card">
+          <span class="k">AIF</span>
+          <h3>El sobre y la mecánica</h3>
+          <ul>
+            <li>Comprueba tamaño, profundidad, claves duplicadas, <code>aif</code>, versión y tipo de <code>operation</code> e <code>input</code>.</li>
+            <li>Resuelve la operación y valida <code>Type</code>, <code>Allowed</code> y el hook <code>Validate</code> de cada campo.</li>
+            <li>Aplica exclusividad, precedencia, <code>collected</code> y omisión de sensibles.</li>
+            <li>Serializa los miembros del resultado de forma determinista.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="k">Integrador</span>
+          <h3>El dominio y sus reglas</h3>
+          <ul>
+            <li>Declara los campos una sola vez y qué regla fina publica cada <code>Schema</code>.</li>
+            <li>Escribe en <code>Execute</code> solo lo que AIF no puede expresar: reglas de negocio, permisos, persistencia y transacciones.</li>
+            <li>Devuelve <code>DeniedError</code> para una denegación y <code>DomainError</code> para un fallo con código.</li>
+            <li>Marca con <code>Sensitive</code> lo que no debe volver en ninguna respuesta.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note accent">
+        <p><strong>No construyas el JSON a mano.</strong> Usa <code>json.Marshal(resp)</code>: el <code>MarshalJSON</code> del paquete elige los miembros según <code>result</code> y omite los que no corresponden. Construir el mapa por tu cuenta duplica el contrato y abre la puerta a respuestas que dicen dos cosas a la vez.</p>
+      </div>
+
+      <div class="code"><pre><code class="language-bash">go get github.com/fred66sp/agent-interaction-forms
+go test ./...                     <span class="comment"># biblioteca, conformidad y PoC</span></code></pre></div>
+    </section>
+
+    <section id="cli" class="section">
+      <div class="section-head"><span class="section-num" style="--num:#c2410c">8</span><h2 class="title">Perfil CLI y códigos de salida</h2><span class="chip-repo">cmd/aifdemo/main.go · §7</span></div>
+      <p class="sub">El perfil CLI es la primera materialización del contrato y no amplía el núcleo. La CLI de demostración, <code>aifdemo</code>, sirve una operación <code>record_observation</code> y ejercita el perfil completo: descubrimiento, reparación, continuación y códigos de salida.</p>
+
+      <ul class="rules">
+        <li><strong>No interactiva.</strong> Lee una petición de <code>stdin</code>, escribe exactamente un objeto JSON con salto de línea final en <code>stdout</code> y manda diagnósticos y avisos a <code>stderr</code>.</li>
+        <li><strong>El código depende solo del resultado.</strong> Es determinista; <code>stderr</code> no lo altera. El descubrimiento también sale con 0.</li>
+        <li><strong>Continuación = nueva invocación</strong> con el <code>input</code> íntegro y corregido. El ejecutor no reserva estado entre invocaciones.</li>
+      </ul>
+
+      <div class="table-wrap">
+        <table>
+          <caption>CL-04 · códigos de salida del perfil CLI</caption>
+          <thead><tr><th>Código</th><th><code>result</code></th><th>Lectura para el agente</th></tr></thead>
+          <tbody>
+            <tr><td><strong>0</strong></td><td><code>executed</code> y descubrimiento</td><td>Hay efecto completado o lista de operaciones.</td></tr>
+            <tr><td><strong>1</strong></td><td><code>failed</code></td><td>Fallo del dominio o de infraestructura; estado posiblemente desconocido.</td></tr>
+            <tr><td><strong>2</strong></td><td><code>input_needed</code>, <code>invalid</code></td><td>La petición es reparable: completar o corregir y reenviar.</td></tr>
+            <tr><td><strong>3</strong></td><td><code>unsupported_version</code>, <code>malformed_request</code>, <code>unknown_operation</code></td><td>Problema de contrato: versión, sintaxis u operación. No hay nada que reparar campo a campo.</td></tr>
+            <tr><td><strong>4</strong></td><td><code>denied</code></td><td>El dominio niega la operación; no es un trámite reparable.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code"><pre><code class="language-bash">go build -o aifdemo ./cmd/aifdemo
+
+printf '%s' '{"aif":"0.1","operation":"record_observation","input":{"kind":"learning"}}' \
+  | ./aifdemo
+<span class="comment"># stdout: una respuesta input_needed con missing, fields y collected</span>
+<span class="comment"># exit: 2</span></code></pre></div>
+
+      <div class="code"><pre><code class="language-bash"><span class="comment"># La operación ejecuta si AIF_DEMO_STORE apunta a un fichero JSON Lines.</span>
+AIF_DEMO_STORE=/tmp/observaciones.jsonl \
+  ./aifdemo &lt; peticion.json
+
+<span class="comment"># Precondiciones de dominio para los escenarios de error:</span>
+<span class="comment"># AIF_DEMO_DENY_WRITE=1  → denied  (exit 4)</span>
+<span class="comment"># AIF_DEMO_STORAGE_FAIL=1 → failed (exit 1)</span></code></pre></div>
+
+      <div class="details">
+        <summary>¿Por qué tres resultados comparten el código 3?</summary>
+        <div class="details-body">
+          <p><strong>Porque comparten la misma consecuencia operativa para el consumidor:</strong> el contrato no permite ejecutar y no hay campos que corregir. La distinción accionable sigue estando en <code>result</code>: versión no soportada (<code>supported</code>), entrada no interpretable (<code>reason</code>) u operación inexistente (<code>known_operations</code>).</p>
+          <p>Separar la causa es trabajo del miembro <code>result</code>; el código de salida solo clasifica la reparabilidad para scripts. Por eso <code>input_needed</code> e <code>invalid</code> sí comparten el 2: ambos piden una petición nueva con el <code>input</code> completo.</p>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>Cuidado con <code>go run</code>.</strong> <code>go run</code> devuelve 1 cuando el programa sale con cualquier código distinto de 0. Para observar los códigos reales 0/1/2/3/4, compila el binario y ejecútalo directamente.</p>
+      </div>
+    </section>
+
+    <section id="conformidad" class="section">
+      <div class="section-head"><span class="section-num" style="--num:#15803d">9</span><h2 class="title">Fixtures de conformidad y ejecución de pruebas</h2><span class="chip-repo">conformance/ · CJ-01…CJ-13</span></div>
+      <p class="sub">La conformidad es una matriz de pruebas deterministas, ejecutables sin LLM ni red. Cada fixture declara la petición, las precondiciones de dominio y las salidas afirmadas; el runner comprueba también que no hubo efecto de dominio cuando no debía haberlo.</p>
+
+      <div class="prose">
+        <p>Hay <strong>trece casos</strong> y <strong>catorce ficheros</strong>: CJ-06 se divide en <code>CJ-06a</code> (fallo) y <code>CJ-06b</code> (versión incompatible). Los fixtures son JSON independientes del lenguaje; el runner vive en Go y compila la CLI en un directorio temporal antes de ejecutarlos.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <caption>Matriz de conformidad (§9)</caption>
+          <thead><tr><th>Caso</th><th>Qué verifica</th><th>Salida</th></tr></thead>
+          <tbody>
+            <tr><td><code>CJ-01</code></td><td>Ejecución directa: <code>executed</code>, <code>outcome</code> y exactamente una escritura.</td><td>0</td></tr>
+            <tr><td><code>CJ-02</code></td><td>Campo obligatorio ausente: <code>missing</code> exacto, <code>fields</code> y <code>collected</code> sin pérdidas.</td><td>2</td></tr>
+            <tr><td><code>CJ-03</code></td><td>Enumeración inválida con <code>reason</code>, <code>allowed</code> y <code>fields</code>; el reenvío corregido ejecuta.</td><td>2 → 0</td></tr>
+            <tr><td><code>CJ-04</code></td><td><code>denied</code> con <code>reason</code>, sin miembros de reparación, y sigue denegado si el input simula permisos.</td><td>4</td></tr>
+            <tr><td><code>CJ-05</code></td><td>Misma petición, mismo dominio: mismos miembros de decisión (determinismo).</td><td>0</td></tr>
+            <tr><td><code>CJ-06a</code></td><td>Fallo forzado del dominio: <code>failed</code> con <code>message</code>, nunca <code>executed</code>.</td><td>1</td></tr>
+            <tr><td><code>CJ-06b</code></td><td>Versión incompatible: <code>supported</code>, sin eco de <code>operation</code>, <code>input</code> no procesado.</td><td>3</td></tr>
+            <tr><td><code>CJ-07</code></td><td>Valor sensible: no aparece en ninguna parte de la respuesta y sigue <code>input_needed</code>.</td><td>2</td></tr>
+            <tr><td><code>CJ-08</code></td><td>Miembro desconocido: <code>invalid</code> con <code>reason</code> que lo identifica.</td><td>2</td></tr>
+            <tr><td><code>CJ-09</code></td><td>Invocación sin <code>operation</code>: descubrimiento con un <code>id</code> por operación.</td><td>0</td></tr>
+            <tr><td><code>CJ-10</code></td><td>Operación desconocida: <code>known_operations</code> y eco del identificador.</td><td>3</td></tr>
+            <tr><td><code>CJ-11</code></td><td>Entrada no interpretable en cuatro formas: no JSON, no objeto, sin <code>aif</code> y claves duplicadas.</td><td>3</td></tr>
+            <tr><td><code>CJ-12</code></td><td>Mezcla de ausente e inválido: <code>invalid</code> por precedencia, ambos informes, <code>collected</code> conservado.</td><td>2</td></tr>
+            <tr><td><code>CJ-13</code></td><td>Restricción fina: <code>schema</code> con la regla incumplida en sintaxis JSON Schema 2020-12.</td><td>2</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code"><pre><code class="language-json">{
+  "id": "CJ-09",
+  "description": "Invocación sin operation (CL-05): descubrimiento con id por operación y código 0.",
+  "request": "{\"aif\":\"0.1\"}",
+  "preconditions": {
+    "env": {},
+    "store": []
+  },
+  "assertions": {
+    "exit_code": 0,
+    "discovery": true,
+    "must": ["aif", "operations"],
+    "must_not": ["result", "operation"],
+    "operations_must_id": ["record_observation"],
+    "writes": 0
+  }
+}</code></pre></div>
+
+      <div class="code"><pre><code class="language-bash">go test ./...                 <span class="comment"># biblioteca + conformidad + PoC</span>
+go test ./conformance/ -v     <span class="comment"># detalle de la matriz CJ</span>
+go test ./conformance/ -run TestConformance -v</code></pre></div>
+
+      <div class="prose">
+        <p>El runner comprueba código de salida, <code>result</code>, eco de <code>operation</code>, presencia y ausencia de miembros, subcadenas que no deben aparecer (el valor sensible), número de escrituras y repetición determinista. Las precondiciones de entorno y de almacén se aplican por fixture. El <a href="../../CHANGELOG.md">CHANGELOG</a> registra el resultado de la suite en <strong>14/14 PASS</strong>; es una comprobación de conformidad, no una medida de rendimiento.</p>
+      </div>
+
+      <div class="note">
+        <p><strong>La suite no necesita un agente.</strong> Los fixtures son datos y el runner es código: misma entrada, mismas aserciones, mismo veredicto. Eso es lo que hace comprobable la promesa de determinismo del contrato.</p>
+      </div>
+    </section>
+
+    <section id="poc" class="section">
+      <div class="section-head"><span class="section-num" style="--num:#7c3aed">10</span><h2 class="title">PoC real con ACM</h2><span class="chip-repo">poc/acm/ · 4 escenarios</span></div>
+      <p class="sub">La prueba de concepto integra la biblioteca con el adaptador real de ACM sobre una memoria efímera. No reimplementa ninguna regla de ACM ni toca la memoria de producción: copia una instantánea intacta y ejecuta la operación <code>learning</code> como un proceso hijo.</p>
+
+      <div class="prose">
+        <p>El comando <code>acmpoc</code> es el perfil CLI de AIF para una operación real. AIF decide el sobre, la estructura de campos y el conjunto cerrado de <code>confidence</code>; ACM conserva su validación, su deduplicación por contenido (<code>content_hash</code>), la idempotencia de <code>form_id</code>, el ETag y las transacciones. El <code>outcome</code> es la respuesta de ACM, sin reinterpretar.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <caption>Operación <code>learning</code> de la PoC</caption>
+          <thead><tr><th>Campo</th><th>Obligatorio</th><th>Restricción</th></tr></thead>
+          <tbody>
+            <tr><td><code>title</code></td><td>Sí</td><td><code>string</code>, no en blanco; <code>schema</code>: <code>{"minLength":1}</code></td></tr>
+            <tr><td><code>body</code></td><td>Sí</td><td><code>string</code>, no en blanco; <code>schema</code>: <code>{"minLength":1}</code></td></tr>
+            <tr><td><code>topic</code></td><td>No</td><td>Clave de tema libre; ACM la normaliza</td></tr>
+            <tr><td><code>confidence</code></td><td>No</td><td>Conjunto cerrado de ACM: <code>confirmed</code>, <code>inference</code>, <code>hypothesis</code>, <code>proposal</code>, <code>unknown</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <caption>Escenarios de <code>poc/acm/run.sh</code></caption>
+          <thead><tr><th>Escenario</th><th>Qué ocurre</th><th>Qué se afirma</th></tr></thead>
+          <tbody>
+            <tr><td><strong>S1</strong> · ejecución directa</td><td>Datos completos y válidos.</td><td><code>executed</code>, una fila, salida 0.</td></tr>
+            <tr><td><strong>S2</strong> · información ausente</td><td>Faltan <code>title</code> y <code>body</code>.</td><td><code>input_needed</code>, <code>missing</code> exacto, sin <code>invalid</code>, ninguna fila nueva.</td></tr>
+            <tr><td><strong>S3</strong> · inválido y corrección</td><td><code>confidence: "certain"</code> no pertenece al conjunto; después se corrige.</td><td><code>invalid</code> con <code>allowed</code> íntegro y, tras corregir, <code>executed</code> con una fila nueva.</td></tr>
+            <tr><td><strong>S4</strong> · mismo contenido</td><td>Se reenvía la observación de S1.</td><td><code>executed</code> con <code>consolidated</code>: ACM deduplica, no hay segunda fila y <code>duplicate_count</code> vale 2.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"learning","input":{"title":"El parser exige UTC","body":"Las fechas sin zona se interpretan como UTC; el test lo fija.","topic":"parser-fechas","confidence":"confirmed"}}</code></pre></div>
+
+      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"learning","outcome":{"ok":true,"result":"created"},"result":"executed"}</code></pre></div>
+
+      <div class="code"><pre><code class="language-bash">bash poc/acm/run.sh      <span class="comment"># 4 escenarios aislados; RESULT: 4/4 PASS</span></code></pre></div>
+
+      <div class="note">
+        <p><strong>Las garantías que se prueban son de ACM, no de AIF.</strong> La deduplicación, la idempotencia real y las transacciones siguen siendo del adaptador. AIF solo comprueba que su vocabulario puede envolver esa operación sin robarle autoridad ni prometer garantías que no existen en el contrato.</p>
+      </div>
+    </section>
+
+    <section id="responsabilidades" class="section">
+      <div class="section-head"><span class="section-num" style="--num:#b91c1c">11</span><h2 class="title">Responsabilidades, seguridad y límites</h2><span class="chip-repo">SPECIFICATION §6 · L-01…L-05</span></div>
+      <p class="sub">El contrato describe la interacción; el ejecutor y su dominio retienen toda la autoridad. Esta separación no es una recomendación de estilo: es el límite que impide que una respuesta JSON se convierta en permiso o en prueba de ejecución.</p>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 880 410" role="img" aria-labelledby="d4-title d4-desc">
+          <title id="d4-title">Separación entre AIF, herramienta integradora y dominio</title>
+          <desc id="d4-desc">AIF aporta el vocabulario y el sobre. La herramienta integradora declara operaciones y campos, usa Handle para validar y traduce el resultado. El dominio conserva reglas de negocio, permisos, persistencia y garantías. AIF no autoriza, no persiste y no ejecuta.</desc>
+          <text class="lbl" x="20" y="24">VOCABULARIO COMPARTIDO</text>
+          <text class="lbl" x="610" y="24">AUTORIDAD DEL DOMINIO</text>
+
+          <rect class="box-teal" x="20" y="48" width="250" height="292" rx="14"></rect>
+          <text class="t" x="38" y="78">AIF</text>
+          <line class="divider" x1="38" y1="92" x2="252" y2="92"></line>
+          <text class="s" x="38" y="118">sobre aif / operation / input</text>
+          <text class="s" x="38" y="144">ocho resultados exigibles</text>
+          <text class="s" x="38" y="170">missing · invalid · fields</text>
+          <text class="s" x="38" y="196">collected y sensibilidad</text>
+          <text class="s" x="38" y="222">schema JSON Schema 2020-12</text>
+          <text class="s" x="38" y="248">continuación sin estado</text>
+          <line class="divider" x1="38" y1="270" x2="252" y2="270"></line>
+          <text class="s" x="38" y="296" style="fill: var(--error-text)">✕ no autoriza</text>
+          <text class="s" x="38" y="316" style="fill: var(--error-text)">✕ no persiste</text>
+          <text class="s" x="38" y="336" style="fill: var(--error-text)">✕ no ejecuta</text>
+
+          <rect class="box-blue" x="315" y="48" width="250" height="292" rx="14"></rect>
+          <text class="t" x="333" y="78">Herramienta integradora</text>
+          <line class="divider" x1="333" y1="92" x2="547" y2="92"></line>
+          <text class="s" x="333" y="118">declara Operation y Field</text>
+          <text class="s" x="333" y="144">type · allowed · schema</text>
+          <text class="s" x="333" y="170">marca lo sensible</text>
+          <text class="s" x="333" y="196">Handle: parsea y valida</text>
+          <text class="s" x="333" y="222">Execute delega en el dominio</text>
+          <text class="s" x="333" y="248">traduce errores a result</text>
+          <line class="divider" x1="333" y1="270" x2="547" y2="270"></line>
+          <text class="s" x="333" y="296" style="fill: var(--accent)">revalida siempre</text>
+          <text class="s" x="333" y="316">no añade permisos</text>
+
+          <rect class="box-violet" x="610" y="48" width="250" height="292" rx="14"></rect>
+          <text class="t" x="628" y="78">Dominio</text>
+          <line class="divider" x1="628" y1="92" x2="842" y2="92"></line>
+          <text class="s" x="628" y="118">reglas de negocio</text>
+          <text class="s" x="628" y="144">permisos y autorización</text>
+          <text class="s" x="628" y="170">persistencia y transacciones</text>
+          <text class="s" x="628" y="196">idempotencia real, si existe</text>
+          <text class="s" x="628" y="222">estado del efecto</text>
+          <text class="s" x="628" y="248">outcome · reason · message</text>
+          <line class="divider" x1="628" y1="270" x2="842" y2="270"></line>
+          <text class="s" x="628" y="296" style="fill: var(--accent-4)">decide denied y failed</text>
+          <text class="s" x="628" y="316">conserva la autoridad</text>
+
+          <path class="arrow-blue" d="M270 194 H 303" marker-end="url(#ah4)"></path>
+          <path class="arrow-blue" d="M565 194 H 598" marker-end="url(#ah4)"></path>
+          <text class="lbl" x="268" y="184">usa</text>
+          <text class="lbl" x="563" y="184">delega</text>
+          <defs>
+            <marker id="ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--accent-2)"></path></marker>
+          </defs>
+          <text class="s" x="20" y="380">AIF no cruza la frontera de autoridad: describe, no concede. Toda continuación la revalida el ejecutor.</text>
+        </svg>
+        <figcaption>Tres capas con una frontera explícita. El vocabulario AIF no sustituye a la validación ni a los permisos del dominio.</figcaption>
+      </figure>
+
+      <div class="table-wrap">
+        <table>
+          <caption>Quién retiene qué (§6)</caption>
+          <thead><tr><th>Quién</th><th>Retiene</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Ejecutor y dominio</strong></td><td>Reglas de negocio, validación efectiva, autorización y permisos, ejecución, persistencia, integridad, transacciones y cualquier garantía de idempotencia que exista.</td></tr>
+            <tr><td><strong>AIF</strong></td><td>Únicamente el vocabulario de §§1–5 para que esa autoridad se comunique.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ul class="rules">
+        <li><strong>L-01 · Sin autorización implícita.</strong> Los datos de una respuesta AIF no son autorización ni evidencia de ejecución. Toda continuación la revalida el ejecutor.</li>
+        <li><strong>L-02 · Sin efecto en los rechazos.</strong> Entrada inválida o denegada no produce efecto de dominio, y el resultado debe permitir comprobarlo.</li>
+        <li><strong>L-03 · Sin valores sensibles.</strong> El ejecutor no devuelve un valor sensible en ningún miembro. La sensibilidad la declara el dominio. En <code>collected</code> la única omisión legítima es la de un valor sensible.</li>
+        <li><strong>L-04 · Límites declarados.</strong> El ejecutor documenta los límites de tamaño y profundidad de su <code>input</code>. La especificación no fija números: exige declararlos. Esta implementación usa 256 KiB y profundidad 32.</li>
+        <li><strong>L-05 · Prosa honesta.</strong> <code>outcome</code>, <code>reason</code> y <code>message</code> son del dominio; AIF solo exige su presencia y que no mientan sobre el estado del efecto.</li>
+      </ul>
+
+      <div class="cards c3">
+        <div class="card">
+          <span class="k">Límite de entrada</span>
+          <h3>256 KiB</h3>
+          <p>Se comprueba antes de parsear. Una entrada mayor responde <code>malformed_request</code> con <code>reason</code> determinista.</p>
+        </div>
+        <div class="card">
+          <span class="k">Límite de forma</span>
+          <h3>Profundidad 32</h3>
+          <p>El escáner rechaza anidamiento excesivo y claves duplicadas, que <code>encoding/json</code> por sí solo no detecta.</p>
+        </div>
+        <div class="card">
+          <span class="k">Diagnóstico</span>
+          <h3>Causa, no prosa</h3>
+          <p><code>reason</code> identifica una causa mecánica: entrada vacía, JSON inválido, no es un objeto, carece de <code>aif</code>, tipo incorrecto o claves duplicadas.</p>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>Publicar un <code>schema</code> no es validar con él.</strong> La biblioteca transporta el fragmento JSON Schema 2020-12 tal cual y no ejecuta un motor. Si una regla no se comprueba de verdad, publicarla sería una promesa falsa: el contrato exige que lo declarado exprese el comportamiento real del dominio.</p>
+      </div>
+    </section>
+
+    <section id="experimento" class="section">
+      <div class="section-head"><span class="section-num" style="--num:#b45309">12</span><h2 class="title">Resultados y limitaciones del experimento</h2><span class="chip-repo">docs/experiment/EXPERIMENT-RESULTS.md</span></div>
+      <p class="sub">Antes de la Specification se ejecutó un experimento de viabilidad: 3 escenarios × 5 pares × 2 variantes = 30 mediciones, comparando ACM con una CLI JSON competente. Esta sección describe lo ocurrido; no es un benchmark de adopción ni una decisión de producto.</p>
+
+      <div class="note">
+        <p><strong>Clasificación: INCONCLUSO.</strong> La puerta del PRD §7, regla 2, clasifica una medición incompleta o no comparable como INCONCLUSO. El fixture de usuario se retuvo en 9 de las 20 ejecuciones de reparación, una condición experimental vulnerada que contamina la métrica de éxito. Las 30 mediciones se completaron, pero no sustentan ningún criterio de la puerta.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <caption>Umbrales de la puerta (PRD §7), fijados antes de medir</caption>
+          <thead><tr><th>Criterio de GO</th><th>Umbral provisional</th></tr></thead>
+          <tbody>
+            <tr><td>Éxito</td><td>Al menos igual al baseline y 14/15 o más</td></tr>
+            <tr><td>Tokens</td><td>AIF ≤ 125 % del baseline</td></tr>
+            <tr><td>Efectos no autorizados o inválidos</td><td>Cero en AIF</td></tr>
+            <tr><td>Beneficio</td><td>Al menos 30 % menos errores de contrato o 20 % menos invocaciones en reparación</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <caption>Qué quedó verificado y qué no se demostró</caption>
+          <thead><tr><th>Verificado en la campaña</th><th>No demostrado</th></tr></thead>
+          <tbody>
+            <tr><td><strong>17/17 PASS</strong> en la equivalencia de garantías sin modelo (Fase B, revalidada antes de medir).</td><td><strong>Superioridad o paridad de éxito:</strong> 8/15 en ambas variantes, por debajo de 14/15, bajo condición vulnerada: no interpretable.</td></tr>
+            <tr><td><strong>0 errores de contrato</strong> en las 30 ejecuciones.</td><td><strong>Reducción de errores de contrato:</strong> 0 frente a 0; sin margen medible, no calculable.</td></tr>
+            <tr><td><strong>0 efectos indebidos de integridad:</strong> ninguna sesión ajena, <code>agent_id</code> correcto, entradas inválidas sin efecto de dominio.</td><td><strong>Menos invocaciones en reparación:</strong> −9,5 % (AIF peor), contaminado por el fixture y lejos del 20 %.</td></tr>
+            <tr><td><strong>Éxito 8/15</strong> en cada variante: el mecanismo de un extremo a otro funciona, pero el dato es descriptivo y queda por debajo del umbral.</td><td><strong>Eficiencia de tokens:</strong> ratio 0,698 a favor de AIF, observado bajo la condición vulnerada; no es un criterio de puerta superado.</td></tr>
+            <tr><td><strong>Telemetría completa</strong> por respuesta en las 30 ejecuciones y datos brutos auditados.</td><td><strong>Inferencia poblacional:</strong> con n=5 pares por escenario, ninguna métrica la admite.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="prose">
+        <h3>Limitaciones que acotan la lectura</h3>
+      </div>
+      <ul class="rules">
+        <li><strong>Condición experimental vulnerada.</strong> El fixture de usuario no se entregó en 9 de 20 reparaciones (5 AIF y 4 CLI) aunque el modelo pedía el dato. La comparación de éxito no es válida.</li>
+        <li><strong>Temperatura efectiva no ejecutada.</strong> Se configuró a 0 y la configurabilidad del proveedor estaba acreditada, pero la comprobación directa exigía modificar configuración global no autorizada.</li>
+        <li><strong>Caché de lectura compartida con la máquina.</strong> El contenido cacheado del prompt del sistema es simétrico entre variantes, pero no replicable en otra máquina.</li>
+        <li><strong>Instrumento artesanal.</strong> Dos defectos documentados: un contador de errores de contrato por escapado (corregido y re-verificado) y el detector del fixture (asumido sin corrección), que acota la confianza en cualquier medición automática de interacción agente-herramienta.</li>
+        <li><strong>Comportamientos genuinos del modelo.</strong> Reenvíos con <code>duplicate_count=2</code>, bodies inventados y el texto del fixture pegado como body aparecen en los datos brutos.</li>
+      </ul>
+
+      <div class="note accent">
+        <p><strong>Lo que este experimento no dice.</strong> No demuestra que AIF sea superior a una CLI JSON competente, ni mide adopción, productividad o rendimiento en producción. Tampoco autoriza a extrapolar los 8/15: la campaña no es comparable y no se usa como argumento de producto.</p>
+      </div>
+    </section>
+
+    <section id="referencias" class="section">
+      <div class="section-head"><span class="section-num" style="--num:#5f6b80">13</span><h2 class="title">Referencias</h2><span class="chip-repo">rutas del repositorio</span></div>
+      <p class="sub">Cada fuente canónica vive en su fichero. Si esta página y una fuente discrepan, manda la fuente enlazada.</p>
+
+      <div class="cards c2">
+        <div class="card">
+          <h3><a href="../SPECIFICATION.md">SPECIFICATION.md</a></h3>
+          <p>Contrato AIF v0.1.1, APROBADO por el PO el 2026-11-24. Norma de §§1–7 y 9–10; ejemplos en §8; trazabilidad y decisiones en §§11–12.</p>
+        </div>
+        <div class="card">
+          <h3><a href="../PRD.md">PRD.md</a></h3>
+          <p>Alcance, requisitos, criterios de aceptación y puerta GO/NO-GO de §7 con sus umbrales y orden de evaluación.</p>
+        </div>
+        <div class="card">
+          <h3><a href="../experiment/EXPERIMENT-RESULTS.md">EXPERIMENT-RESULTS.md</a></h3>
+          <p>Informe del experimento: datos observados, incidencia del fixture, garantías verificadas, límites y clasificación INCONCLUSO.</p>
+        </div>
+        <div class="card">
+          <h3><a href="../experiment/EXPERIMENT.md">EXPERIMENT.md</a></h3>
+          <p>Protocolo aprobado: diseño, métricas, interpretación y plazo. <a href="../experiment/EXPERIMENT-RUNBOOK.md">Runbook</a> para ejecutarlo.</p>
+        </div>
+        <div class="card">
+          <h3><a href="../../README.md">README.md</a></h3>
+          <p>Entrada al proyecto, estado, ejemplo de uso mínimo de la biblioteca y comandos de prueba.</p>
+        </div>
+        <div class="card">
+          <h3><a href="../../CHANGELOG.md">CHANGELOG.md</a></h3>
+          <p>Qué cambió en cada versión, incluido el MVP v0.1, la suite 14/14 y la PoC 4/4.</p>
+        </div>
+        <div class="card">
+          <h3><a href="../RESEARCH.md">RESEARCH.md</a></h3>
+          <p>Investigación de origen: antecedentes, evidencia propia y hueco diferencial. No normativa.</p>
+        </div>
+        <div class="card">
+          <h3><a href="../../CONTRIBUTING.md">CONTRIBUTING.md</a></h3>
+          <p>Ramas, commits, verificación e integración. <a href="../../AGENTS.md">AGENTS.md</a> mapea las fuentes para agentes.</p>
+        </div>
+      </div>
+
+      <div class="prose">
+        <h3>Código de la implementación de referencia</h3>
+        <ul>
+          <li><a href="../../aif.go">aif.go</a> — tipos del contrato: <code>Operation</code>, <code>Field</code>, <code>Executor</code> y errores de dominio.</li>
+          <li><a href="../../handle.go">handle.go</a> — parseo, límites, validación, precedencia y ejecución.</li>
+          <li><a href="../../response.go">response.go</a> — serialización de cada resultado.</li>
+          <li><a href="../../cmd/aifdemo/main.go">cmd/aifdemo/main.go</a> — perfil CLI completo y códigos de salida.</li>
+          <li><a href="../../conformance/fixtures/CJ-01.json">conformance/fixtures/</a> — matriz CJ-01…CJ-13 en JSON.</li>
+          <li><a href="../../poc/acm/run.sh">poc/acm/run.sh</a> — PoC aislada con ACM y sus cuatro escenarios.</li>
+          <li><a href="../../llms.txt">llms.txt</a> — catálogo enlazable para agentes.</li>
+        </ul>
+      </div>
+
+      <div class="note">
+        <p><strong>Versiones.</strong> Contrato <code>aif: "0.1"</code>; especificación v0.1.1; implementación de referencia MVP v0.1. Esta página documenta ese estado y no anticipa versiones futuras: la idempotencia del núcleo, las sesiones y los perfiles HTTP quedan fuera de v0.1.</p>
+      </div>
+
+      <div class="next" style="display:grid;gap:18px;margin-top:26px;padding:22px;border-radius:var(--radius);border:1px solid color-mix(in srgb, var(--accent) 26%, var(--border));background:linear-gradient(120deg,color-mix(in srgb, var(--accent) 8%, var(--bg-elev)),var(--bg-elev) 60%);box-shadow:var(--shadow)">
+        <div>
+          <span class="k" style="display:inline-flex;align-items:center;gap:7px;font-size:10.5px;font-weight:750;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)">Empezar a integrar</span>
+          <h3 style="margin:7px 0 0;font-size:18px;letter-spacing:-.02em">Declara una operación y deja que el contrato hable</h3>
+          <p style="margin:6px 0 0;color:var(--muted);font-size:13.4px;max-width:65ch">La biblioteca comprueba el sobre, valida los campos y serializa el resultado. El dominio conserva las reglas, los permisos y la persistencia: exactamente lo que AIF no debe robarle.</p>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <a class="btn btn-primary" href="#biblioteca">Ver la integración en Go
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"></path></svg>
+          </a>
+          <a class="btn btn-ghost" href="../SPECIFICATION.md">Leer la especificación</a>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <a class="brand" href="#top">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" role="presentation">
+          <rect width="32" height="32" fill="#0f766e"></rect>
+          <path d="M9 22V10h7a5 5 0 0 1 0 10H9" fill="none" stroke="#ffffff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M9 15h7" stroke="#ffffff" stroke-width="2.3" stroke-linecap="round"></path>
+        </svg>
+      </span>
+      <span class="brand-name">AIF<small>contrato de interacción</small></span>
+    </a>
+    <nav class="footer-nav" aria-label="Enlaces del repositorio">
+      <a href="../SPECIFICATION.md">Especificación</a>
+      <a href="../PRD.md">PRD</a>
+      <a href="../../README.md">README</a>
+      <a href="../experiment/EXPERIMENT-RESULTS.md">Experimento</a>
+      <a href="../../CHANGELOG.md">CHANGELOG</a>
+      <a href="https://github.com/fred66sp/agent-interaction-forms">GitHub</a>
+    </nav>
+    <p class="footer-note">Documentación estática: sin tipografías, scripts ni peticiones externas. Fuente normativa: <code>docs/SPECIFICATION.md</code> v0.1.1. El contenido de esta página se limita a ese contrato y a la implementación de referencia.</p>
+  </div>
+</footer>
+
+<a class="to-top" id="to-top" href="#top" aria-label="Volver arriba" title="Volver arriba">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+</a>
+
+<script>
+(function () {
+  "use strict";
+
+  var STORAGE_KEY = "aif-docs:prefs";
+  var root = document.documentElement;
+
+  var COPY_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  var CHECK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+
+  function updateThemeLabel() {
+    var btn = document.getElementById("theme-toggle");
+    if (!btn) { return; }
+    var dark = root.getAttribute("data-theme") === "dark";
+    btn.setAttribute("aria-label", dark ? "Cambiar a tema claro" : "Cambiar a tema oscuro");
+  }
+
+  function applyTheme(theme) {
+    if (theme !== "dark" && theme !== "light") { theme = "light"; }
+    root.setAttribute("data-theme", theme);
+    updateThemeLabel();
+  }
+
+  var prefs = {};
+  try { prefs = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); } catch (e) { prefs = {}; }
+
+  var initialTheme = prefs.theme;
+  if (initialTheme !== "dark" && initialTheme !== "light") {
+    initialTheme = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+  applyTheme(initialTheme);
+
+  var themeBtn = document.getElementById("theme-toggle");
+  if (themeBtn) {
+    themeBtn.addEventListener("click", function () {
+      prefs.theme = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      applyTheme(prefs.theme);
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs)); } catch (e) {}
+    });
+  }
+
+  function copyText(text, btn, label) {
+    var idle = COPY_ICON + "<span>" + label + "</span>";
+    var done = function () {
+      btn.classList.add("copied");
+      btn.innerHTML = CHECK_ICON + "<span>Copiado</span>";
+      btn.setAttribute("aria-label", "Copiado");
+      setTimeout(function () {
+        btn.classList.remove("copied");
+        btn.innerHTML = idle;
+        btn.setAttribute("aria-label", "Copiar " + label.toLowerCase());
+      }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, done);
+    } else {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta);
+      done();
+    }
+  }
+
+  // Bloques de código: el botón se crea aquí para no duplicarlo en el marcado.
+  document.querySelectorAll(".code").forEach(function (block) {
+    if (block.querySelector(".copy")) { return; }
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "copy";
+    btn.innerHTML = COPY_ICON + "<span>Copiar</span>";
+    btn.setAttribute("aria-label", "Copiar bloque de código");
+    block.appendChild(btn);
+    btn.addEventListener("click", function () {
+      var pre = block.querySelector("pre");
+      var code = (pre && (pre.querySelector("code") || pre)) || null;
+      if (!code) { return; }
+      copyText(code.textContent, btn, "Copiar");
+    });
+  });
+
+  // Navegación activa: TOC lateral y barra superior comparten los mismos ids.
+  if ("IntersectionObserver" in window) {
+    var links = {};
+    document.querySelectorAll(".toc a, .topnav a").forEach(function (a) {
+      var href = a.getAttribute("href") || "";
+      if (href.charAt(0) !== "#") { return; }
+      var id = href.slice(1);
+      if (!links[id]) { links[id] = []; }
+      links[id].push(a);
+    });
+    var clear = function () {
+      Object.keys(links).forEach(function (id) {
+        links[id].forEach(function (a) { a.classList.remove("active"); });
+      });
+    };
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting || !links[entry.target.id]) { return; }
+        clear();
+        links[entry.target.id].forEach(function (a) { a.classList.add("active"); });
+      });
+    }, { rootMargin: "-20% 0px -70% 0px", threshold: 0 });
+    document.querySelectorAll("main section").forEach(function (s) {
+      if (links[s.id]) { observer.observe(s); }
+    });
+  }
+})();
+</script>
+<script>
+(function () {
+  "use strict";
+  var toTop = document.getElementById("to-top");
+  if (!toTop) { return; }
+  function update() { toTop.classList.toggle("is-visible", window.scrollY > 480); }
+  window.addEventListener("scroll", update, { passive: true });
+  update();
+})();
+</script>
+<script>
+(function () {
+  "use strict";
+  // Entrada por scroll: cascada en tarjetas y reglas, fade simple en el resto.
+  // Sin JavaScript nada queda oculto; reduced-motion lo apaga entero por CSS.
+  var groups = document.querySelectorAll(".cards, .rules");
+  var singles = document.querySelectorAll(".section-head, .section > .sub, .note, .code, .section > .prose, .diagram, .table-wrap");
+  if ((!groups.length && !singles.length) || !("IntersectionObserver" in window)) { return; }
+  var observer = new IntersectionObserver(function (entries) {
+    entries.filter(function (e) { return e.isIntersecting; })
+      .sort(function (a, b) {
+        return parseFloat(a.target.style.getPropertyValue("--d")) - parseFloat(b.target.style.getPropertyValue("--d"));
+      })
+      .forEach(function (entry, i) {
+        entry.target.style.setProperty("--d", i);
+        entry.target.classList.add("is-in");
+        observer.unobserve(entry.target);
+      });
+  }, { threshold: 0, rootMargin: "0px 0px -8% 0px" });
+  groups.forEach(function (group) {
+    var blocks = group.querySelectorAll(".card, li");
+    blocks.forEach(function (block, i) { block.style.setProperty("--d", i); });
+    group.classList.add("is-ready");
+    blocks.forEach(function (block) { observer.observe(block); });
+  });
+  singles.forEach(function (block) {
+    block.style.setProperty("--d", 0);
+    block.classList.add("is-ready");
+    observer.observe(block);
+  });
+})();
+</script>
+</body>
+</html>
