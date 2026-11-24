@@ -1,13 +1,14 @@
 # agent-interaction-forms
 
-> AIF (Agent Interaction Forms): contrato abierto, ligero e independiente del lenguaje para la interacción determinista entre agentes y herramientas — una operación completa se ejecuta directamente, una incompleta devuelve un formulario con lo que falta y una instrucción de continuación, y una inválida permite corregir sin reconstruir los campos válidos. Proyecto en fase de investigación: el experimento comparativo contra una CLI JSON de línea base (puerta GO/NO-GO del PRD) está aprobado y pendiente de ejecución. Cada fuente canónica vive en su fichero; este fichero solo enlaza y no duplica descripciones.
+> AIF (Agent Interaction Forms): contrato abierto, ligero e independiente del lenguaje para la interacción determinista entre agentes y herramientas — una operación completa se ejecuta directamente, una incompleta devuelve un formulario con lo que falta y una instrucción de continuación, y una inválida permite corregir sin reconstruir los campos válidos. Proyecto tras el experimento de viabilidad (ejecutado, clasificado INCONCLUSO según la puerta del PRD §7; el PO decidió continuar). Cada fuente canónica vive en su fichero; este fichero solo enlaza y no duplica descripciones.
 
 ## Documentación
 
 - [README del proyecto](README.md)
-- [PRD — requisitos y alcance](PRD.md) (v0.1.4, PARCIAL, pendiente de revisión del PO)
+- [PRD — requisitos y alcance](PRD.md) (v0.1.5, PARCIAL, pendiente de aprobación del PO)
+- [SPECIFICATION — contrato de interacción](SPECIFICATION.md) (v0.1.1, APROBADO por el PO el 2026-11-24)
 - [RESEARCH — investigación de origen](RESEARCH.md)
-- [Protocolo del experimento GO/NO-GO](EXPERIMENT.md) (aprobado por el PO, no ejecutado aún)
+- [Protocolo del experimento GO/NO-GO](EXPERIMENT.md) (aprobado por el PO; ejecutado, resultado INCONCLUSO)
 - [Plan del experimento](EXPERIMENT-PLAN.md)
 - [Runbook del experimento](EXPERIMENT-RUNBOOK.md)
 - [Política Git y contribución](CONTRIBUTING.md)

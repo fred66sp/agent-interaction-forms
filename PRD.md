@@ -4,7 +4,7 @@
 | Metadato | Valor |
 |---|---|
 | ID | AIF-PRD |
-| Versión | 0.1.4 |
+| Versión | 0.1.5 |
 | Fecha | 2026-11-24 |
 | Estado de preparación | PARCIAL |
 | Fuente | [RESEARCH.md](RESEARCH.md), v0.1.2 |
@@ -103,11 +103,15 @@ Orden de evaluación, aprobado por el PO: (1) defecto de integridad → **NO-GO*
 | D-06: sintaxis, tipos exactos, códigos de salida y versionado | Specification, tras GO |
 | D-07: licencia, nombre, gobernanza y publicación | Pendiente; resolver antes de cualquier publicación |
 | D-08: umbrales y protocolo | Aprobados por el PO el 2026-11-24 (umbrales en §7, protocolo en EXPERIMENT.md) |
+| D-09: metodología de desarrollo — sin documento SDD; flujo ODD del proyecto (tablero Tasks-AI, Orchestrator, ACM) | Aprobada por el PO el 2026-11-24, en la revisión de SPECIFICATION v0.1 |
 
 **PARCIAL:** alcance y criterios definidos; hipótesis de usuarios sin validación externa; línea base comparable y experimento pendientes; auditoría externa de fuentes parcial (véase RESEARCH, adenda); decisión de lenguaje y aprobación del PO pendientes. No listo para implementación.
 
 ## 9. Secuencia y control de cambios
 
-RESEARCH → PRD revisado → experimento ACM → GO / NO-GO / INCONCLUSO → Specification → SDD mínimo → PoC y fixtures. Benchmark ampliado solo si la evidencia lo justifica.
+RESEARCH → PRD revisado → experimento ACM → GO / NO-GO / INCONCLUSO → Specification →
+PoC y fixtures. Benchmark ampliado solo si la evidencia lo justifica. No hay etapa de
+documento SDD (D-09): la Specification aprobada es la entrada directa de la
+implementación, dirigida por el flujo ODD del proyecto.
 
-v0.1.0: borrador inicial. v0.1.1: recorte del MVP, elimina dependencias implícitas con el Runner, puerta temprana con objetivos medibles, estado PARCIAL. v0.1.2: se corrige la numeración (un ID por requisito, CA contiguos), se recuperan D-02, D-04, D-06 y D-07 y se conserva RNF-04 (Linux/WSL inicial); el protocolo experimental pasa a EXPERIMENT.md; §7 conserva la puerta con cuatro criterios. Un baseline sin margen de mejora da INCONCLUSO, no GO ni NO-GO. Se cierra el hueco de la puerta: cualquier criterio incumplido con medición válida es NO-GO. Se corrigen la referencia a RESEARCH v0.1.2 y la matriz comparativa de RESEARCH §5 (reintento seguro diferido a v0.2). v0.1.3: el PO aprueba el orden de evaluación de la puerta (§7) y la primera llamada prefijada del experimento ([EXPERIMENT.md](EXPERIMENT.md) §4). v0.1.4: el PO aprueba el protocolo y los umbrales (D-08), el modelo `nan/deepseek-v4-flash#medium` y el aislamiento y registro mínimos; la ejecución sigue pendiente de autorización de destino.
+v0.1.0: borrador inicial. v0.1.1: recorte del MVP, elimina dependencias implícitas con el Runner, puerta temprana con objetivos medibles, estado PARCIAL. v0.1.2: se corrige la numeración (un ID por requisito, CA contiguos), se recuperan D-02, D-04, D-06 y D-07 y se conserva RNF-04 (Linux/WSL inicial); el protocolo experimental pasa a EXPERIMENT.md; §7 conserva la puerta con cuatro criterios. Un baseline sin margen de mejora da INCONCLUSO, no GO ni NO-GO. Se cierra el hueco de la puerta: cualquier criterio incumplido con medición válida es NO-GO. Se corrigen la referencia a RESEARCH v0.1.2 y la matriz comparativa de RESEARCH §5 (reintento seguro diferido a v0.2). v0.1.3: el PO aprueba el orden de evaluación de la puerta (§7) y la primera llamada prefijada del experimento ([EXPERIMENT.md](EXPERIMENT.md) §4). v0.1.4: el PO aprueba el protocolo y los umbrales (D-08), el modelo `nan/deepseek-v4-flash#medium` y el aislamiento y registro mínimos; la ejecución sigue pendiente de autorización de destino. v0.1.5: decisión del PO (D-09): la secuencia §9 no incluye etapa de documento SDD; el desarrollo sigue el flujo ODD del proyecto (tablero Tasks-AI, Orchestrator, ACM), sin documento sustitutivo ni metodología paralela.

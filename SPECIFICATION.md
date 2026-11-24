@@ -3,10 +3,10 @@
 | Metadato | Valor |
 |---|---|
 | ID | AIF-SPEC |
-| Versión | 0.1.0 |
+| Versión | 0.1.1 |
 | Fecha | 2026-11-24 |
-| Estado | **BORRADOR** — pendiente de aprobación del PO |
-| Fuentes | [PRD.md](PRD.md) v0.1.4 · [RESEARCH.md](RESEARCH.md) v0.1.2 · [EXPERIMENT-RESULTS.md](EXPERIMENT-RESULTS.md) v1.0.0 |
+| Estado | **APROBADO** — v0.1.1 aprobada por el PO el 2026-11-24 |
+| Fuentes | [PRD.md](PRD.md) v0.1.5 · [RESEARCH.md](RESEARCH.md) v0.1.2 · [EXPERIMENT-RESULTS.md](EXPERIMENT-RESULTS.md) v1.0.0 |
 
 ## 0. Alcance, naturaleza y vocabulario normativo
 
@@ -48,7 +48,7 @@ Una **respuesta a una operación** es un objeto JSON con estos miembros:
 | Miembro | Condición | Contenido |
 |---|---|---|
 | `aif` | DEBE | Versión del contrato empleada para esta respuesta. |
-| `operation` | DEBE | El identificador de la operación solicitada; salvo en `unsupported_version` (§3.5), donde no hay operación activa que reclamar. |
+| `operation` | DEBE | El identificador de la operación solicitada; salvo en `unsupported_version` y `malformed_request` (§3.5), donde no hay contrato activo que dé sentido a un eco. |
 | `result` | DEBE | Uno de los resultados de §2. |
 
 Cada resultado añade los miembros propios de §3. Los miembros no definidos aquí están
@@ -73,6 +73,7 @@ respuestas interpretables para el consumidor y la declara en `aif`.
 | `denied` | El dominio niega la operación; nada se ejecutó. | operación denegada |
 | `failed` | La ejecución no llegó a completarse o su estado es desconocido. | fallo de ejecución |
 | `unsupported_version` | La versión del contrato no es soportada. | compatibilidad (§1) |
+| `malformed_request` | La entrada no es interpretable como petición conforme. | contrato no establecido (§3.5) |
 | `unknown_operation` | El identificador no corresponde a ninguna operación del ejecutor. | compatibilidad (§1) |
 
 Reglas invariantes:
@@ -86,7 +87,7 @@ Reglas invariantes:
   y la misma descripción de campos (RNF-01). El determinismo no alcanza a valores de
   dominio como identificadores generados o relojes (RESEARCH §8).
 - R-03. Únicamente el `result` y los miembros que §3 exige son fiables para decidir
-  cómo continuar (`collected` incluido cuando la respuesta lo trae); ninguna prosa
+  cómo continuar (`collected` incluido); ninguna prosa
   del ejecutor es parte del contrato ni sustituye a `result`. La interpretación de
   prosa libre es un error de conformidad (RF-06).
 
@@ -103,15 +104,22 @@ la operación. Continuar tras `executed` corresponde al dominio, no a AIF.
 
 Ambos resultados describen los campos de la operación con el mismo vocabulario:
 
-- `missing` — DEBE en `input_needed`, NO DEBE presente en `invalid`: matriz de
-  nombres de campos obligatorios cuyo valor no llegó o llegó vacío.
-- `invalid` — DEBE en `invalid`, NO DEBE presente en `input_needed`: objeto campo →
-  descriptor del problema.
-- `fields` — DEBE en `input_needed` y `invalid`: objeto campo → descriptor (§4) de,
-  al menos, cada campo de `missing` y de `invalid`, con su obligatoriedad y sus
-  restricciones; PUEDE describir campos adicionales (RF-03, CA-02).
-- `collected` — PUEDE: objeto campo → valor; conserva los valores válidos **no
-  sensibles** que el consumidor aportó en esta misma petición (RF-05, RNF-07).
+- `missing` — DEBE cuando la petición deja campos obligatorios ausentes; NO DEBE en
+  otro caso: matriz de nombres de campos obligatorios **ausentes**. Un campo está
+  ausente cuando no aparece en `input` o aparece con `null`; los valores `false`,
+  `0`, `""` y `[]` son valores legítimos que no constituyen ausencia: se validan
+  como cualquier otro valor (RF-04, RF-08).
+- `invalid` — DEBE cuando la petición trae campos inválidos; NO DEBE en otro caso:
+  objeto campo → descriptor del problema.
+- `fields` — DEBE siempre que la respuesta trae `missing` o `invalid`: objeto
+  campo → descriptor (§4) de, al menos, cada campo de `missing` y de `invalid`, con
+  su obligatoriedad y sus restricciones; PUEDE describir campos adicionales
+  (RF-03, CA-02).
+- `collected` — DEBE en las respuestas reparables (`input_needed` e `invalid`):
+  objeto campo → valor; conserva los valores válidos **no sensibles** que el
+  consumidor aportó en esta misma petición (RF-05, CA-03). Los valores sensibles se
+  omiten y esa omisión no significa nada más (RNF-07, L-03); ninguna otra omisión
+  es legítima.
 
 El descriptor de un campo inválido en `invalid` DEBE listar:
 
@@ -122,9 +130,14 @@ El descriptor de un campo inválido en `invalid` DEBE listar:
 | `allowed` | DEBE si el campo tiene un conjunto cerrado de valores: los valores permitidos. |
 
 `missing` e `invalid` son excluyentes por campo: un campo no figura en ambos (RF-04,
-distinguir ausencia de invalidez). Un campo opcional con valor inválido figura en
-`invalid`; nada obliga al ejecutor a validarlo, pero, si lo comprueba y falla, DEBE
-reportarlo igual que un obligatorio.
+distinguir ausencia de invalidez). Una misma petición puede contener a la vez campos
+ausentes y campos inválidos: la respuesta informa de **todos** los problemas
+detectados en un único intercambio —`missing` con los ausentes, `invalid` con los
+que fallan— y el `result` sigue la precedencia determinista: si hay algún campo
+inválido, el resultado es `invalid`; si no lo hay, `input_needed` (RF-04, R-02).
+Un campo opcional con valor inválido figura en `invalid`: el ejecutor DEBE validar
+todo valor proporcionado, sea el campo obligatorio u opcional (RF-08), y su fallo se
+reporta igual que el de un obligatorio.
 
 `reason` y las reglas que citan valores permitidos son repos de comprobación
 mecánica: no es prosa interpretativa. La causa sigue siendo la regla del ejecutor,
@@ -154,20 +167,29 @@ petición combina miembros desconocidos con campos ausentes o inválidos, el rec
 estructural precede: el `result` es `invalid` por los miembros desconocidos y el
 ejecutor PUEDE informar además de los campos.
 
-### 3.5 `unsupported_version` y `unknown_operation`
+### 3.5 `unsupported_version`, `malformed_request` y `unknown_operation`
 
 `unsupported_version` DEBE incluir `supported`: matriz de las versiones del contrato
 que el ejecutor soporta, y NO DEBE procesar `input`; su respuesta prescinde de
 `operation` (§1), porque el contrato que podría dar sentido a ese identificador no
-está activo. Es también la respuesta ante una entrada que el ejecutor no puede
+está activo.
+
+`malformed_request` es la respuesta ante una entrada que el ejecutor no puede
 interpretar como petición conforme —no es JSON válido, no es un objeto, carece de
-`aif` o lleva claves duplicadas—: el contrato no queda establecido y por ello la
-petición no se procesa; esta política es el rechazo explícito que RESEARCH §8 exige
-para v0.1, y el ejecutor que quiera un diagnóstico más fino lo documenta fuera del
-contrato. `unknown_operation` DEBE incluir `known_operations`: matriz de los
+`aif` o lleva claves duplicadas—: el contrato no queda establecido, la petición no
+se procesa y no hay eco de `operation`. DEBE incluir `reason`: diagnóstico
+sintáctico determinista que identifica la causa («no es JSON válido», «no es un
+objeto», «carece de `aif`», «claves duplicadas»), y PUEDE incluir `supported`
+cuando el ejecutor pueda declarar las versiones que atendería a una petición bien
+formada. Esta política es el rechazo explícito que RESEARCH §8 exige para v0.1.
+
+`unknown_operation` DEBE incluir `known_operations`: matriz de los
 identificadores de operación que el ejecutor atendería, y DEBE hacer eco de
-`operation` con el identificador solicitado. Ambos describen un problema del
+`operation` con el identificador solicitado. Los tres describen un problema del
 contrato, no del dominio: sin efecto de dominio y sin campo alguno que reparar.
+La distinción entre `unsupported_version` y `malformed_request` es de causa: en el
+primero la petición declara una versión del contrato que el ejecutor no soporta; en
+el segundo la entrada ni siquiera llega a establecer el contrato.
 
 ## 4. Descripción de campos
 
@@ -181,15 +203,22 @@ El conjunto mínimo para describir un campo de una operación:
 | `type` | opcional | Uno de `string`, `number`, `boolean`, `object`, `array`. |
 | `allowed` | opcional | Matriz de valores permitidos, cuando el conjunto es cerrado. |
 | `description` | opcional | Indicación contextual en texto, sin sustituir a reglas mecánicas (§2, R-03). |
+| `schema` | opcional | Fragmento JSON Schema 2020-12 aplicado al valor del campo; el ejecutor lo incorpora al menos cuando la regla comprobada no se expresa con `type` ni `allowed` (por ejemplo, longitud máxima o patrón). |
 
-Reglas: los miembros `required`, `type` y `description` describen el mismo campo con
-la misma semántica en cualquier respuesta en que aparezcan, y una única fuente de
-verdad por operación dentro del ejecutor (DRY). Ninguna otra propiedad pertenece al
-núcleo de v0.1: restricciones finas (patrones, rangos, dependencias entre campos)
-quedan en manos del dominio, que es quien valida (§6); si el ejecutor quiere
-publicarlas, lo hace en `description` o como extensión tolerada (§1). La ausencia
-de `type` o `allowed` no autoriza a aceptar cualquier valor: es una limitación de la
-descripción, no de la validación del dominio.
+Reglas: los miembros `required`, `type`, `description` y `schema` describen el mismo
+campo con la misma semántica en cualquier respuesta en que aparezcan, y una única
+fuente de verdad por operación dentro del ejecutor (DRY). Ninguna otra propiedad
+pertenece al núcleo de v0.1: las restricciones finas (patrones, rangos, longitudes,
+dependencias entre campos) quedan en manos del dominio, que es quien valida (§6),
+y AIF no define un lenguaje de validación propio ni reinventa JSON Schema: la
+sintaxis de `schema` es la de JSON Schema 2020-12, reutilizada tal cual. Cuando la
+regla comprobada que produjo `invalid` no se expresa con `type` ni `allowed`, el
+descriptor DEBE incluir `schema` con, al menos, esa regla; en los demás casos
+PUEDE incluirlo. Lo que el ejecutor declare en `schema` DEBE expresar el
+comportamiento que realmente valida (RF-08). Otras informaciones que el ejecutor
+quiera publicar van en `description` o como extensión tolerada (§1). La ausencia
+de `type`, `allowed` o `schema` no autoriza a aceptar cualquier valor: es una
+limitación de la descripción, no de la validación del dominio.
 
 ## 5. Continuación
 
@@ -203,7 +232,8 @@ La continuación es implícita al resultado y explícita en su contenido:
   para que el consumidor elija valores, no datos que reenviar.
 - C-03. El ejecutor NO DEBE asumir estado previo: revalida el `input` completo en
   cada petición (RF-08). El `result` de la ronda anterior no da ningún derecho.
-- C-04. Tras `denied`, `failed`, `unsupported_version` o `unknown_operation`, AIF no
+- C-04. Tras `denied`, `failed`, `unsupported_version`, `malformed_request` o
+  `unknown_operation`, AIF no
   define continuación: quien decide el paso siguiente es el consumidor con la
   información de §3.3/§3.4/§3.5 y la documentación del dominio.
 - C-05. Ninguna continuación implica garantía de idempotencia, autenticidad ni
@@ -233,9 +263,11 @@ Consecuencias normativas:
   resultado debe permitir comprobarlo (R-01).
 - L-03. El ejecutor NO DEBE devolver en la respuesta valores sensibles, sea cual
   sea el miembro: ni en `collected`, ni en `value`, ni en `reason`, ni en `message`,
-  ni en `outcome`, ni en `description` (RNF-07). Sensibilidad la declara el dominio;
-  el ejecutor PUEDE omitir cualquier valor por sensibilidad u otra prudencia, y la
-  omisión no significa invalidez.
+  ni en `outcome`, ni en `description` (RNF-07). Sensibilidad la declara el dominio.
+  En `collected` la única omisión legítima es la de valores sensibles (RF-05):
+  omitir un valor válido no sensible rompe la garantía de conservación y es un
+  defecto de conformidad. En los demás miembros, el ejecutor PUEDE omitir cualquier
+  valor por sensibilidad u otra prudencia, y la omisión no significa invalidez.
 - L-04. El ejecutor DEBE documentar los límites de tamaño y profundidad de su
   `input` (RNF-03): la especificación no fija números, exige que se declaren.
 - L-05. El contenido de `outcome`, `reason` y `message` es territorio del dominio;
@@ -260,7 +292,7 @@ sobre una herramienta de línea de órdenes; el núcleo (§§1–6) no cambia.
 |---|---|
 | `0` | `executed` y respuestas de descubrimiento (CL-05) |
 | `2` | `input_needed`, `invalid` |
-| `3` | `unknown_operation`, `unsupported_version` |
+| `3` | `unknown_operation`, `unsupported_version`, `malformed_request` |
 | `4` | `denied` |
 | `1` | `failed` |
 
@@ -279,7 +311,8 @@ sobre una herramienta de línea de órdenes; el núcleo (§§1–6) no cambia.
 Operación de ejemplo: `record_observation`, con campos `title` (cadena, obligatorio),
 `kind` (enum obligatorio: `learning`, `decision`, `discovery`, `bugfix`) y
 `confidence` (enum obligatorio: `hypothesis`, `confirmed`). Los valores de dominio
-(`outcome`) son ilustrativos. «←» marca el paso que el ejemplo ilustra.
+(`outcome`) son ilustrativos. Cada ejemplo va precedido, si acaso, de una línea de
+prosa que señala el paso que ilustra.
 
 ### 8.1 Ejecución directa (§5)
 
@@ -297,9 +330,10 @@ Operación de ejemplo: `record_observation`, con campos `title` (cadena, obligat
 
 ```json
 {"aif":"0.1","operation":"record_observation",
- "input":{"kind":"learning"}}                                  ← faltan title y confidence
+ "input":{"kind":"learning"}}
 ```
 
+La petición aporta `kind` y omite `title` y `confidence`. La respuesta:
 ```json
 {"aif":"0.1","operation":"record_observation","result":"input_needed",
  "missing":["title","confidence"],
@@ -334,6 +368,8 @@ Operación de ejemplo: `record_observation`, con campos `title` (cadena, obligat
  "invalid":{"kind":{"value":"Learning",
                     "reason":"valor no permitido",
                     "allowed":["learning","decision","discovery","bugfix"]}},
+ "fields":{"kind":{"required":true,"type":"string",
+                   "allowed":["learning","decision","discovery","bugfix"]}},
  "collected":{"title":"Perfil CLI decidido","confidence":"confirmed"}}
 ```
 
@@ -390,6 +426,72 @@ Nótese que un `unsupported_version` no reclama la operación solicitada: la res
 lleva `aif` y `supported`, y prescinde de `operation` porque el contrato que podría
 darle sentido no está activo (§1, §3.5).
 
+### 8.9 Mezcla de campos ausentes e inválidos en una respuesta (§3.2)
+
+```json
+{"aif":"0.1","operation":"record_observation",
+ "input":{"title":"Perfil CLI decidido","kind":"Learning"}}
+```
+
+```json
+{"aif":"0.1","operation":"record_observation","result":"invalid",
+ "missing":["confidence"],
+ "invalid":{"kind":{"value":"Learning",
+                    "reason":"valor no permitido",
+                    "allowed":["learning","decision","discovery","bugfix"]}},
+ "fields":{"title":{"required":true,"type":"string",
+                    "description":"Título breve de la observación"},
+           "kind":{"required":true,"type":"string",
+                   "allowed":["learning","decision","discovery","bugfix"]},
+           "confidence":{"required":true,"type":"string",
+                         "allowed":["hypothesis","confirmed"]}},
+ "collected":{"title":"Perfil CLI decidido"}}
+```
+
+Un único intercambio informa de los ausentes y de los inválidos: la exclusividad es
+por campo, y el `result` es `invalid` porque hay un campo inválido —la precedencia
+es determinista (§3.2, R-02)—.
+
+### 8.10 Entrada no interpretable (§3.5, `malformed_request`)
+
+```json
+{"operation":"record_observation","input":{"title":"X","kind":"learning"}}
+```
+
+```json
+{"aif":"0.1","result":"malformed_request",
+ "reason":"carece de aif",
+ "supported":["0.1"]}
+```
+
+La entrada es JSON válido y un objeto, pero carece de `aif`: el contrato no queda
+establecido, no hay eco de `operation` (§3.5) y `supported` declara las versiones
+que el ejecutor atendería a una petición bien formada.
+
+### 8.11 Restricción fina descrita con `schema` (§4, CJ-13)
+
+Precondición de este ejemplo: el ejecutor valida además una longitud máxima
+de 40 caracteres para `title`.
+
+```json
+{"aif":"0.1","operation":"record_observation",
+ "input":{"title":"Perfil CLI decidido durante la revisión final de la especificación","kind":"learning","confidence":"confirmed"}}
+```
+
+```json
+{"aif":"0.1","operation":"record_observation","result":"invalid",
+ "invalid":{"title":{"value":"Perfil CLI decidido durante la revisión final de la especificación",
+                     "reason":"supera la longitud máxima",
+                     "schema":{"maxLength":40}}},
+ "fields":{"title":{"required":true,"type":"string",
+                    "schema":{"maxLength":40}}},
+ "collected":{"kind":"learning","confidence":"confirmed"}}
+```
+
+La regla incumplida no se expresa con `type` ni `allowed`, de modo que el
+descriptor DEBE incluir `schema` con esa regla en sintaxis JSON Schema 2020-12
+(§4); el reenvío con un `title` en el límite produce `executed`.
+
 ## 9. Conformidad
 
 Una implementación es conforme con AIF v0.1 cuando cumple todo lo normativo de
@@ -405,7 +507,7 @@ efecto de dominio verificada en el estado previo y posterior).
 |---|---|---|---|---|
 | CJ-01 | §8.1 | acceso concedido | `executed`, `outcome` presente, salida 0, efecto de dominio exactamente el esperado (una escritura) | CA-01, RF-01/02 |
 | CJ-02 | §8.2 | acceso concedido | `input_needed`, `missing` lista exacta, sin `invalid`, `fields` describe obligatoriedad y restricciones de los campos de `missing`, `collected` conserva no sensibles, salida 2, cero efecto de dominio | CA-02, RF-03/04 |
-| CJ-03 | §8.4 | acceso concedido | `invalid` con `reason` citando regla comprobada y `allowed` íntegro; sin `missing`; un reenvío §8.5 produce `executed`; salida 2 luego 0 | CA-03, RF-04/05/06 |
+| CJ-03 | §8.4 | acceso concedido | `invalid` con `reason` citando regla comprobada, `allowed` íntegro y `fields` presente (al menos, cada campo de `invalid`); sin `missing`; un reenvío §8.5 produce `executed`; salida 2 luego 0 | CA-03, RF-04/05/06 |
 | CJ-04 | §8.6 | permiso retirado | `denied` con `reason`, sin miembros de reparación, salida 4, cero efecto de dominio; ídem con `input` manipulado para simular permisos → sigue `denied` | CA-04, RF-07/11 |
 | CJ-05 | §8.1 repetida, mismo dominio | acceso concedido | mismo `result` y mismos miembros de decisión; el JSON de `stdout` interpreta sin entrada interactiva | CA-05, RNF-01 |
 | CJ-06a | §8.7 | fallo forzado del dominio | `failed`, `message` presente, salida 1, nunca `executed` | CA-06, RF-07 |
@@ -414,12 +516,14 @@ efecto de dominio verificada en el estado previo y posterior).
 | CJ-08 | `input` con miembro desconocido | acceso concedido | `invalid` con `reason` identificando el miembro, salida 2, cero efecto de dominio | §3, RNF-05 |
 | CJ-09 | invocación sin `operation` (perfil CLI) | — | respuesta de descubrimiento, código 0, cada operación con `id` | CL-05, RF-12 |
 | CJ-10 | `operation` desconocida para el ejecutor | — | `unknown_operation`, `known_operations` presente, eco de `operation`, salida 3, cero efecto de dominio | §3.5, RF-01 |
-| CJ-11 | entrada no interpretable (no JSON, sin `aif`, claves duplicadas) | — | `unsupported_version` con `supported`, `input` no procesado, salida 3, cero efecto de dominio | §3.5, RNF-08 |
+| CJ-11 | entrada no interpretable (no JSON, no objeto, sin `aif` —§8.10—, claves duplicadas) | — | `malformed_request` con `reason` determinista que identifica la causa, sin eco de `operation`, `input` no procesado, salida 3, cero efecto de dominio | §3.5, RESEARCH §8 |
+| CJ-12 | §8.9 | acceso concedido | una única respuesta con `missing` e `invalid` excluyentes por campo, `result` `invalid` por la precedencia (§3.2), `fields` cubre los tres campos, `collected` conserva los válidos no sensibles, salida 2, cero efecto de dominio | CA-03, RF-04/05 |
+| CJ-13 | petición cuyo `title` supera la longitud máxima declarada por el ejecutor (§8.11) | acceso concedido | `invalid` para `title` con `value`, `reason` y `schema` que contiene la regla incumplida en sintaxis JSON Schema 2020-12, `fields` con `schema`, salida 2, cero efecto de dominio | §4, RF-03/08 |
 
 Los fixtures de conformidad se derivarán de esta tabla como ficheros independientes
 del lenguaje (petición, precondición, aserciones), al pasar a la fase de
-implementación; definirlos aquí sería diseñar el formato antes del SDD, que está
-fuera del alcance de este documento.
+implementación; definirlos aquí sería diseñar el formato antes de poder
+implementarlo, lo que está fuera del alcance de este documento.
 
 ## 10. Fuera del contrato de v0.1
 
@@ -436,12 +540,12 @@ su cuenta (como las de ACM) permanecen en el ejecutor y no se generalizan ni nie
 |---|---|
 | RF-01 | §1, §2, §3.5 |
 | RF-02 | §5, §8.1 |
-| RF-03 | §3.2 (`fields` DEBE), §8.2 |
-| RF-04 | §3.2, §8.2/§8.4 |
-| RF-05 | §3.2, §8.4/§8.5 |
+| RF-03 | §3.2 (`fields` DEBE), §4 (`schema`), §8.2 |
+| RF-04 | §3.2, §8.2/§8.4/§8.9 |
+| RF-05 | §3.2 (`collected` DEBE), §8.4/§8.5/§8.9 |
 | RF-06 | §2 (R-03), §5, §7 (CL-05) |
 | RF-07 | §2, §3.3, §3.4 |
-| RF-08 | §1, §5 (C-03), §6 (L-01) |
+| RF-08 | §1, §3.2, §5 (C-03), §6 (L-01) |
 | RF-11 | §3.3, §6 |
 | RF-12 | §7 |
 | RF-13 | §9 |
@@ -460,9 +564,14 @@ su cuenta (como las de ACM) permanecen en el ejecutor y no se generalizan ni nie
    distintos por estado: una sola forma que aprender, `result` como discriminante.
 2. Siete resultados explícitos en lugar de códigos de error anidados: cada uno con
    contenido exigible y comprobable (§3); `unsupported_version` lo exige RNF-08 y
-   `unknown_operation` es la lectura contractual de RF-01.
+   `unknown_operation` es la lectura contractual de RF-01. La revisión del PO añadió
+   un octavo, `malformed_request`, para separar el diagnóstico sintáctico de la
+   incompatibilidad de versión.
 3. `missing` y `invalid` como miembros excluyentes (§3.2) frente a un único mapa con
-   estados: separa ausencia de invalidez (RF-04) sin introducir una propiedad de estado.
+   estados: separa ausencia de invalidez (RF-04) sin introducir una propiedad de
+   estado. La revisión del PO fijó la exclusividad campo a campo: una petición que
+   mezcle ausentes e inválidos recibe una única respuesta con ambos informes y
+   `result` `invalid` por precedencia determinista.
 4. Continuación stateless (§5) frente a identificadores de formulario: conserva el
    alcance del PRD (sin sesiones, D-05) y hace la revalidación explicable (RF-08).
 5. Metadatos de campo mínimos con jerarquía imprescindible/contextual/opcional (§4):
@@ -471,15 +580,29 @@ su cuenta (como las de ACM) permanecen en el ejecutor y no se generalizan ni nie
    los valores 0/2/3/4 coinciden con los ya ejercitados por el experimento para
    resultados equivalentes, y `failed`→1 es una decisión nueva sin antecedente
    ejercitado (el experimento usaba 9 para el error interno del ejecutor).
-7. Descubrimiento como respuesta aparte del sobre (§7, CL-05): evita un octavo
-   `result` y una operación fantasma.
+7. Descubrimiento como respuesta aparte del sobre (§7, CL-05): evita un `result`
+   adicional y una operación fantasma; el octavo que hoy existe,
+   `malformed_request`, no es de operación sino de contrato no establecido.
 8. Miembros desconocidos de `input` rechazados de forma explícita (§1, §3.4, CJ-08):
    el silencio ante nombres errados ocultaría errores del consumidor y rompería el
    determinismo de la decisión.
 9. Cadena de autorización: el PRD §7 condicionaba Specification a un GO explícito;
    el PO clasificó el experimento como INCONCLUSO (opción B), decidió continuar
    asumiendo la incertidumbre residual y autorizó el inicio de Specification. Este
-   borrador nace de esa autorización y queda a la espera de su aprobación.
-10. Entrada no interpretable elevada a `unsupported_version` (§3.5, CJ-11): reutiliza
-   un resultado existente en lugar de crear un octavo y cumple el rechazo explícito
-   que RESEARCH §8 pide para JSON ambiguo y claves duplicadas.
+   borrador nace de esa autorización. Aprobado por el PO el 2026-11-24 tras la
+   revisión integrada de H-01…H-08, junto con la decisión metodológica D-09 del PRD.
+10. Entrada no interpretable como resultado propio, `malformed_request` (§3.5,
+   CJ-11): decisión del PO en la revisión de v0.1, frente a la elevación a
+   `unsupported_version` del primer borrador; el diagnóstico sintáctico va en
+   `reason` (determinista) y cumple el rechazo explícito que RESEARCH §8 pide
+   para JSON ambiguo y claves duplicadas.
+11. `collected` obligatorio en las respuestas reparables, con la sensibilidad como
+   única omisión legítima (§3.2, L-03): el PRD lo exige para corregir sin
+   reconstruir (RF-05, CA-03); el primer borrador lo dejaba opcional.
+12. Toda entrada proporcionada se valida, obligatoria u opcional (§3.2, RF-08);
+   el primer borrador permitía no validar los opcionales.
+13. Ausencia = no presente o `null`; `false`, `0`, `""` y `[]` son valores
+   legítimos que se validan (§3.2), para no confundir valor con ausencia.
+14. Restricciones finas publicadas con la sintaxis de JSON Schema 2020-12 mediante
+   el miembro `schema`, sin lenguaje propio (§4): `schema` es DEBE cuando la regla
+   que falló no se expresa con `type` ni `allowed` (decisión del PO).
