@@ -21,13 +21,15 @@ entrada con sus propias reglas, sin confiar en los metadatos que declare el agen
 
 | Elemento | Estado |
 |---|---|
-| PRD | v0.1.4; preparación **PARCIAL**, pendiente de revisión del PO |
+| PRD | v0.1.5; preparación **PARCIAL**, pendiente de aprobación del PO |
 | RESEARCH | v0.1.2; investigación inicial, no normativa |
-| Experimento previo a Specification | Protocolo v0.1.6 aprobado por el PO el 2026-11-24; **no ejecutado** |
+| SPECIFICATION | v0.1.1 **APROBADO** por el PO (2026-11-24), tras la revisión integrada |
+| Experimento previo a Specification | Protocolo v0.1.6; ejecutado el 2026-11-24 (30/30 mediciones), resultado **INCONCLUSO** (PRD §7, orden 2) |
 | Implementación de referencia | No iniciada; Go es candidato, no decisión cerrada |
 
 La secuencia acordada es RESEARCH → PRD → experimento → GO / NO-GO / INCONCLUSO →
-Specification → SDD mínimo → PoC con fixtures. No se inicia la Specification sin un GO
+Specification → PoC con fixtures; no hay etapa de documento SDD (decisión D-09 del
+PO: el desarrollo sigue el flujo ODD del proyecto). No se inicia la Specification sin un GO
 explícito del PO. El alcance v0.1 son tres entregables condicionados a esa puerta:
 especificación mínima y perfil CLI, implementación de referencia con fixtures de
 conformidad, y PoC aislada con ACM. No se modifica ACM de producción.

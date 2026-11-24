@@ -219,7 +219,7 @@ Decisiones pendientes (identificadores del PRD): perfil de JSON Schema (D-04); p
 
 Existe fundamento suficiente para el PRD, con una tesis prudente: AIF puede ser un contrato de interacción contextual y recuperación para herramientas consumidas por agentes, aprovechando estándares existentes. La novedad y la utilidad comparativa siguen abiertas a prueba; el único dato propio (n=1) muestra un coste de tokens mayor que el de una CLI convencional. El éxito no es disponer de otro formato JSON, sino conseguir que herramientas independientes se comporten de manera predecible ante entradas incompletas y errores sin aumentar innecesariamente la carga del agente.
 
-Secuencia: RESEARCH → PRD → experimento ACM → GO / NO-GO / INCONCLUSO → Specification → SDD mínimo → PoC y fixtures. El benchmark ampliado solo se ejecuta si la evidencia lo justifica.
+Secuencia: RESEARCH → PRD → experimento ACM → GO / NO-GO / INCONCLUSO → Specification → PoC y fixtures. El benchmark ampliado solo se ejecuta si la evidencia lo justifica.
 
 ## 13. Fuentes primarias
 
