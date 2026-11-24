@@ -6,7 +6,7 @@
 | Versión | 0.1.0 |
 | Fecha | 2026-11-24 |
 | Destinatario | Quien ejecute el experimento en la máquina de desarrollo (Linux/WSL) |
-| Autoridad | [PRD.md](PRD.md) §7 y [EXPERIMENT.md](EXPERIMENT.md) v0.1.6, aprobados por el PO. Si discrepan con este runbook, prevalecen ellos |
+| Autoridad | [PRD.md](../PRD.md) §7 y [EXPERIMENT.md](EXPERIMENT.md) v0.1.6, aprobados por el PO. Si discrepan con este runbook, prevalecen ellos |
 
 Este runbook solo operacionaliza lo aprobado. No añade criterios. Lo que figura como **[Sin verificar]** procede de [EXPERIMENT-PLAN.md](EXPERIMENT-PLAN.md) (lectura de código sin ejecución) y debe comprobarse en la máquina de desarrollo antes de fiarse de ello.
 

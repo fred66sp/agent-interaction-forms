@@ -63,7 +63,7 @@ RF-09/10/15 diferidos (idempotencia, revisión, otros transportes). RF-14 se lim
 | RNF-08 | Rechazar versiones incompatibles de forma explícita. |
 | RNF-10 | Mantener reglas de dominio fuera del núcleo y justificar dependencias. |
 
-RNF-04: el desarrollo y la PoC se ejecutan inicialmente en Linux/WSL; Windows nativo diferido. RNF-09: latencia y tokens se miden en la puerta de §7 ([EXPERIMENT.md](EXPERIMENT.md)); no se promete rendimiento sin medir.
+RNF-04: el desarrollo y la PoC se ejecutan inicialmente en Linux/WSL; Windows nativo diferido. RNF-09: latencia y tokens se miden en la puerta de §7 ([EXPERIMENT.md](experiment/EXPERIMENT.md)); no se promete rendimiento sin medir.
 
 ## 6. Criterios de aceptación de la PoC
 
@@ -80,7 +80,7 @@ Los fixtures deben pasar al 100 %. Esta numeración sustituye a la de v0.1.0: lo
 
 ## 7. Puerta de producto previa a Specification
 
-El procedimiento, las métricas completas y el plazo están en [EXPERIMENT.md](EXPERIMENT.md). Aquí solo se fija la puerta. Se compara ACM con una CLI JSON competente que comparta ejecutor, validadores y permisos. Los umbrales son criterios de producto propuestos, no significación estadística, y se fijan antes de medir.
+El procedimiento, las métricas completas y el plazo están en [EXPERIMENT.md](experiment/EXPERIMENT.md). Aquí solo se fija la puerta. Se compara ACM con una CLI JSON competente que comparta ejecutor, validadores y permisos. Los umbrales son criterios de producto propuestos, no significación estadística, y se fijan antes de medir.
 
 | Criterio de GO | Umbral provisional |
 |---|---|
@@ -114,4 +114,4 @@ PoC y fixtures. Benchmark ampliado solo si la evidencia lo justifica. No hay eta
 documento SDD (D-09): la Specification aprobada es la entrada directa de la
 implementación, dirigida por el flujo ODD del proyecto.
 
-v0.1.0: borrador inicial. v0.1.1: recorte del MVP, elimina dependencias implícitas con el Runner, puerta temprana con objetivos medibles, estado PARCIAL. v0.1.2: se corrige la numeración (un ID por requisito, CA contiguos), se recuperan D-02, D-04, D-06 y D-07 y se conserva RNF-04 (Linux/WSL inicial); el protocolo experimental pasa a EXPERIMENT.md; §7 conserva la puerta con cuatro criterios. Un baseline sin margen de mejora da INCONCLUSO, no GO ni NO-GO. Se cierra el hueco de la puerta: cualquier criterio incumplido con medición válida es NO-GO. Se corrigen la referencia a RESEARCH v0.1.2 y la matriz comparativa de RESEARCH §5 (reintento seguro diferido a v0.2). v0.1.3: el PO aprueba el orden de evaluación de la puerta (§7) y la primera llamada prefijada del experimento ([EXPERIMENT.md](EXPERIMENT.md) §4). v0.1.4: el PO aprueba el protocolo y los umbrales (D-08), el modelo `nan/deepseek-v4-flash#medium` y el aislamiento y registro mínimos; la ejecución sigue pendiente de autorización de destino. v0.1.5: decisión del PO (D-09): la secuencia §9 no incluye etapa de documento SDD; el desarrollo sigue el flujo ODD del proyecto (tablero Tasks-AI, Orchestrator, ACM), sin documento sustitutivo ni metodología paralela.
+v0.1.0: borrador inicial. v0.1.1: recorte del MVP, elimina dependencias implícitas con el Runner, puerta temprana con objetivos medibles, estado PARCIAL. v0.1.2: se corrige la numeración (un ID por requisito, CA contiguos), se recuperan D-02, D-04, D-06 y D-07 y se conserva RNF-04 (Linux/WSL inicial); el protocolo experimental pasa a EXPERIMENT.md; §7 conserva la puerta con cuatro criterios. Un baseline sin margen de mejora da INCONCLUSO, no GO ni NO-GO. Se cierra el hueco de la puerta: cualquier criterio incumplido con medición válida es NO-GO. Se corrigen la referencia a RESEARCH v0.1.2 y la matriz comparativa de RESEARCH §5 (reintento seguro diferido a v0.2). v0.1.3: el PO aprueba el orden de evaluación de la puerta (§7) y la primera llamada prefijada del experimento ([EXPERIMENT.md](experiment/EXPERIMENT.md) §4). v0.1.4: el PO aprueba el protocolo y los umbrales (D-08), el modelo `nan/deepseek-v4-flash#medium` y el aislamiento y registro mínimos; la ejecución sigue pendiente de autorización de destino. v0.1.5: decisión del PO (D-09): la secuencia §9 no incluye etapa de documento SDD; el desarrollo sigue el flujo ODD del proyecto (tablero Tasks-AI, Orchestrator, ACM), sin documento sustitutivo ni metodología paralela.

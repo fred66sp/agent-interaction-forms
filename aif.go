@@ -1,4 +1,4 @@
-// Package aif implements the AIF v0.1 interaction contract (SPECIFICATION.md
+// Package aif implements the AIF v0.1 interaction contract (docs/SPECIFICATION.md
 // §§1–6): request envelopes, the eight results, field descriptions, sensitive
 // values and stateless continuation. The CLI profile of §7 is demonstrated by
 // cmd/aifdemo.

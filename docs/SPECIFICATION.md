@@ -6,7 +6,7 @@
 | Versión | 0.1.1 |
 | Fecha | 2026-11-24 |
 | Estado | **APROBADO** — v0.1.1 aprobada por el PO el 2026-11-24 |
-| Fuentes | [PRD.md](PRD.md) v0.1.5 · [RESEARCH.md](RESEARCH.md) v0.1.2 · [EXPERIMENT-RESULTS.md](EXPERIMENT-RESULTS.md) v1.0.0 |
+| Fuentes | [PRD.md](PRD.md) v0.1.5 · [RESEARCH.md](RESEARCH.md) v0.1.2 · [EXPERIMENT-RESULTS.md](experiment/EXPERIMENT-RESULTS.md) v1.0.0 |
 
 ## 0. Alcance, naturaleza y vocabulario normativo
 

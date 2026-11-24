@@ -180,7 +180,7 @@ Recomendación: el contrato JSON es lo primero. La elección entre Go y Python e
 
 ## 10. Plan experimental
 
-**Filtro temprano (antes de Specification).** Se define únicamente en [PRD.md](PRD.md) §7 (puerta GO/NO-GO/INCONCLUSO) y [EXPERIMENT.md](EXPERIMENT.md) (protocolo): ACM frente a una CLI JSON competente que comparta ejecutor, validadores y permisos, un modelo fijado, tres escenarios y 30 ejecuciones. No se repiten aquí sus umbrales.
+**Filtro temprano (antes de Specification).** Se define únicamente en [PRD.md](PRD.md) §7 (puerta GO/NO-GO/INCONCLUSO) y [EXPERIMENT.md](experiment/EXPERIMENT.md) (protocolo): ACM frente a una CLI JSON competente que comparta ejecutor, validadores y permisos, un modelo fijado, tres escenarios y 30 ejecuciones. No se repiten aquí sus umbrales.
 
 **Benchmark ampliado (condicional).** Solo si el filtro resulta en GO y la evidencia lo justifica: añadir CLI convencional documentada, MCP equivalente cuando sea viable, dos modelos de capacidades diferentes, al menos 30 repeticiones por combinación prioritaria, orden aleatorio y versiones fijadas. Registrar errores y abandonos, no solo ejecuciones exitosas. Comparar tasas e intervalos de incertidumbre; un único ejemplo no es prueba concluyente.
 
@@ -243,7 +243,7 @@ Consultadas el 24-11-2026. Las referencias a ramas main son mutables; fijar comm
 
 ## 14. Adenda de revisión v0.1.1 — 2026-11-24 (actualizada en v0.1.2)
 
-Esta adenda se incorporó en v0.1.1; en v0.1.2 se reescribieron §§7–12 para reflejar el mismo alcance, por lo que ya no hay recomendaciones contradictorias. La revisión de estado, la idempotencia y el Runner son líneas futuras, no requisitos v0.1. El filtro temprano y sus umbrales se definen únicamente en [PRD.md](PRD.md) §7 y [EXPERIMENT.md](EXPERIMENT.md).
+Esta adenda se incorporó en v0.1.1; en v0.1.2 se reescribieron §§7–12 para reflejar el mismo alcance, por lo que ya no hay recomendaciones contradictorias. La revisión de estado, la idempotencia y el Runner son líneas futuras, no requisitos v0.1. El filtro temprano y sus umbrales se definen únicamente en [PRD.md](PRD.md) §7 y [EXPERIMENT.md](experiment/EXPERIMENT.md).
 
 ### Comprobación de evidencia
 

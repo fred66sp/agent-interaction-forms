@@ -5,7 +5,7 @@
 | ID | AIF-EXP-RESULTS |
 | Versión | 1.0.0 |
 | Fecha | 2026-11-24 |
-| Fuentes | [PRD.md](PRD.md) §7 · [EXPERIMENT.md](EXPERIMENT.md) v0.1.6 · [EXPERIMENT-RUNBOOK.md](EXPERIMENT-RUNBOOK.md) v0.1.0 |
+| Fuentes | [PRD.md](../PRD.md) §7 · [EXPERIMENT.md](EXPERIMENT.md) v0.1.6 · [EXPERIMENT-RUNBOOK.md](EXPERIMENT-RUNBOOK.md) v0.1.0 |
 | Estado | Experimento clasificado **INCONCLUSO** por el PO (opción B, 2026-11-24) |
 | Decisión de producto | Continuar con el proyecto AIF asumiendo la incertidumbre residual; **no equivale a un GO experimental**. Specification no se inicia en este encargo |
 
@@ -25,7 +25,7 @@ medida (driver) vivió fuera del repositorio, en el laboratorio `/tmp/opencode/l
 
 ## 2. Incidencias de infraestructura previas a la medición
 
-Documentadas en [`experiment/runs/incidencias-previas/`](runs/incidencias-previas/README.md):
+Documentadas en [`experiment/runs/incidencias-previas/`](../../experiment/runs/incidencias-previas/README.md):
 
 1. Runtime de Node de OpenCode no descargable al HOME aislado (sin red).
 2. El `opencode` primero en PATH es el conmutador de vite-plus (`vp`), que bajo
@@ -62,14 +62,14 @@ el límite de 4 invocaciones con una quinta llamada, ambas además fallidas
 (registrado como exceso de invocaciones; sin re-descuento de la puerta porque
 el protocolo no contempla descartes).
 
-Datos por ejecución: [`runs/registro.jsonl`](experiment/runs/registro.jsonl) (14 campos del
+Datos por ejecución: [`runs/registro.jsonl`](../../experiment/runs/registro.jsonl) (14 campos del
 runbook §6 más auditoría); descriptivos y puerta:
-[`runs/metricas.json`](experiment/runs/metricas.json) (calculados por
-[`experiment/metrics.py`](experiment/metrics.py)).
+[`runs/metricas.json`](../../experiment/runs/metricas.json) (calculados por
+[`experiment/metrics.py`](../../experiment/metrics.py)).
 
 ## 4. Incidencia 2 — fixture de usuario retenido (invalidación)
 
-Documentación completa: [`runs/INCIDENCIA-FIXTURE.md`](runs/INCIDENCIA-FIXTURE.md).
+Documentación completa: [`runs/INCIDENCIA-FIXTURE.md`](../../experiment/runs/INCIDENCIA-FIXTURE.md).
 
 El detector del fixture del instrumento clasificó como «éxito» frases negativas
 del modelo (la subcadena `registrad` casa con «No he registrado nada todavía»)

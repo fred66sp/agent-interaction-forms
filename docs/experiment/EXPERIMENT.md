@@ -6,7 +6,7 @@
 | Versión | 0.1.6 |
 | Fecha | 2026-11-24 |
 | Estado | Aprobado por el PO el 2026-11-24 (PRD D-08). Ejecución fuera de esta sesión, en la máquina de desarrollo; antes de medir debe verificarse la telemetría del modelo ([EXPERIMENT-RUNBOOK.md](EXPERIMENT-RUNBOOK.md) §1) |
-| Origen | [PRD.md](PRD.md) §7 (puerta GO/NO-GO) |
+| Origen | [PRD.md](../PRD.md) §7 (puerta GO/NO-GO) |
 
 Este documento define el procedimiento. La puerta y sus criterios viven en el PRD; si discrepan, prevalece el PRD. Los umbrales se fijan antes de ejecutar.
 
