@@ -1,0 +1,46 @@
+# agent-interaction-forms — ignore rules
+#
+# Cuatro capas, en este orden: ruido de SO y editor, estado local de
+# herramientas de IA, tablero y secretos. Los entregables (docs/, agentes,
+# contratos) se quedan versionados porque son el producto.
+
+# --- Ruido de SO --------------------------------------------------------------
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+
+# --- Editor e IDE -------------------------------------------------------------
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Las capas de dependencias (**/node_modules/, __pycache__/) se añaden cuando se
+# elija lenguaje; el PRD deja Go como candidato, no como decisión cerrada.
+
+# --- Estado local de herramientas de IA ---------------------------------------
+.atl/
+.agent-memory/
+.codegraph/
+.explanations/
+.impeccable/
+.pi/
+.skills/
+
+# --- Tablero tasks-ai ----------------------------------------------------------
+# El estado, el binario incrustado y la extensión quedan fuera; las instrucciones,
+# el contrato de etiquetas y los ajustes sí se versionan, como en tasks-ai. En .run/
+# viven los pid y los registros de serve.sh.
+.tasks-ai/tasks.db
+.tasks-ai/tasks.db-wal
+.tasks-ai/tasks.db-shm
+.tasks-ai/bin/
+.tasks-ai/extensions/
+.run/
+
+# --- Secretos y ficheros con claves -------------------------------------------
+*.pem
+*.key
+.env
+.env.*

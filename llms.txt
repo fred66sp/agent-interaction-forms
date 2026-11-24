@@ -1,0 +1,21 @@
+# agent-interaction-forms
+
+> AIF (Agent Interaction Forms): contrato abierto, ligero e independiente del lenguaje para la interacción determinista entre agentes y herramientas — una operación completa se ejecuta directamente, una incompleta devuelve un formulario con lo que falta y una instrucción de continuación, y una inválida permite corregir sin reconstruir los campos válidos. Proyecto en fase de investigación: el experimento comparativo contra una CLI JSON de línea base (puerta GO/NO-GO del PRD) está aprobado y pendiente de ejecución. Cada fuente canónica vive en su fichero; este fichero solo enlaza y no duplica descripciones.
+
+## Documentación
+
+- [README del proyecto](README.md)
+- [PRD — requisitos y alcance](PRD.md) (v0.1.4, PARCIAL, pendiente de revisión del PO)
+- [RESEARCH — investigación de origen](RESEARCH.md)
+- [Protocolo del experimento GO/NO-GO](EXPERIMENT.md) (aprobado por el PO, no ejecutado aún)
+- [Plan del experimento](EXPERIMENT-PLAN.md)
+- [Runbook del experimento](EXPERIMENT-RUNBOOK.md)
+- [Política Git y contribución](CONTRIBUTING.md)
+- [Registro de cambios](CHANGELOG.md)
+- [Mapa del repositorio para agentes](AGENTS.md)
+
+## Tablero y memoria
+
+- [`.tasks-ai/AGENTS.md`](.tasks-ai/AGENTS.md) — trabajo del repositorio: crear, mover, bloquear y cerrar tareas
+- [`.tasks-ai/CONTRATO_ETIQUETAS.md`](.tasks-ai/CONTRATO_ETIQUETAS.md) — tipos y catálogo de etiquetas
+- Memoria ACM: montaje db-ai `agent-interaction-forms` (rw) sobre la base local del proyecto; `acm start` para abrirla, `acm recall` para consultarla (adaptador: `tools/acm.py` del ejemplo `agent-continuity` en database-virtual-filesystem)
