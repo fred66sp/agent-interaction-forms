@@ -1,0 +1,19 @@
+I'll start by checking the tool's help to learn the correct invocation.
+
+====
+
+The tool has a `learning` subcommand. Let me get its schema.
+
+====
+
+He consultado la ayuda y el esquema (2 invocaciones usadas; me queda 1 de las 3).
+
+El problema: `learning` exige `--body`, y el contenido del `body` no aparece en los datos que me diste. Los datos disponibles son solo título (`Parser en UTC`), topic (`parser-fechas`) y confianza (`confirmed`). Si relleno `body` con texto inventado, estaría registrando información que no está en los datos, lo que choca con tu instrucción explícita.
+
+No he registrado nada todavía. Detalle del estado:
+
+- Comando correcto detectado: `python3 /tmp/opencode/lab/tools/acm.py learning --session ses_exp14 --title "Parser en UTC" --topic parser-fechas --confidence confirmed --body "..."`.
+- Me falta únicamente el texto de `--body`.
+- Invocaciones restantes: 1 (suficiente para ejecutar el registro si me das el body).
+
+¿Qué texto debe llevar el `body` del aprendizaje? Pásamelo tal cual y lo registro en una sola invocación. Si prefieres que use el título como body, dímelo explícitamente y lo haré.

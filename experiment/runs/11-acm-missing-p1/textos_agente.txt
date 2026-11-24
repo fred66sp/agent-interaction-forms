@@ -1,0 +1,30 @@
+No he registrado nada todavía, y me detengo aquí antes de agotar el límite.
+
+**Qué hice (2 de 3 invocaciones permitidas):**
+1. `python3 /tmp/opencode/lab/tools/acm.py --help` → confirmé que existe el comando `learning`.
+2. `python3 /tmp/opencode/lab/tools/acm.py learning --help` → su esquema es:
+
+```
+--session SESSION        (o OPENCODE_SESSION_ID)
+--title TITLE            obligatorio
+--body BODY              obligatorio
+--topic TOPIC
+--confidence CONFIDENCE
+```
+
+**Por qué no puedo completar el registro:**
+El comando exige `--body` (obligatorio), pero ese contenido no aparece en los datos que me diste. Los únicos datos disponibles son título, topic, confianza y sesión. El intento previo falló precisamente por esa ausencia, así que rellenarlo yo supondría inventar el contenido del aprendizaje, algo que me pediste explícitamente no hacer.
+
+**Lo que necesito de ti:**
+El texto de `body` (el contenido reutilizable del aprendizaje sobre el parser en UTC). Con eso haría el registro en la tercera y última invocación:
+
+```
+python3 /tmp/opencode/lab/tools/acm.py learning \
+  --session ses_exp11 \
+  --title "Parser en UTC" \
+  --topic parser-fechas \
+  --confidence confirmed \
+  --body "<lo que me indiques>"
+```
+
+Si prefieres, dime también si quieres que el `body` sea simplemente el propio título; pero no lo asumiré por mi cuenta. Queda 1 invocación disponible.

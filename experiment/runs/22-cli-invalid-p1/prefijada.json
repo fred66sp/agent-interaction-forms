@@ -1,0 +1,6 @@
+{
+  "cmd": "/usr/bin/python3 /tmp/opencode/lab/cli-json.py <<< {\"session\": \"ses_exp22\", \"title\": \"Parser en UTC\", \"body\": \"Las fechas sin zona se interpretan como UTC.\", \"topic\": \"parser-fechas\", \"confidence\": \"confimed\"}",
+  "stdout": "{\"ok\":false,\"error\":\"invalid_field\",\"fields\":{\"confidence\":{\"value\":\"confimed\",\"reason\":\"valores permitidos: confirmed, inference, hypothesis, proposal, unknown\"}}}",
+  "stderr": "",
+  "exit": 2
+}

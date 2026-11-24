@@ -1,0 +1,33 @@
+{
+  "id": 1,
+  "variante": "acm",
+  "escenario": "completa",
+  "par": 1,
+  "orden": "ACM_primero",
+  "tokens_entrada": 0,
+  "tokens_salida": 0,
+  "tokens_cache_lectura": 0,
+  "tokens_cache_escritura": 0,
+  "llamadas": 0,
+  "errores_contrato": 0,
+  "exito_verificado_bd": false,
+  "duracion_ms": 50,
+  "efectos_indebidos": [
+    "observación: {'sessions': [{'id': 'ses_exp01', 'agent_id': 'exp-agent', 'source': 'agent', 'goal': 'registro de aprendizaje del experimento', 'status': 'open', 'started_at': '2026-11-24T18:44:49Z', 'ended_at': None, 'summary': None, 'created_at': '2026-11-24T18:44:49Z', 'updated_at': '2026-11-24T18:44:49Z'}], 'observations': [], 'checkpoints': [], 'preferences': []}"
+  ],
+  "abandono": true,
+  "timeout": false,
+  "estado_medicion": "completa",
+  "prefijada_operador": null,
+  "errores_detalle": [],
+  "notas_detalle": [],
+  "fixture_rondas": 0,
+  "inicio": "2026-11-24T18:44:49Z",
+  "session_opencode": null,
+  "pasos": 0,
+  "limite_invocaciones": 4,
+  "invocaciones_totales": 0,
+  "exceso_invocaciones": false,
+  "codigo_salida_opencode": 1,
+  "stderr_opencode": "warn: This project does not use vite-plus. Learn how to migrate: https://viteplus.dev/guide/migrate\n"
+}

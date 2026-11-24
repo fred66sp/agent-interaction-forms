@@ -1,0 +1,43 @@
+{
+  "sessions": [
+    {
+      "id": "ses_exp12",
+      "agent_id": "exp-agent",
+      "source": "agent",
+      "goal": "registro de aprendizaje del experimento",
+      "status": "open",
+      "started_at": "2026-11-24T18:57:04Z",
+      "ended_at": null,
+      "summary": null,
+      "created_at": "2026-11-24T18:57:04Z",
+      "updated_at": "2026-11-24T18:57:04Z"
+    }
+  ],
+  "observations": [
+    {
+      "id": "01a20eeb-6fce-7f94-a647-91e4119c6595",
+      "session_id": "ses_exp12",
+      "agent_id": "exp-agent",
+      "source": "agent",
+      "kind": "learning",
+      "title": "Parser en UTC",
+      "body": "Las fechas sin zona se interpretan como UTC.",
+      "rationale": "",
+      "alternatives": "",
+      "consequences": "",
+      "topic_key": "parser-fechas",
+      "confidence": "confirmed",
+      "status": "active",
+      "review_after": null,
+      "superseded_by": null,
+      "duplicate_count": 2,
+      "last_seen_at": "2026-11-24T18:57:32Z",
+      "content_hash": "sha256:b5fbec22003eaf01104cec4d83f6054f3cbe6c93f11d77850a13f323e9ff7ebd",
+      "origin_ref": null,
+      "created_at": "2026-11-24T18:57:20Z",
+      "updated_at": "2026-11-24T18:57:32Z"
+    }
+  ],
+  "checkpoints": [],
+  "preferences": []
+}

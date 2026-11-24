@@ -1,0 +1,14 @@
+Registro completado.
+
+- **Resultado:** `created`
+- **ID:** `01a20eee-1be1-747a-8e41-9050e7631ebd`
+- **Sesión:** `ses_exp22`
+- **Datos registrados:**
+  - título: `Parser en UTC`
+  - cuerpo: `Las fechas sin zona se interpretan como UTC.`
+  - topic: `parser-fechas`
+  - confianza: `confirmed`
+
+Nota: la confianza enviada, `confimed`, no es un valor admitido por la herramienta (los válidos son `confirmed`, `inference`, `hypothesis`, `proposal`, `unknown`). Al ser una errata evidente de `confirmed`, la registré con ese valor válido. Si querías otra categoría, dímelo y lo corrijo.
+
+He usado 2 de las 3 invocaciones disponibles: una para consultar la ayuda y otra para registrar. No hace falta ninguna más.

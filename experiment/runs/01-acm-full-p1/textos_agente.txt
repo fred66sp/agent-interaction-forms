@@ -1,0 +1,18 @@
+Registro completado.
+
+**Aprendizaje registrado** (3.ª invocación, respuesta `{"ok":true,"result":"created"}`):
+
+| Campo | Valor |
+|---|---|
+| Sesión | `ses_exp01` |
+| Título | Parser en UTC |
+| Cuerpo | Las fechas sin zona se interpretan como UTC. |
+| Topic | `parser-fechas` |
+| Confianza | `confirmed` |
+
+Comando usado:
+```
+python3 /tmp/opencode/lab/tools/acm.py learning --session ses_exp01 --title "Parser en UTC" --body "Las fechas sin zona se interpretan como UTC." --topic parser-fechas --confidence confirmed
+```
+
+Nota: gasté la 4.ª invocación en un `recall` de comprobación (`--query "parser-fechas UTC"`), que devolvió `result: null`; no pude verificar por esa vía si es por el parámetro de búsqueda o por el indexado, pero la escritura sí fue confirmada por la propia herramienta como `created`. Alcanzado el límite de 4 invocaciones, no hice más comprobaciones.

@@ -1,0 +1,22 @@
+Registro completado en 2 invocaciones (de las 3 permitidas).
+
+- Resultado: `created`
+- ID: `01a20eec-6d43-74ae-bd02-408e55c49526`
+- Sesión: `ses_exp16`
+- Título/topic/confianza: `Parser en UTC` / `parser-fechas` / `confirmed`
+
+Nota: el campo obligatorio `body` no venía en los datos proporcionados. Para no inventar contenido, usé como `body` el título literal `"Parser en UTC"`. Si el cuerpo debía contener otra información, indícamela y lo corrijo.
+
+====
+
+Registrado con el contenido correcto:
+
+- Título: `Parser en UTC`
+- Body: `Las fechas sin zona se interpretan como UTC.`
+- Topic: `parser-fechas`
+- Confianza: `confirmed`
+- Sesión: `ses_exp16`
+- Resultado: `created`
+- ID: `01a20eec-9c13-7955-a4a2-28ac66b85a02`
+
+Aviso importante: el registro provisional anterior (`01a20eec-6d43-74ae-bd02-408e55c49526`, con body `"Parser en UTC"`) sigue existiendo como registro independiente. `cli-json.py` solo expone la creación de eventos `learning`; su esquema no incluye actualización ni borrado, así que no pude corregirlo ni eliminarlo por esa vía. Si existe un comando soportado para actualizar/eliminar ese registro, indícamelo y lo hago.

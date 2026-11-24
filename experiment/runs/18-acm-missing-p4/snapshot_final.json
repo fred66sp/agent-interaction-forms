@@ -1,0 +1,43 @@
+{
+  "sessions": [
+    {
+      "id": "ses_exp18",
+      "agent_id": "exp-agent",
+      "source": "agent",
+      "goal": "registro de aprendizaje del experimento",
+      "status": "open",
+      "started_at": "2026-11-24T18:58:55Z",
+      "ended_at": null,
+      "summary": null,
+      "created_at": "2026-11-24T18:58:55Z",
+      "updated_at": "2026-11-24T18:58:55Z"
+    }
+  ],
+  "observations": [
+    {
+      "id": "01a20eed-25aa-72b8-af41-d065fbbd239e",
+      "session_id": "ses_exp18",
+      "agent_id": "exp-agent",
+      "source": "agent",
+      "kind": "learning",
+      "title": "Parser en UTC",
+      "body": "Parser en UTC",
+      "rationale": "",
+      "alternatives": "",
+      "consequences": "",
+      "topic_key": "parser-fechas",
+      "confidence": "confirmed",
+      "status": "active",
+      "review_after": null,
+      "superseded_by": null,
+      "duplicate_count": 1,
+      "last_seen_at": "2026-11-24T18:59:12Z",
+      "content_hash": "sha256:67367930c1ebee4fec41393e25e23be6d8dd8689931e3f163be2a4eaa66d1914",
+      "origin_ref": null,
+      "created_at": "2026-11-24T18:59:12Z",
+      "updated_at": "2026-11-24T18:59:12Z"
+    }
+  ],
+  "checkpoints": [],
+  "preferences": []
+}

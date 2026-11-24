@@ -1,0 +1,16 @@
+No he registrado nada, y me detengo aquí para no inventar datos.
+
+**Qué hice (2 de 3 invocaciones):**
+1. `acm.py --help` → el comando de registro es `learning`.
+2. `acm.py learning --help` → parámetros: `--session`, `--title`, `--body`, `--topic`, `--confidence` (la ayuda no lista los valores válidos).
+
+**El bloqueo:** el valor de confianza que me das, `confimed`, no es válido. Según el rechazo previo del adaptador, los permitidos son: `confirmed`, `inference`, `hypothesis`, `proposal`, `unknown`.
+
+Registrar con `confirmed` implicaría corregir el dato por mi cuenta, y me pediste no registrar nada que no esté en los datos anteriores. Así que necesito que me lo confirmes.
+
+¿Registro con `confirmed`, o prefieres otro valor permitido (`inference`, `hypothesis`, `proposal`, `unknown`)? En cuanto me lo digas, hago el registro en `ses_exp28` con:
+- título: `Parser en UTC`
+- cuerpo: `Las fechas sin zona se interpretan como UTC.`
+- topic: `parser-fechas`
+
+Queda 1 invocación disponible; con ella basta para el `learning` si el valor es válido. La base sigue sin cambios.

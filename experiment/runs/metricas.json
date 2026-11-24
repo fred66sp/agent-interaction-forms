@@ -1,0 +1,69 @@
+{
+  "medicion": {
+    "completas": 30,
+    "incompletas": [],
+    "no_comparables": []
+  },
+  "integridad": {
+    "efectos_indebidos_AIF": 0,
+    "efectos_indebidos_total": 0,
+    "detalle": []
+  },
+  "variantes": {
+    "acm": {
+      "ejecuciones": 15,
+      "exito": 8,
+      "exito_frac": 0.5333333333333333,
+      "tokens_total": 37487,
+      "tokens_media": 2499.133333333333,
+      "cache_lectura_total": 426496,
+      "duracion_mediana_ms": 13439,
+      "duracion_p95_ms": 19000,
+      "camino_directo": "0 de 5",
+      "errores_contrato_total": 0,
+      "ejecuciones_con_error_contrato": 0
+    },
+    "cli": {
+      "ejecuciones": 15,
+      "exito": 8,
+      "exito_frac": 0.5333333333333333,
+      "tokens_total": 53715,
+      "tokens_media": 3581.0,
+      "cache_lectura_total": 479360,
+      "duracion_mediana_ms": 12870,
+      "duracion_p95_ms": 30265,
+      "camino_directo": "0 de 5",
+      "errores_contrato_total": 0,
+      "ejecuciones_con_error_contrato": 0
+    }
+  },
+  "errores_contrato": {
+    "AIF": 0,
+    "CLI": 0,
+    "reduccion_pct": null
+  },
+  "reparacion": {
+    "acm": {
+      "casos": 10,
+      "media_llamadas": 2.3,
+      "composicion": {
+        "enum-invalido": 5,
+        "dato-ausente": 5
+      }
+    },
+    "cli": {
+      "casos": 10,
+      "media_llamadas": 2.1,
+      "composicion": {
+        "enum-invalido": 5,
+        "dato-ausente": 5
+      }
+    }
+  },
+  "reduccion_reparacion_pct": -9.523809523809511,
+  "tokens_ratio": 0.6978869961835614,
+  "decision_propuesta": "NO-GO",
+  "orden_evaluado": [
+    "(3) éxito AIF 8/15 vs CLI 8/15 → NO-GO"
+  ]
+}

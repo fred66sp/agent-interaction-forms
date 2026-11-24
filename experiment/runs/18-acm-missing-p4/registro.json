@@ -1,0 +1,38 @@
+{
+  "id": 18,
+  "variante": "acm",
+  "escenario": "dato-ausente",
+  "par": 4,
+  "orden": "ACM_primero",
+  "tokens_entrada": 3156,
+  "tokens_salida": 451,
+  "tokens_cache_lectura": 33024,
+  "tokens_cache_escritura": 0,
+  "llamadas": 3,
+  "errores_contrato": 0,
+  "exito_verificado_bd": false,
+  "duracion_ms": 19664,
+  "efectos_indebidos": [
+    "observación: {'session_id': 'ses_exp18', 'agent_id': 'exp-agent', 'source': 'agent', 'kind': 'learning', 'title': 'Parser en UTC', 'body': 'Parser en UTC', 'rationale': '', 'alternatives': '', 'consequences': '', 'topic_key': 'parser-fechas', 'confidence': 'confirmed', 'status': 'active', 'superseded_by': None, 'duplicate_count': 1, 'content_hash': 'sha256:67367930c1ebee4fec41393e25e23be6d8dd8689931e3f163be2a4eaa66d1914', 'origin_ref': None}"
+  ],
+  "abandono": true,
+  "timeout": false,
+  "estado_medicion": "completa",
+  "prefijada_operador": {
+    "cmd": "/usr/bin/python3 /tmp/opencode/lab/tools/acm.py event learning --session ses_exp18 --title Parser en UTC --topic parser-fechas --confidence confirmed",
+    "stdout": "",
+    "stderr": "usage: acm.py [-h] COMANDO ...\nacm.py: error: argument COMANDO: invalid choice: 'event' (choose from start, decision, learning, discovery, bugfix, preference, recall, checkpoint, close, submit, remember, search)",
+    "exit": 2
+  },
+  "errores_detalle": [],
+  "notas_detalle": [],
+  "fixture_rondas": 0,
+  "inicio": "2026-11-24T18:58:55Z",
+  "session_opencode": "ses_df113192cffepf8JGxZSsDcDvr",
+  "pasos": 4,
+  "limite_invocaciones": 4,
+  "invocaciones_totales": 4,
+  "exceso_invocaciones": false,
+  "codigo_salida_opencode": 0,
+  "stderr_opencode": ""
+}

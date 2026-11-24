@@ -1,0 +1,19 @@
+{
+  "sessions": [
+    {
+      "id": "ses_exp21",
+      "agent_id": "exp-agent",
+      "source": "agent",
+      "goal": "registro de aprendizaje del experimento",
+      "status": "open",
+      "started_at": "2026-11-24T18:59:41Z",
+      "ended_at": null,
+      "summary": null,
+      "created_at": "2026-11-24T18:59:41Z",
+      "updated_at": "2026-11-24T18:59:41Z"
+    }
+  ],
+  "observations": [],
+  "checkpoints": [],
+  "preferences": []
+}

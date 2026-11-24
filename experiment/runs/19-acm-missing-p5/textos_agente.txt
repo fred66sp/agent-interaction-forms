@@ -1,0 +1,11 @@
+No he registrado nada: el esquema exige un campo que no está en los datos.
+
+Lo comprobado con la propia herramienta (2 de las 3 invocaciones disponibles, ambas de consulta):
+
+- `learning` requiere `--title` **y** `--body`, ambos obligatorios.
+- Los datos que me diste solo incluyen título, topic, confianza y sesión; no hay texto de `body`.
+- El intento previo falló exactamente por eso (`body` ausente), así que reintentar sin él volvería a fallar.
+
+Rellenar `body` con el título o inventar el contenido del aprendizaje sería registrar algo que no está en los datos, así que me detengo aquí.
+
+¿Me pasas el texto que debe ir en `body` (el contenido del aprendizaje sobre el parser en UTC)? Con eso hago el registro en una sola invocación, que es la que me queda.

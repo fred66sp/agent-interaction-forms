@@ -1,0 +1,10 @@
+Aprendizaje registrado correctamente.
+
+- **Resultado:** `created`
+- **ID:** `01a20ee9-aba6-7607-927d-9f49a990b1a4`
+- **Título:** Parser en UTC
+- **Topic:** parser-fechas
+- **Confianza:** confirmed
+- **Sesión:** ses_exp02
+
+Usé 3 de las 4 invocaciones permitidas: ayuda, esquema y creación.

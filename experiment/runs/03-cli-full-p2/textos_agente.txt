@@ -1,0 +1,27 @@
+I'll start by consulting the tool's help/schema.
+
+====
+
+Registro completado.
+
+- **Resultado:** `created` (nueva entrada, no consolidada con otra existente)
+- **ID:** `01a20ee9-c84a-7e19-91eb-7ac3e48dd8a7`
+- **Sesión:** `ses_exp03`
+- **Datos guardados:** título «Parser en UTC», cuerpo «Las fechas sin zona se interpretan como UTC.», topic `parser-fechas`, confianza `confirmed`
+
+Usé 2 invocaciones de herramienta (la ayuda y el alta), dentro del límite de 4.
+
+====
+
+Ese dato es exactamente el que ya quedó registrado hace un momento, así que no he creado una entrada nueva:
+
+- **ID:** `01a20ee9-c84a-7e19-91eb-7ac3e48dd8a7`
+- **Cuerpo:** «Las fechas sin zona se interpretan como UTC.»
+- **Topic:** `parser-fechas` · **Confianza:** `confirmed`
+
+¿Quieres que haga algo distinto con esta repetición? Por ejemplo:
+1. Dejarlo como está (nada que hacer).
+2. Registrarlo en otro topic (indícame cuál).
+3. Añadir contexto adicional al cuerpo (indícame qué texto).
+
+Si prefieres, también puedo verificar cómo lo trata la base ante duplicados, pero eso consumiría una invocación de la CLI.

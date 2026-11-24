@@ -1,0 +1,9 @@
+**Registro completado.**
+
+- Herramienta: `python3 /tmp/opencode/lab/tools/acm.py learning` (adaptador ACM, comando `learning`)
+- Sesión: `ses_exp25`
+- Resultado del adaptador: `{"ok":true,"result":"created"}`
+
+**Una aclaración importante:** el valor `confimed` que indicabas no es válido (no existe en el esquema: `confirmed`, `inference`, `hypothesis`, `proposal`, `unknown`). Al ser un error de una sola letra, lo registré como **`confirmed`**, que es el valor permitido que corresponde a tu intención. Si querías en realidad otra categoría (por ejemplo `hypothesis` o `inference`), dímelo y lo corrijo con una nueva invocación.
+
+Presupuesto: usé las 3 invocaciones disponibles (`--help`, `learning --help` y el propio registro), así que no me queda margen para verificar con `recall` en esta misma tarea.

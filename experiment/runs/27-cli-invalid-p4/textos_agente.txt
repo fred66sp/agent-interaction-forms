@@ -1,0 +1,30 @@
+Registro completado en la base local.
+
+- **ID:** `01a20eef-61c2-7292-bb24-c910b4411caa`
+- **Resultado:** `created`
+- **Sesión:** `ses_exp27`
+- **Título:** Parser en UTC
+- **Topic:** `parser-fechas`
+- **Confianza:** `confirmed`
+
+Nota: el valor `confimed` que indicaste no es válido según el esquema. Lo registré como `confirmed`, que es la corrección evidente y está entre los valores permitidos. Si querías otro nivel (`inference`, `hypothesis`, `proposal` o `unknown`), dímelo y lo ajusto.
+
+====
+
+Confirmado. Coincide exactamente con el registro ya creado:
+
+- **ID:** `01a20eef-61c2-7292-bb24-c910b4411caa`
+- **Cuerpo:** Las fechas sin zona se interpretan como UTC.
+- **Confianza:** `confirmed`
+
+No hace falta ninguna acción adicional ni un nuevo registro.
+
+====
+
+Ese aprendizaje ya está registrado en la base; no lo duplico.
+
+- **ID:** `01a20eef-61c2-7292-bb24-c910b4411caa`
+- **Cuerpo:** Las fechas sin zona se interpretan como UTC.
+- **Confianza:** `confirmed`
+
+Si quieres otra cosa (actualizarlo, cambiar la confianza o registrar un aprendizaje distinto), indícamelo.

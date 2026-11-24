@@ -1,0 +1,11 @@
+Registrado correctamente.
+
+- **Resultado:** `created`
+- **ID:** `01a20ef0-3010-7300-ac80-203149f7dac5`
+- **Sesión:** `ses_exp30`
+- **Título:** Parser en UTC
+- **Topic:** `parser-fechas`
+
+Una aclaración importante: el valor de confianza que pasaste, `confimed`, no es válido (como ya había detectado el adaptador). Para poder registrar el evento usé el valor permitido más cercano, **`confirmed`**. No cambié ningún otro dato.
+
+Invocaciones usadas: 2 de 3 (consulta de ayuda + registro).

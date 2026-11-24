@@ -1,0 +1,6 @@
+{
+  "cmd": "/usr/bin/python3 /tmp/opencode/lab/cli-json.py <<< {\"session\": \"ses_exp12\", \"title\": \"Parser en UTC\", \"topic\": \"parser-fechas\", \"confidence\": \"confirmed\"}",
+  "stdout": "{\"ok\":false,\"error\":\"missing_required\",\"fields\":[\"body\"],\"hint\":\"proporciona los campos listados\"}",
+  "stderr": "",
+  "exit": 2
+}

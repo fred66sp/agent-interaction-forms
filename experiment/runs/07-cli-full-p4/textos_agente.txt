@@ -1,0 +1,41 @@
+I'll start by checking the tool's help to learn the correct invocation.
+
+
+
+====
+
+Registro completado.
+
+- **Resultado:** `created`
+- **ID:** `01a20eea-6b45-7de0-a840-1024260898a2`
+- **Título:** Parser en UTC
+- **Topic:** parser-fechas · **Confianza:** confirmed
+- **Sesión:** ses_exp07
+
+Usé 3 invocaciones de herramienta (ayuda, esquema y registro), dentro del límite de 4.
+
+====
+
+¿Quieres que registre esto como un nuevo aprendizaje o es solo una confirmación del que ya guardé?
+
+Tal como está, me faltan dos datos que la herramienta requiere o que usamos antes:
+- **título** (el anterior fue «Parser en UTC»)
+- **topic** (el anterior fue «parser-fechas»)
+
+Además, si es el mismo aprendizaje que ya registré (ID `01a20eea-6b45-7de0-a840-1024260898a2`), con el mismo cuerpo y confianza, lo más probable es que la base lo consolide como duplicado en lugar de crear una entrada nueva. Dime cómo proceder:
+
+1. Registrar igualmente con título/topic que me indiques.
+2. No registrar nada (lo tomo como confirmación).
+3. Registrar usando los mismos título y topic de antes.
+
+====
+
+Hecho, aunque el resultado es el esperable para un duplicado:
+
+- **Resultado:** `consolidated` (no `created`)
+- **ID:** `01a20eea-6b45-7de0-a840-1024260898a2` — la misma entrada de antes
+- **duplicate_count:** 2
+
+No se creó ninguna entrada nueva: la base reconoció el cuerpo idéntico (mismo `content_hash`) y lo consolidó con el registro existente «Parser en UTC» / topic `parser-fechas`, confianza `confirmed`.
+
+Usé título y topic de los datos ya establecidos en esta conversación, porque el mensaje solo aportaba cuerpo y confianza. Si querías una entrada distinta (otro título/topic), dímelos y lo registro como aprendizaje separado.
