@@ -44,3 +44,11 @@ Desktop.ini
 *.key
 .env
 .env.*
+
+# --- Temporales de experimento -------------------------------------------------
+# stderr de OpenCode por ejecución: los 30 de la campaña registrada quedaron a
+# 0 bytes y se retiraron del repositorio (inventario aprobado por el PO). El
+# único err.txt con contenido conserva evidencia de incidencia y está fuera de
+# esta ruta (runs/incidencias-previas/intento-fallado-01/), así que sigue
+# versionado.
+experiment/runs/*/opencode.err.txt
