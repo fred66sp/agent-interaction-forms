@@ -11,21 +11,28 @@ from pathlib import Path
 
 FIELDS = ("title", "body", "topic", "confidence")
 
-HELP = """uso: cli-json.py [--schema] < entrada.json
+def help_text(acm):
+    """Ayuda derivada de EVENT_FORMS: no duplica enumeraciones ni reglas."""
+    rules = acm.EVENT_FORMS["learning"]
+    required = ", ".join(n for n, r in rules.items() if r["required"])
+    optional = ", ".join(n for n, r in rules.items() if not r["required"])
+    enums = "\n".join(f"  {n} admite: {', '.join(r['allowed'])}"
+                      for n, r in rules.items() if "allowed" in r)
+    return f"""uso: cli-json.py [--schema] < entrada.json
 
 Evento `learning` con un objeto JSON completo por stdin (sin flags):
-  {"session": "ses_x", "title": "...", "body": "...",
-   "topic": "...", "confidence": "confirmed"}
+  {{"session": "ses_x", "title": "...", "body": "...",
+   "topic": "...", "confidence": "confirmed"}}
 
-Obligatorios: title, body. Opcionales: topic, confidence.
-confidence admite: confirmed, inference, hypothesis, proposal, unknown
-(por defecto confirmed, igual que acm.py).
+Obligatorios: {required}. Opcionales: {optional}.
+Valores permitidos, según acm.py:
+{enums}
 
 Salida: una línea JSON en stdout.
-  éxito            {"ok":true,"result":"created"|"consolidated","id":...}
-  faltan campos    {"ok":false,"error":"missing_required","fields":[...]}
-  campos inválidos {"ok":false,"error":"invalid_field","fields":{...}}
-  error de dominio {"ok":false,"error":"<código>","message":"..."}
+  éxito            {{"ok":true,"result":"created"|"consolidated","id":...}}
+  faltan campos    {{"ok":false,"error":"missing_required","fields":[...]}}
+  campos inválidos {{"ok":false,"error":"invalid_field","fields":{{...}}}}
+  error de dominio {{"ok":false,"error":"<código>","message":"..."}}
 Exit: 0 éxito, 2 validación/uso, 3 no encontrado, 4 denegado, 9 interno.
 """
 
@@ -59,10 +66,10 @@ def schema(acm):
 
 
 def main(argv):
-    if argv == ["--help"]:
-        print(HELP, end="")
-        return 0
     acm = load_acm()
+    if argv == ["--help"]:
+        print(help_text(acm), end="")
+        return 0
     if argv == ["--schema"]:
         return emit(schema(acm))
     if argv:
@@ -90,7 +97,7 @@ def main(argv):
                      "fields": {"session": {
                          "value": sid,
                          "reason": "identificador de sesión: "
-                                   "[A-Za-z0-9._-]{1,128}"}}}, 2)
+                                   f"{acm.SESSION_RE.pattern}"}}}, 2)
 
     values = {name: payload[name] for name in FIELDS if name in payload}
     form, invalid = acm.build_form("learning", sid, "", values)

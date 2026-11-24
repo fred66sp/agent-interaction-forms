@@ -74,7 +74,7 @@ Una línea por ejecución (JSONL o CSV) con: `variante`, `escenario`, `par`, `or
 - **Éxito:** recuento verificado sobre 15 por variante.
 - **Tokens:** suma de entrada más salida de todas las ejecuciones, sin descartar fallos; informar de la caché solo si el proveedor la da.
 - **Errores de contrato:** reducción = `100 × (1 − errores_AIF / errores_CLI)`; no calculable si el denominador es 0.
-- **Invocaciones en reparación:** media de llamadas de las ejecuciones con rechazo de contrato (los escenarios con primera llamada prefijada), por variante; reducción análoga; informar de tamaños y composición de los conjuntos.
+- **Invocaciones en reparación:** la población la fijan los escenarios aprobados, no una selección posterior por resultados: los diez casos de reparación prefijados por variante (cinco de dato ausente y cinco de enum inválido; EXPERIMENT §4), incluidas las ejecuciones fallidas, abandonadas o agotadas conforme al protocolo; media de llamadas por variante, reducción análoga e informe de tamaños y composición. Una petición legítima de datos no es error de contrato, pero pertenece al escenario de reparación correspondiente.
 - **Descriptivos:** mediana de duración (p95 solo descriptivo) y camino directo (5 de 5 en una llamada de operación).
 - **Decisión:** aplicar el orden de PRD §7: integridad → medición completa → éxito y tokens → beneficio → GO. Resultados posibles: GO, NO-GO, INCONCLUSO. Decide el PO.
 
