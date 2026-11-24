@@ -1,0 +1,45 @@
+{
+  "id": "CJ-12",
+  "description": "Mezcla de ausente e inválido (§8.9): invalid por precedencia, missing y collected en un único intercambio.",
+  "request": "{\"aif\":\"0.1\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Perfil CLI decidido\",\"kind\":\"Learning\"}}",
+  "preconditions": {
+    "env": {},
+    "store": []
+  },
+  "assertions": {
+    "exit_code": 2,
+    "result": "invalid",
+    "echo_operation": true,
+    "missing": ["confidence"],
+    "must": ["invalid", "fields", "collected"],
+    "must_not": ["outcome"],
+    "invalid": {
+      "kind": {
+        "value": "Learning",
+        "reason": "valor no permitido",
+        "allowed": ["learning", "decision", "discovery", "bugfix"]
+      }
+    },
+    "fields": {
+      "title": {
+        "required": true,
+        "type": "string",
+        "description": "Título breve de la observación"
+      },
+      "kind": {
+        "required": true,
+        "type": "string",
+        "allowed": ["learning", "decision", "discovery", "bugfix"]
+      },
+      "confidence": {
+        "required": true,
+        "type": "string",
+        "allowed": ["hypothesis", "confirmed"]
+      }
+    },
+    "collected": {
+      "title": "Perfil CLI decidido"
+    },
+    "writes": 0
+  }
+}

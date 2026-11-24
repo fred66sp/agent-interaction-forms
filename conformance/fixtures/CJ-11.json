@@ -1,0 +1,35 @@
+{
+  "id": "CJ-11",
+  "description": "Entrada no interpretable: no JSON, no objeto, sin aif (§8.10) y claves duplicadas.",
+  "requests": [
+    {
+      "text": "esto no es JSON",
+      "reason": "no es JSON válido"
+    },
+    {
+      "text": "[1,2,3]",
+      "reason": "no es un objeto"
+    },
+    {
+      "text": "{\"operation\":\"record_observation\",\"input\":{\"title\":\"X\",\"kind\":\"learning\"}}",
+      "reason": "carece de aif"
+    },
+    {
+      "text": "{\"aif\":\"0.1\",\"aif\":\"0.1\"}",
+      "reason": "claves duplicadas"
+    }
+  ],
+  "preconditions": {
+    "env": {},
+    "store": []
+  },
+  "assertions": {
+    "exit_code": 3,
+    "result": "malformed_request",
+    "echo_operation": false,
+    "must": ["reason"],
+    "must_not": ["operation", "outcome", "missing", "invalid", "fields", "collected"],
+    "supported": ["0.1"],
+    "writes": 0
+  }
+}

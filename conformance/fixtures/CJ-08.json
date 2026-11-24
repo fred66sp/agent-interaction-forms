@@ -1,0 +1,28 @@
+{
+  "id": "CJ-08",
+  "description": "Miembro desconocido del input: invalid con reason que lo identifica, código 2 y cero escrituras.",
+  "request": "{\"aif\":\"0.1\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Perfil CLI decidido\",\"kind\":\"learning\",\"confidence\":\"hypothesis\",\"extra\":\"x\"}}",
+  "preconditions": {
+    "env": {},
+    "store": []
+  },
+  "assertions": {
+    "exit_code": 2,
+    "result": "invalid",
+    "echo_operation": true,
+    "must": ["invalid", "fields", "collected"],
+    "must_not": ["missing", "outcome"],
+    "invalid": {
+      "extra": {
+        "value": "x",
+        "reason": "miembro desconocido: extra"
+      }
+    },
+    "collected": {
+      "title": "Perfil CLI decidido",
+      "kind": "learning",
+      "confidence": "hypothesis"
+    },
+    "writes": 0
+  }
+}

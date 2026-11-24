@@ -1,0 +1,46 @@
+{
+  "id": "CJ-03",
+  "description": "Enumeración inválida (§8.4) y reenvío corregido (§8.5): salida 2 y después 0.",
+  "request": "{\"aif\":\"0.1\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Perfil CLI decidido\",\"kind\":\"Learning\",\"confidence\":\"confirmed\"}}",
+  "preconditions": {
+    "env": {},
+    "store": []
+  },
+  "assertions": {
+    "exit_code": 2,
+    "result": "invalid",
+    "echo_operation": true,
+    "must": ["invalid", "fields", "collected"],
+    "must_not": ["missing", "reason", "message", "outcome"],
+    "invalid": {
+      "kind": {
+        "value": "Learning",
+        "reason": "valor no permitido",
+        "allowed": ["learning", "decision", "discovery", "bugfix"]
+      }
+    },
+    "fields": {
+      "kind": {
+        "required": true,
+        "type": "string",
+        "allowed": ["learning", "decision", "discovery", "bugfix"]
+      }
+    },
+    "collected": {
+      "title": "Perfil CLI decidido",
+      "confidence": "confirmed"
+    },
+    "writes": 0
+  },
+  "follow_up": {
+    "request": "{\"aif\":\"0.1\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Perfil CLI decidido\",\"kind\":\"decision\",\"confidence\":\"confirmed\"}}",
+    "assertions": {
+      "exit_code": 0,
+      "result": "executed",
+      "echo_operation": true,
+      "must": ["outcome"],
+      "outcome_members": ["id", "recorded_at"],
+      "writes": 1
+    }
+  }
+}

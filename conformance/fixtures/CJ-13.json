@@ -1,0 +1,39 @@
+{
+  "id": "CJ-13",
+  "description": "Restricción fina (§8.11, §4): title supera maxLength y el descriptor publica schema JSON Schema 2020-12.",
+  "request": "{\"aif\":\"0.1\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Perfil CLI decidido durante la revisión final de la especificación\",\"kind\":\"learning\",\"confidence\":\"confirmed\"}}",
+  "preconditions": {
+    "env": {},
+    "store": []
+  },
+  "assertions": {
+    "exit_code": 2,
+    "result": "invalid",
+    "echo_operation": true,
+    "must": ["invalid", "fields", "collected"],
+    "must_not": ["missing", "outcome"],
+    "invalid": {
+      "title": {
+        "value": "Perfil CLI decidido durante la revisión final de la especificación",
+        "reason": "supera la longitud máxima",
+        "schema": {
+          "maxLength": 40
+        }
+      }
+    },
+    "fields": {
+      "title": {
+        "required": true,
+        "type": "string",
+        "schema": {
+          "maxLength": 40
+        }
+      }
+    },
+    "collected": {
+      "kind": "learning",
+      "confidence": "confirmed"
+    },
+    "writes": 0
+  }
+}

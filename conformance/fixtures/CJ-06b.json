@@ -1,0 +1,19 @@
+{
+  "id": "CJ-06b",
+  "description": "Versión incompatible (§8.8): supported presente, sin eco de operation y input no procesado.",
+  "request": "{\"aif\":\"1.0\",\"operation\":\"record_observation\",\"input\":{\"title\":\"X\",\"kind\":\"learning\",\"confidence\":\"confirmed\"}}",
+  "preconditions": {
+    "env": {},
+    "store": []
+  },
+  "assertions": {
+    "exit_code": 3,
+    "result": "unsupported_version",
+    "echo_operation": false,
+    "supported": ["0.1"],
+    "must": ["supported"],
+    "must_not": ["operation", "outcome", "missing", "invalid", "fields", "collected"],
+    "absent_substrings": ["\"X\""],
+    "writes": 0
+  }
+}
