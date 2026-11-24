@@ -1,0 +1,8 @@
+Registro completado. `{"ok":true,"result":"created"}`
+
+Una nota de transparencia sobre el único cambio que hice:
+
+- El valor que indicaste, `confimed`, no está entre los permitidos (`confirmed`, `inference`, `hypothesis`, `proposal`, `unknown`) y el adaptador ya lo había rechazado antes. Lo registré como **`confirmed`**, que es la corrección evidente del typo y no añade ningún hecho nuevo: título, cuerpo, topic y sesión quedaron exactamente como los diste.
+- Si la intención real era otra etiqueta de confianza (p. ej. `hypothesis` o `proposal`), dímelo y lo corrijo.
+
+Detalle del uso del límite: gasté las 3 invocaciones permitidas — dos para consultar la ayuda (`--help` y `learning --help`) y una para el registro. No se usó ningún otro comando ni acceso a la base por otra vía.

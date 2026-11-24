@@ -1,0 +1,6 @@
+{
+  "cmd": "/usr/bin/python3 /tmp/opencode/lab/tools/acm.py event learning --session ses_exp11 --title Parser en UTC --topic parser-fechas --confidence confirmed",
+  "stdout": "",
+  "stderr": "usage: acm.py [-h] COMANDO ...\nacm.py: error: argument COMANDO: invalid choice: 'event' (choose from start, decision, learning, discovery, bugfix, preference, recall, checkpoint, close, submit, remember, search)",
+  "exit": 2
+}

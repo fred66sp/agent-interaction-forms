@@ -8,6 +8,14 @@ al publicar; la historia de cada cambio, commit a commit, vive en Git.
 
 ### Añadido
 
+- EXPERIMENT-RESULTS v1.0.0: ejecución del experimento de viabilidad (30/30
+  mediciones) e informe de resultados con clasificación **INCONCLUSO** (PRD §7,
+  regla 2: medición no comparable por la incidencia del fixture de usuario,
+  documentada en `experiment/runs/INCIDENCIA-FIXTURE.md`, opción B del PO). La
+  decisión de producto de continuar con AIF asumiendo la incertidumbre residual
+  no equivale a un GO experimental; Specification queda pendiente de encargo
+  propio. Incluye datos brutos y auditados en `experiment/runs/` y el cálculo
+  determinista de métricas en `experiment/metrics.py`.
 - Documentación base del proyecto: PRD v0.1.4, RESEARCH v0.1.2 y protocolo de experimento
   v0.1.6, con la puerta GO/NO-GO en el PRD §7 y la guía operativa en EXPERIMENT-RUNBOOK.
 - Estructura de entrada del repositorio: README con el estado del proyecto, AGENTS.md con

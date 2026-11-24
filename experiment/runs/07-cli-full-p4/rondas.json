@@ -1,0 +1,13 @@
+{
+  "mensajes_usuario": [
+    "Registra este aprendizaje en la base de memoria local de esta máquina usando exclusivamente el comando `python3 /tmp/opencode/lab/cli-json.py` (su ayuda o su esquema se consultan con la propia herramienta; no uses otros comandos ni accedas a la base por otra vía).\n\n- título: Parser en UTC\n- cuerpo: Las fechas sin zona se interpretan como UTC.\n- topic: parser-fechas\n- confianza: confirmed\nSesión de trabajo (ya abierta): ses_exp07.\n\nLímite operativo de esta tarea: como máximo 4 invocaciones de herramienta adicionales a partir de ahora. Si no alcanzases a completar el registro dentro de ese límite, detente y explícalo.\nNo registres nada que no esté en los datos anteriores. Si necesitas información imprescindible que no puedas obtener tú, detente y pídela.",
+    "Las fechas sin zona se interpretan como UTC. Confianza: confirmed.",
+    "Las fechas sin zona se interpretan como UTC. Confianza: confirmed."
+  ],
+  "textos_asistente": [
+    "I'll start by checking the tool's help to learn the correct invocation.\n\n",
+    "Registro completado.\n\n- **Resultado:** `created`\n- **ID:** `01a20eea-6b45-7de0-a840-1024260898a2`\n- **Título:** Parser en UTC\n- **Topic:** parser-fechas · **Confianza:** confirmed\n- **Sesión:** ses_exp07\n\nUsé 3 invocaciones de herramienta (ayuda, esquema y registro), dentro del límite de 4.",
+    "¿Quieres que registre esto como un nuevo aprendizaje o es solo una confirmación del que ya guardé?\n\nTal como está, me faltan dos datos que la herramienta requiere o que usamos antes:\n- **título** (el anterior fue «Parser en UTC»)\n- **topic** (el anterior fue «parser-fechas»)\n\nAdemás, si es el mismo aprendizaje que ya registré (ID `01a20eea-6b45-7de0-a840-1024260898a2`), con el mismo cuerpo y confianza, lo más probable es que la base lo consolide como duplicado en lugar de crear una entrada nueva. Dime cómo proceder:\n\n1. Registrar igualmente con título/topic que me indiques.\n2. No registrar nada (lo tomo como confirmación).\n3. Registrar usando los mismos título y topic de antes.",
+    "Hecho, aunque el resultado es el esperable para un duplicado:\n\n- **Resultado:** `consolidated` (no `created`)\n- **ID:** `01a20eea-6b45-7de0-a840-1024260898a2` — la misma entrada de antes\n- **duplicate_count:** 2\n\nNo se creó ninguna entrada nueva: la base reconoció el cuerpo idéntico (mismo `content_hash`) y lo consolidó con el registro existente «Parser en UTC» / topic `parser-fechas`, confianza `confirmed`.\n\nUsé título y topic de los datos ya establecidos en esta conversación, porque el mensaje solo aportaba cuerpo y confianza. Si querías una entrada distinta (otro título/topic), dímelos y lo registro como aprendizaje separado."
+  ]
+}

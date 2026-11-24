@@ -1,0 +1,28 @@
+I'll start by checking the CLI's help to learn the correct usage.
+
+
+
+====
+
+The help shows a JSON object via stdin, but mentions an "evento `learning`", which suggests an envelope. Let me check the schema.
+
+
+
+====
+
+The schema lists only the four content fields, while the help example includes `"session"`. I'll follow the working example and include the session.
+
+
+
+====
+
+Registrado correctamente.
+
+- **Resultado:** `created` (nuevo aprendizaje)
+- **ID:** `01a20eea-f326-7c27-b323-c8f25baba432`
+- **Sesión:** `ses_exp10`
+- **Título:** Parser en UTC
+- **Topic:** parser-fechas
+- **Confianza:** confirmed
+
+Usé 3 invocaciones (ayuda, esquema y registro), dentro del límite de 4. Nota: el esquema no documenta el campo `session`, pero el ejemplo de la ayuda sí lo incluye y fue aceptado.

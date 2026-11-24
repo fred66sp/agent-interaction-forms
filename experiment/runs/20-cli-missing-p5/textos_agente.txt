@@ -1,0 +1,9 @@
+No he registrado nada todavía. Antes de escribir en la base, hay un dato imprescindible que falta:
+
+- La ayuda de `cli-json.py` indica que los campos **obligatorios** son `title` y `body` (además de `session` en el objeto de evento).
+- En los datos que me diste están `title` ("Parser en UTC"), `topic` ("parser-fechas") y `confidence` ("confirmed"), pero **no hay ningún texto de `body`**.
+- El intento previo falló precisamente por eso (`missing_required: body`), y no voy a inventar el contenido del aprendizaje ni a reutilizar el título como cuerpo sin tu confirmación, porque eso sería registrar información que no está en los datos.
+
+¿Me facilitas el texto exacto que debe ir en `body`? (Si prefieres que el cuerpo sea literalmente "Parser en UTC", dímelo explícitamente y lo uso así.)
+
+Llevo 1 invocación de herramienta usada (la consulta de ayuda), así que me quedan 2 para completar el registro en cuanto me des el `body`.

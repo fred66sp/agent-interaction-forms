@@ -1,0 +1,8 @@
+No he registrado nada todavía: el valor de confianza que indicas, `confimed`, no es válido y el adaptador lo rechazaría igual que en el intento anterior. Los valores admitidos son: `confirmed`, `inference`, `hypothesis`, `proposal`, `unknown`.
+
+Como el campo `confidence` es obligatorio y no puedo decidir por mi cuenta qué valor querías, necesito que me lo confirmes antes de escribir en la base:
+
+- ¿Era una errata y quieres `confirmed`?
+- ¿O prefieres otro valor (`inference`, `hypothesis`, `proposal`, `unknown`)?
+
+En cuanto me lo indiques, haré el registro con `python3 /tmp/opencode/lab/tools/acm.py` para la sesión `ses_exp21`, manteniéndome dentro del límite de 3 invocaciones.

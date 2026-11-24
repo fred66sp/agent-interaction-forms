@@ -1,0 +1,20 @@
+I'll start by checking the tool's help.
+
+
+
+====
+
+Registro completado.
+
+- **Resultado:** `created` (nuevo aprendizaje, sin duplicados)
+- **ID:** `01a20eea-3a9c-7e9c-a53a-4e9f89d355c8`
+- **Sesión:** `ses_exp06`
+- **Topic:** `parser-fechas` · **Confianza:** `confirmed`
+
+Se usaron 3 de las 4 invocaciones disponibles (ayuda, esquema y registro).
+
+====
+
+Ese aprendizaje ya quedó registrado en el paso anterior, con el mismo contenido y confianza `confirmed` (ID `01a20eea-3a9c-7e9c-a53a-4e9f89d355c8`, topic `parser-fechas`), así que no hay nada nuevo que guardar.
+
+Si querías registrar otra entrada, necesito el **título** (es obligatorio) y, si aplica, el **topic**. ¿Cómo lo llamamos?

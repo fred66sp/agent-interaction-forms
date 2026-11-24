@@ -1,0 +1,11 @@
+{
+  "mensajes_usuario": [
+    "Registra este aprendizaje en la base de memoria local de esta máquina usando exclusivamente el comando `python3 /tmp/opencode/lab/cli-json.py` (su ayuda o su esquema se consultan con la propia herramienta; no uses otros comandos ni accedas a la base por otra vía).\n\n- título: Parser en UTC\n- cuerpo: Las fechas sin zona se interpretan como UTC.\n- topic: parser-fechas\n- confianza: confirmed\nSesión de trabajo (ya abierta): ses_exp06.\n\nLímite operativo de esta tarea: como máximo 4 invocaciones de herramienta adicionales a partir de ahora. Si no alcanzases a completar el registro dentro de ese límite, detente y explícalo.\nNo registres nada que no esté en los datos anteriores. Si necesitas información imprescindible que no puedas obtener tú, detente y pídela.",
+    "Las fechas sin zona se interpretan como UTC. Confianza: confirmed."
+  ],
+  "textos_asistente": [
+    "I'll start by checking the tool's help.\n\n",
+    "Registro completado.\n\n- **Resultado:** `created` (nuevo aprendizaje, sin duplicados)\n- **ID:** `01a20eea-3a9c-7e9c-a53a-4e9f89d355c8`\n- **Sesión:** `ses_exp06`\n- **Topic:** `parser-fechas` · **Confianza:** `confirmed`\n\nSe usaron 3 de las 4 invocaciones disponibles (ayuda, esquema y registro).",
+    "Ese aprendizaje ya quedó registrado en el paso anterior, con el mismo contenido y confianza `confirmed` (ID `01a20eea-3a9c-7e9c-a53a-4e9f89d355c8`, topic `parser-fechas`), así que no hay nada nuevo que guardar.\n\nSi querías registrar otra entrada, necesito el **título** (es obligatorio) y, si aplica, el **topic**. ¿Cómo lo llamamos?"
+  ]
+}

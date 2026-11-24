@@ -1,0 +1,39 @@
+{
+  "id": 12,
+  "variante": "cli",
+  "escenario": "dato-ausente",
+  "par": 1,
+  "orden": "CLI_primero",
+  "tokens_entrada": 4335,
+  "tokens_salida": 787,
+  "tokens_cache_lectura": 60672,
+  "tokens_cache_escritura": 0,
+  "llamadas": 4,
+  "errores_contrato": 0,
+  "exito_verificado_bd": false,
+  "duracion_ms": 30265,
+  "efectos_indebidos": [
+    "observación: {'session_id': 'ses_exp12', 'agent_id': 'exp-agent', 'source': 'agent', 'kind': 'learning', 'title': 'Parser en UTC', 'body': 'Las fechas sin zona se interpretan como UTC.', 'rationale': '', 'alternatives': '', 'consequences': '', 'topic_key': 'parser-fechas', 'confidence': 'confirmed', 'status': 'active', 'superseded_by': None, 'duplicate_count': 2, 'content_hash': 'sha256:b5fbec22003eaf01104cec4d83f6054f3cbe6c93f11d77850a13f323e9ff7ebd', 'origin_ref': None}",
+    "exceso de invocaciones"
+  ],
+  "abandono": true,
+  "timeout": false,
+  "estado_medicion": "completa",
+  "prefijada_operador": {
+    "cmd": "/usr/bin/python3 /tmp/opencode/lab/cli-json.py <<< {\"session\": \"ses_exp12\", \"title\": \"Parser en UTC\", \"topic\": \"parser-fechas\", \"confidence\": \"confirmed\"}",
+    "stdout": "{\"ok\":false,\"error\":\"missing_required\",\"fields\":[\"body\"],\"hint\":\"proporciona los campos listados\"}",
+    "stderr": "",
+    "exit": 2
+  },
+  "errores_detalle": [],
+  "notas_detalle": [],
+  "fixture_rondas": 2,
+  "inicio": "2026-11-24T18:57:04Z",
+  "session_opencode": "ses_df114cdfcffe06S2p2YP9GWeNf",
+  "pasos": 7,
+  "limite_invocaciones": 4,
+  "invocaciones_totales": 5,
+  "exceso_invocaciones": true,
+  "codigo_salida_opencode": 0,
+  "stderr_opencode": ""
+}

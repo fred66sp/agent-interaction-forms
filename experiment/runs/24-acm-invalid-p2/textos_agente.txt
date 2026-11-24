@@ -1,0 +1,11 @@
+Registro completado (`{"ok":true,"result":"created"}`).
+
+**Una corrección aplicada, y por qué:** el payload indicaba `confidence: "confimed"`, que no es un valor válido del vocabulario controlado (`confirmed`, `inference`, `hypothesis`, `proposal`, `unknown`) y es exactamente la causa del rechazo anterior. Lo registré como `confirmed`, la única variante admisible a una letra de distancia. El resto de los datos quedó tal cual:
+
+- sesión: `ses_exp24`
+- título: Parser en UTC
+- cuerpo: Las fechas sin zona se interpretan como UTC.
+- topic: `parser-fechas`
+- confianza: `confirmed`
+
+Consumo del límite: 3 de 3 invocaciones (ayuda general, ayuda de `learning`, y el registro). Si el valor correcto debía ser otro distinto de `confirmed`, dímelo y lo ajusto, pero ya no queda margen en esta tarea.

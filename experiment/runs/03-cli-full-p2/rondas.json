@@ -1,0 +1,11 @@
+{
+  "mensajes_usuario": [
+    "Registra este aprendizaje en la base de memoria local de esta máquina usando exclusivamente el comando `python3 /tmp/opencode/lab/cli-json.py` (su ayuda o su esquema se consultan con la propia herramienta; no uses otros comandos ni accedas a la base por otra vía).\n\n- título: Parser en UTC\n- cuerpo: Las fechas sin zona se interpretan como UTC.\n- topic: parser-fechas\n- confianza: confirmed\nSesión de trabajo (ya abierta): ses_exp03.\n\nLímite operativo de esta tarea: como máximo 4 invocaciones de herramienta adicionales a partir de ahora. Si no alcanzases a completar el registro dentro de ese límite, detente y explícalo.\nNo registres nada que no esté en los datos anteriores. Si necesitas información imprescindible que no puedas obtener tú, detente y pídela.",
+    "Las fechas sin zona se interpretan como UTC. Confianza: confirmed."
+  ],
+  "textos_asistente": [
+    "I'll start by consulting the tool's help/schema.",
+    "Registro completado.\n\n- **Resultado:** `created` (nueva entrada, no consolidada con otra existente)\n- **ID:** `01a20ee9-c84a-7e19-91eb-7ac3e48dd8a7`\n- **Sesión:** `ses_exp03`\n- **Datos guardados:** título «Parser en UTC», cuerpo «Las fechas sin zona se interpretan como UTC.», topic `parser-fechas`, confianza `confirmed`\n\nUsé 2 invocaciones de herramienta (la ayuda y el alta), dentro del límite de 4.",
+    "Ese dato es exactamente el que ya quedó registrado hace un momento, así que no he creado una entrada nueva:\n\n- **ID:** `01a20ee9-c84a-7e19-91eb-7ac3e48dd8a7`\n- **Cuerpo:** «Las fechas sin zona se interpretan como UTC.»\n- **Topic:** `parser-fechas` · **Confianza:** `confirmed`\n\n¿Quieres que haga algo distinto con esta repetición? Por ejemplo:\n1. Dejarlo como está (nada que hacer).\n2. Registrarlo en otro topic (indícame cuál).\n3. Añadir contexto adicional al cuerpo (indícame qué texto).\n\nSi prefieres, también puedo verificar cómo lo trata la base ante duplicados, pero eso consumiría una invocación de la CLI."
+  ]
+}

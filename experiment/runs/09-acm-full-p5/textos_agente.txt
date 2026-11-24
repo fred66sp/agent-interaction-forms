@@ -1,0 +1,15 @@
+I'll start by checking the tool's help/schema.
+
+====
+
+Registrado con la tercera invocación (de las 4 permitidas):
+
+- **Comando:** `python3 /tmp/opencode/lab/tools/acm.py learning ...`
+- **Resultado:** `{"ok":true,"result":"created"}`
+- **Sesión:** `ses_exp09`
+- **Título:** Parser en UTC
+- **Cuerpo:** Las fechas sin zona se interpretan como UTC.
+- **Topic:** parser-fechas
+- **Confianza:** confirmed
+
+Invocationes usadas: 1) `--help`, 2) `learning --help`, 3) el registro. Queda 1 disponible.

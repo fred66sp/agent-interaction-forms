@@ -1,0 +1,30 @@
+{
+  "experimento": "AIF-EXP v0.1.6 / runbook AIF-EXP-RUN v0.1.0",
+  "modelo": "nan/deepseek-v4-flash#medium",
+  "proveedor": "nan via OpenCode",
+  "opencode": "opencode v2.4.1",
+  "opencode_binario": "/home/desarrollo/.local/share/vite-plus/packages/@opencode/cli/c9b80b64-8931-4aaf-8a03-178dba0e229a/bin/opencode",
+  "opencode_shim": "el 'opencode' primero en PATH es el conmutador de vite-plus (vp); bajo el entorno aislado no delega; incidencias en experiment/runs/incidencias-previas/",
+  "temperatura": "0 en la config del LAB (XDG_CONFIG_HOME del agente medido; fichero opencode.json con provider.nan.models.deepseek-v4-flash.options.temperature=0); configurabilidad del proveedor acreditada en tk-2 (models.dev); la comprobación directa de la temperatura efectiva en runtime exige el servicio gestionado de opencode en 127.0.0.1:49374, ocupado por la sesión del operador, y desplazarlo exige 'opencode service set port' (configuración global de la máquina, no autorizada): se declara == NO EJECUTADA",
+  "caches": "XDG_CACHE_HOME apunta al caché real del usuario porque el runtime de Node de opencode vive ahí y no hay red para descargarlo al HOME aislado; comparte lecturas/escrituras de caché (binarios, models.json), no sesiones ni config (XDG_DATA/XDG_CONFIG siguen en el HOME del LAB)",
+  "aislamiento_sesiones": "sesiones de opencode en el HOME del LAB (opencode.db propio); el cfg del agente medido no ve la del operador",
+  "db-ai": "binario LAB sha256 51e6e0c3344e",
+  "acm.py": "sha256 d0c70429b31d",
+  "cli-json.py": "sha256 0a6f90056f58",
+  "arsenal": "congelado en main (merge 2e47cc0)",
+  "telemetria": "step_finish tokens {input, output, reasoning, cache{read,write}} por respuesta; probes verificadas antes de medir",
+  "limites": {
+    "invocaciones": 4,
+    "segundos": 120
+  },
+  "fixture": "Las fechas sin zona se interpretan como UTC. Confianza: confirmed.",
+  "orden_pares": {
+    "1": "acm",
+    "2": "cli",
+    "3": "acm",
+    "4": "cli",
+    "5": "acm"
+  },
+  "sesion": "abierta por el operador por ejecución (runbook §2.4; el ejecutor exige sesión existente)",
+  "prefijada": "bloque sembrado idéntico entre variantes; llamada real ejecutada por el operador y archivada por ejecución"
+}

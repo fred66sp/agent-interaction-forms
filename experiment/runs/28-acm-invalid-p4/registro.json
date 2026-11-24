@@ -1,0 +1,38 @@
+{
+  "id": 28,
+  "variante": "acm",
+  "escenario": "enum-invalido",
+  "par": 4,
+  "orden": "ACM_primero",
+  "tokens_entrada": 2982,
+  "tokens_salida": 414,
+  "tokens_cache_lectura": 22656,
+  "tokens_cache_escritura": 0,
+  "llamadas": 2,
+  "errores_contrato": 0,
+  "exito_verificado_bd": false,
+  "duracion_ms": 14882,
+  "efectos_indebidos": [
+    "observación: {'sessions': [{'id': 'ses_exp28', 'agent_id': 'exp-agent', 'source': 'agent', 'goal': 'registro de aprendizaje del experimento', 'status': 'open', 'started_at': '2026-11-24T19:01:48Z', 'ended_at': None, 'summary': None, 'created_at': '2026-11-24T19:01:48Z', 'updated_at': '2026-11-24T19:01:48Z'}], 'observations': [], 'checkpoints': [], 'preferences': []}"
+  ],
+  "abandono": true,
+  "timeout": false,
+  "estado_medicion": "completa",
+  "prefijada_operador": {
+    "cmd": "/usr/bin/python3 /tmp/opencode/lab/tools/acm.py event learning --session ses_exp28 --title Parser en UTC --body Las fechas sin zona se interpretan como UTC. --topic parser-fechas --confidence confimed",
+    "stdout": "",
+    "stderr": "usage: acm.py [-h] COMANDO ...\nacm.py: error: argument COMANDO: invalid choice: 'event' (choose from start, decision, learning, discovery, bugfix, preference, recall, checkpoint, close, submit, remember, search)",
+    "exit": 2
+  },
+  "errores_detalle": [],
+  "notas_detalle": [],
+  "fixture_rondas": 0,
+  "inicio": "2026-11-24T19:01:48Z",
+  "session_opencode": "ses_df11077a9ffe6m2jSDV2Buy6oq",
+  "pasos": 3,
+  "limite_invocaciones": 4,
+  "invocaciones_totales": 3,
+  "exceso_invocaciones": false,
+  "codigo_salida_opencode": 0,
+  "stderr_opencode": ""
+}

@@ -1,0 +1,10 @@
+No he registrado nada, porque falta un dato imprescindible.
+
+Estado:
+- Consulté la ayuda del CLI con `python3 /tmp/opencode/lab/cli-json.py --help` (1 de 3 invocaciones usadas).
+- La herramienta confirma que los campos obligatorios del evento `learning` son **`title` y `body`**.
+- En los datos que me diste solo hay `title`, `topic`, `confidence` y la sesión `ses_exp17`; **no hay ningún `body`**. El intento anterior también falló precisamente por eso.
+
+Registrar un `body` inventado (por ejemplo, repetir el título) equivaldría a añadir información que no está en los datos, y me lo has prohibido expresamente. Tampoco puedo obtenerlo por otra vía según el límite de la tarea.
+
+¿Me indicas el contenido (`body`) exacto que debe llevar el aprendizaje «Parser en UTC»? Con eso haría el registro en una sola invocación más.

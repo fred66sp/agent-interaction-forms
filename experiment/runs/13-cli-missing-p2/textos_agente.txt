@@ -1,0 +1,71 @@
+I'll start by consulting the tool's help to learn its schema.
+
+
+
+====
+
+Help confirms `body` is a mandatory field (it's the one that was rejected). Let me check the schema for its constraints.
+
+
+
+====
+
+I've used 2 of my 3 tool invocations. Before spending the last one, I hit a blocker I shouldn't resolve on my own.
+
+**Situation**
+
+The rejection was correct: `body` is a required field (confirmed by both `--help` and `--schema`). But the data you gave me does not include any body content:
+
+- título: "Parser en UTC"
+- topic: "parser-fechas"
+- confianza: confirmed
+- sesión: ses_exp13
+
+That leaves no actual statement of *what* the learning is. The title hints at UTC behavior, but writing a body would mean inventing the substance of the record — content not present in the data you provided, which your instructions explicitly forbid ("No registres nada que no esté en los datos anteriores").
+
+So per your own stop rule, I'm pausing rather than fabricating.
+
+**What I need**
+
+Please give me the `body` text exactly as it should be stored — i.e. the sentence(s) describing the learning about "Parser en UTC". If you'd rather, you can also confirm that a specific wording is acceptable (for example, something like "El parser de fechas opera en UTC") and I'll store it verbatim.
+
+**Budget status**
+
+- Invocation 1: `--help`
+- Invocation 2: `--schema`
+- Invocation 3: reserved for the actual `create` call
+
+Once you provide the body, one final invocation completes the registration at `ses_exp13` with the title, topic, and confidence already given.
+
+====
+
+Now I have the body. Executing the single registration call with my last invocation.
+
+
+
+====
+
+Registro completado.
+
+**Resultado**
+
+```json
+{"ok":true,"result":"created","id":"01a20eeb-d8c4-7b22-87ce-f3bacf7707db","content_hash":"sha256:b5fbec...ff7ebd","duplicate_count":1}
+```
+
+**Evento almacenado**
+
+- Sesión: `ses_exp13`
+- Título: Parser en UTC
+- Body: "Las fechas sin zona se interpretan como UTC."
+- Topic: `parser-fechas`
+- Confianza: `confirmed`
+- Estado: `created`, `duplicate_count: 1` (sin duplicados previos)
+
+**Nota sobre el presupuesto**
+
+Se usaron exactamente 3 invocaciones: `--help`, `--schema` y `create`. La última quedó reservada para el registro y no fue necesaria ninguna comprobación adicional, ya que la salida `{"ok":true}` confirma la creación.
+
+Sobre el rechazo previo: era correcto y sin efecto en la base, como indicaste. La única corrección necesaria fue aportar el campo obligatorio `body`; el resto del payload original se mantuvo intacto.
+
+Una observación para futuros registros: el `body` ahora contiene solo la afirmación, sin el sufijo "Confianza: confirmed", porque ese dato se almacena en el campo `confidence` y duplicarlo en el texto habría añadido contenido redundante.

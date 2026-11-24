@@ -1,0 +1,968 @@
+[
+  {
+    "id": 1,
+    "variante": "acm",
+    "escenario": "completa",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 4,
+      "llamadas_bd": 4
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py --help",
+        "exit": 0,
+        "out_head": "usage: acm.py [-h] COMANDO ...\n\nAdaptador ACM sobre db-ai (un comando por evento, JSON compacto).\n\npositional arguments:\n  COMANDO\n    start       abre la sesió"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --help",
+        "exit": 0,
+        "out_head": "usage: acm.py learning [-h] [--session SESSION] [--title TITLE] [--body BODY]\n                       [--topic TOPIC] [--confidence CONFIDENCE]\n\noptions:\n  -h, -"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --session ses_exp01 --title \"Parser en UTC\" --body \"Las fechas sin zona se interpretan como UTC.\" --topic parser",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\"}\n"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py recall --session ses_exp01 --query \"parser-fechas UTC\" 2>&1 | head -c 2000",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":null}\n"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "variante": "cli",
+    "escenario": "completa",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 3,
+      "llamadas_bd": 3
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --help",
+        "exit": 0,
+        "out_head": "uso: cli-json.py [--schema] < entrada.json\n\nEvento `learning` con un objeto JSON completo por stdin (sin flags):\n  {\"session\": \"ses_x\", \"title\": \"...\", \"body\": "
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --schema",
+        "exit": 0,
+        "out_head": "{\"event\":\"learning\",\"input\":\"objeto JSON completo por stdin\",\"fields\":{\"title\":{\"required\":true},\"body\":{\"required\":true},\"topic\":{\"required\":false},\"confidence"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py <<'EOF'\n{\"session\":\"ses_exp02\",\"title\":\"Parser en UTC\",\"body\":\"Las fechas sin zona se interpretan como UTC.\",\"topic\":\"pars",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\",\"id\":\"01a20ee9-aba6-7607-927d-9f49a990b1a4\",\"content_hash\":\"sha256:b5fbec22003eaf01104cec4d83f6054f3cbe6c93f11d77850a13f323e9ff7eb"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "variante": "cli",
+    "escenario": "completa",
+    "rondas_usuario": 2,
+    "fixture_rondas_registradas": 1,
+    "fixture_mensaje_detectado": [
+      {
+        "ronda": 2,
+        "fixture_enviado": false
+      }
+    ],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 2,
+      "llamadas_bd": 2
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --help",
+        "exit": 0,
+        "out_head": "uso: cli-json.py [--schema] < entrada.json\n\nEvento `learning` con un objeto JSON completo por stdin (sin flags):\n  {\"session\": \"ses_x\", \"title\": \"...\", \"body\": "
+      },
+      {
+        "cmd": "cd /tmp/opencode/lab && printf '%s' '{\"session\":\"ses_exp03\",\"title\":\"Parser en UTC\",\"body\":\"Las fechas sin zona se interpretan como UTC.\",\"topic\":\"parser-fechas",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\",\"id\":\"01a20ee9-c84a-7e19-91eb-7ac3e48dd8a7\",\"content_hash\":\"sha256:b5fbec22003eaf01104cec4d83f6054f3cbe6c93f11d77850a13f323e9ff7eb"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "variante": "acm",
+    "escenario": "completa",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 3,
+      "llamadas_bd": 3
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py --help",
+        "exit": 0,
+        "out_head": "usage: acm.py [-h] COMANDO ...\n\nAdaptador ACM sobre db-ai (un comando por evento, JSON compacto).\n\npositional arguments:\n  COMANDO\n    start       abre la sesió"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --help",
+        "exit": 0,
+        "out_head": "usage: acm.py learning [-h] [--session SESSION] [--title TITLE] [--body BODY]\n                       [--topic TOPIC] [--confidence CONFIDENCE]\n\noptions:\n  -h, -"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --session ses_exp04 --title \"Parser en UTC\" --body \"Las fechas sin zona se interpretan como UTC.\" --topic parser",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\"}\n"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "variante": "acm",
+    "escenario": "completa",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 3,
+      "llamadas_bd": 3
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py --help",
+        "exit": 0,
+        "out_head": "usage: acm.py [-h] COMANDO ...\n\nAdaptador ACM sobre db-ai (un comando por evento, JSON compacto).\n\npositional arguments:\n  COMANDO\n    start       abre la sesió"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --help",
+        "exit": 0,
+        "out_head": "usage: acm.py learning [-h] [--session SESSION] [--title TITLE] [--body BODY]\n                       [--topic TOPIC] [--confidence CONFIDENCE]\n\noptions:\n  -h, -"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --session ses_exp05 --title \"Parser en UTC\" --body \"Las fechas sin zona se interpretan como UTC.\" --topic parser",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\"}\n"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "variante": "cli",
+    "escenario": "completa",
+    "rondas_usuario": 2,
+    "fixture_rondas_registradas": 1,
+    "fixture_mensaje_detectado": [
+      {
+        "ronda": 2,
+        "fixture_enviado": false
+      }
+    ],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 3,
+      "llamadas_bd": 3
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --help",
+        "exit": 0,
+        "out_head": "uso: cli-json.py [--schema] < entrada.json\n\nEvento `learning` con un objeto JSON completo por stdin (sin flags):\n  {\"session\": \"ses_x\", \"title\": \"...\", \"body\": "
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --schema",
+        "exit": 0,
+        "out_head": "{\"event\":\"learning\",\"input\":\"objeto JSON completo por stdin\",\"fields\":{\"title\":{\"required\":true},\"body\":{\"required\":true},\"topic\":{\"required\":false},\"confidence"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py <<'EOF'\n{\"session\":\"ses_exp06\",\"title\":\"Parser en UTC\",\"body\":\"Las fechas sin zona se interpretan como UTC.\",\"topic\":\"pars",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\",\"id\":\"01a20eea-3a9c-7e9c-a53a-4e9f89d355c8\",\"content_hash\":\"sha256:b5fbec22003eaf01104cec4d83f6054f3cbe6c93f11d77850a13f323e9ff7eb"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "variante": "cli",
+    "escenario": "completa",
+    "rondas_usuario": 3,
+    "fixture_rondas_registradas": 2,
+    "fixture_mensaje_detectado": [
+      {
+        "ronda": 2,
+        "fixture_enviado": false
+      },
+      {
+        "ronda": 3,
+        "fixture_enviado": false
+      }
+    ],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 4,
+      "llamadas_bd": 4
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --help",
+        "exit": 0,
+        "out_head": "uso: cli-json.py [--schema] < entrada.json\n\nEvento `learning` con un objeto JSON completo por stdin (sin flags):\n  {\"session\": \"ses_x\", \"title\": \"...\", \"body\": "
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --schema",
+        "exit": 0,
+        "out_head": "{\"event\":\"learning\",\"input\":\"objeto JSON completo por stdin\",\"fields\":{\"title\":{\"required\":true},\"body\":{\"required\":true},\"topic\":{\"required\":false},\"confidence"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py <<'EOF'\n{\"session\":\"ses_exp07\",\"title\":\"Parser en UTC\",\"body\":\"Las fechas sin zona se interpretan como UTC.\",\"topic\":\"pars",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\",\"id\":\"01a20eea-6b45-7de0-a840-1024260898a2\",\"content_hash\":\"sha256:b5fbec22003eaf01104cec4d83f6054f3cbe6c93f11d77850a13f323e9ff7eb"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py <<'EOF'\n{\"session\":\"ses_exp07\",\"title\":\"Parser en UTC\",\"body\":\"Las fechas sin zona se interpretan como UTC.\",\"topic\":\"pars",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"consolidated\",\"id\":\"01a20eea-6b45-7de0-a840-1024260898a2\",\"duplicate_count\":2,\"content_hash\":\"sha256:b5fbec22003eaf01104cec4d83f6054f3cbe6c"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "variante": "acm",
+    "escenario": "completa",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 3,
+      "llamadas_bd": 3
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py --help",
+        "exit": 0,
+        "out_head": "usage: acm.py [-h] COMANDO ...\n\nAdaptador ACM sobre db-ai (un comando por evento, JSON compacto).\n\npositional arguments:\n  COMANDO\n    start       abre la sesió"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --help",
+        "exit": 0,
+        "out_head": "usage: acm.py learning [-h] [--session SESSION] [--title TITLE] [--body BODY]\n                       [--topic TOPIC] [--confidence CONFIDENCE]\n\noptions:\n  -h, -"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --session ses_exp08 --title \"Parser en UTC\" --body \"Las fechas sin zona se interpretan como UTC.\" --topic parser",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\"}\n"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "variante": "acm",
+    "escenario": "completa",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 3,
+      "llamadas_bd": 3
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py --help",
+        "exit": 0,
+        "out_head": "usage: acm.py [-h] COMANDO ...\n\nAdaptador ACM sobre db-ai (un comando por evento, JSON compacto).\n\npositional arguments:\n  COMANDO\n    start       abre la sesió"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --help",
+        "exit": 0,
+        "out_head": "usage: acm.py learning [-h] [--session SESSION] [--title TITLE] [--body BODY]\n                       [--topic TOPIC] [--confidence CONFIDENCE]\n\noptions:\n  -h, -"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --session ses_exp09 --title \"Parser en UTC\" --body \"Las fechas sin zona se interpretan como UTC.\" --topic parser",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\"}\n"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "variante": "cli",
+    "escenario": "completa",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 3,
+      "llamadas_bd": 3
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --help",
+        "exit": 0,
+        "out_head": "uso: cli-json.py [--schema] < entrada.json\n\nEvento `learning` con un objeto JSON completo por stdin (sin flags):\n  {\"session\": \"ses_x\", \"title\": \"...\", \"body\": "
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --schema",
+        "exit": 0,
+        "out_head": "{\"event\":\"learning\",\"input\":\"objeto JSON completo por stdin\",\"fields\":{\"title\":{\"required\":true},\"body\":{\"required\":true},\"topic\":{\"required\":false},\"confidence"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py <<'EOF'\n{\"session\": \"ses_exp10\", \"title\": \"Parser en UTC\", \"body\": \"Las fechas sin zona se interpretan como UTC.\", \"topic\"",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\",\"id\":\"01a20eea-f326-7c27-b323-c8f25baba432\",\"content_hash\":\"sha256:b5fbec22003eaf01104cec4d83f6054f3cbe6c93f11d77850a13f323e9ff7eb"
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "variante": "acm",
+    "escenario": "dato-ausente",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 2,
+      "llamadas_bd": 2
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py --help",
+        "exit": 0,
+        "out_head": "usage: acm.py [-h] COMANDO ...\n\nAdaptador ACM sobre db-ai (un comando por evento, JSON compacto).\n\npositional arguments:\n  COMANDO\n    start       abre la sesió"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --help",
+        "exit": 0,
+        "out_head": "usage: acm.py learning [-h] [--session SESSION] [--title TITLE] [--body BODY]\n                       [--topic TOPIC] [--confidence CONFIDENCE]\n\noptions:\n  -h, -"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "variante": "cli",
+    "escenario": "dato-ausente",
+    "rondas_usuario": 3,
+    "fixture_rondas_registradas": 2,
+    "fixture_mensaje_detectado": [
+      {
+        "ronda": 2,
+        "fixture_enviado": false
+      },
+      {
+        "ronda": 3,
+        "fixture_enviado": false
+      }
+    ],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 4,
+      "llamadas_bd": 4
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --help",
+        "exit": 0,
+        "out_head": "uso: cli-json.py [--schema] < entrada.json\n\nEvento `learning` con un objeto JSON completo por stdin (sin flags):\n  {\"session\": \"ses_x\", \"title\": \"...\", \"body\": "
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --schema",
+        "exit": 0,
+        "out_head": "{\"event\":\"learning\",\"input\":\"objeto JSON completo por stdin\",\"fields\":{\"title\":{\"required\":true},\"body\":{\"required\":true},\"topic\":{\"required\":false},\"confidence"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py <<'EOF'\n{\"session\":\"ses_exp12\",\"title\":\"Parser en UTC\",\"body\":\"Las fechas sin zona se interpretan como UTC.\",\"topic\":\"pars",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\",\"id\":\"01a20eeb-6fce-7f94-a647-91e4119c6595\",\"content_hash\":\"sha256:b5fbec22003eaf01104cec4d83f6054f3cbe6c93f11d77850a13f323e9ff7eb"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py <<'EOF'\n{\"session\":\"ses_exp12\",\"title\":\"Parser en UTC\",\"body\":\"Las fechas sin zona se interpretan como UTC.\",\"topic\":\"pars",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"consolidated\",\"id\":\"01a20eeb-6fce-7f94-a647-91e4119c6595\",\"duplicate_count\":2,\"content_hash\":\"sha256:b5fbec22003eaf01104cec4d83f6054f3cbe6c"
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "variante": "cli",
+    "escenario": "dato-ausente",
+    "rondas_usuario": 2,
+    "fixture_rondas_registradas": 1,
+    "fixture_mensaje_detectado": [
+      {
+        "ronda": 2,
+        "fixture_enviado": false
+      }
+    ],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 3,
+      "llamadas_bd": 3
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --help",
+        "exit": 0,
+        "out_head": "uso: cli-json.py [--schema] < entrada.json\n\nEvento `learning` con un objeto JSON completo por stdin (sin flags):\n  {\"session\": \"ses_x\", \"title\": \"...\", \"body\": "
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --schema",
+        "exit": 0,
+        "out_head": "{\"event\":\"learning\",\"input\":\"objeto JSON completo por stdin\",\"fields\":{\"title\":{\"required\":true},\"body\":{\"required\":true},\"topic\":{\"required\":false},\"confidence"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py <<'EOF'\n{\"session\": \"ses_exp13\", \"title\": \"Parser en UTC\", \"body\": \"Las fechas sin zona se interpretan como UTC.\", \"topic\"",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\",\"id\":\"01a20eeb-d8c4-7b22-87ce-f3bacf7707db\",\"content_hash\":\"sha256:b5fbec22003eaf01104cec4d83f6054f3cbe6c93f11d77850a13f323e9ff7eb"
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "variante": "acm",
+    "escenario": "dato-ausente",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 2,
+      "llamadas_bd": 2
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py --help",
+        "exit": 0,
+        "out_head": "usage: acm.py [-h] COMANDO ...\n\nAdaptador ACM sobre db-ai (un comando por evento, JSON compacto).\n\npositional arguments:\n  COMANDO\n    start       abre la sesió"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --help",
+        "exit": 0,
+        "out_head": "usage: acm.py learning [-h] [--session SESSION] [--title TITLE] [--body BODY]\n                       [--topic TOPIC] [--confidence CONFIDENCE]\n\noptions:\n  -h, -"
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "variante": "acm",
+    "escenario": "dato-ausente",
+    "rondas_usuario": 2,
+    "fixture_rondas_registradas": 1,
+    "fixture_mensaje_detectado": [
+      {
+        "ronda": 2,
+        "fixture_enviado": false
+      }
+    ],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 3,
+      "llamadas_bd": 3
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py --help",
+        "exit": 0,
+        "out_head": "usage: acm.py [-h] COMANDO ...\n\nAdaptador ACM sobre db-ai (un comando por evento, JSON compacto).\n\npositional arguments:\n  COMANDO\n    start       abre la sesió"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --help",
+        "exit": 0,
+        "out_head": "usage: acm.py learning [-h] [--session SESSION] [--title TITLE] [--body BODY]\n                       [--topic TOPIC] [--confidence CONFIDENCE]\n\noptions:\n  -h, -"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --session ses_exp15 --title \"Parser en UTC\" --topic parser-fechas --confidence confirmed --body \"Las fechas sin ",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\"}\n"
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "variante": "cli",
+    "escenario": "dato-ausente",
+    "rondas_usuario": 2,
+    "fixture_rondas_registradas": 1,
+    "fixture_mensaje_detectado": [
+      {
+        "ronda": 2,
+        "fixture_enviado": false
+      }
+    ],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 4,
+      "llamadas_bd": 4
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --help",
+        "exit": 0,
+        "out_head": "uso: cli-json.py [--schema] < entrada.json\n\nEvento `learning` con un objeto JSON completo por stdin (sin flags):\n  {\"session\": \"ses_x\", \"title\": \"...\", \"body\": "
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py <<'EOF'\n{\"session\": \"ses_exp16\", \"title\": \"Parser en UTC\", \"body\": \"Parser en UTC\", \"topic\": \"parser-fechas\", \"confidence\"",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\",\"id\":\"01a20eec-6d43-74ae-bd02-408e55c49526\",\"content_hash\":\"sha256:67367930c1ebee4fec41393e25e23be6d8dd8689931e3f163be2a4eaa66d191"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --schema",
+        "exit": 0,
+        "out_head": "{\"event\":\"learning\",\"input\":\"objeto JSON completo por stdin\",\"fields\":{\"title\":{\"required\":true},\"body\":{\"required\":true},\"topic\":{\"required\":false},\"confidence"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py <<'EOF'\n{\"session\": \"ses_exp16\", \"title\": \"Parser en UTC\", \"body\": \"Las fechas sin zona se interpretan como UTC.\", \"topic\"",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\",\"id\":\"01a20eec-9c13-7955-a4a2-28ac66b85a02\",\"content_hash\":\"sha256:b5fbec22003eaf01104cec4d83f6054f3cbe6c93f11d77850a13f323e9ff7eb"
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "variante": "cli",
+    "escenario": "dato-ausente",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 1,
+      "llamadas_bd": 1
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --help",
+        "exit": 0,
+        "out_head": "uso: cli-json.py [--schema] < entrada.json\n\nEvento `learning` con un objeto JSON completo por stdin (sin flags):\n  {\"session\": \"ses_x\", \"title\": \"...\", \"body\": "
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "variante": "acm",
+    "escenario": "dato-ausente",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 3,
+      "llamadas_bd": 3
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py --help",
+        "exit": 0,
+        "out_head": "usage: acm.py [-h] COMANDO ...\n\nAdaptador ACM sobre db-ai (un comando por evento, JSON compacto).\n\npositional arguments:\n  COMANDO\n    start       abre la sesió"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --help",
+        "exit": 0,
+        "out_head": "usage: acm.py learning [-h] [--session SESSION] [--title TITLE] [--body BODY]\n                       [--topic TOPIC] [--confidence CONFIDENCE]\n\noptions:\n  -h, -"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --session ses_exp18 --title \"Parser en UTC\" --body \"Parser en UTC\" --topic parser-fechas --confidence confirmed",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\"}\n"
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "variante": "acm",
+    "escenario": "dato-ausente",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 2,
+      "llamadas_bd": 2
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py --help",
+        "exit": 0,
+        "out_head": "usage: acm.py [-h] COMANDO ...\n\nAdaptador ACM sobre db-ai (un comando por evento, JSON compacto).\n\npositional arguments:\n  COMANDO\n    start       abre la sesió"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --help",
+        "exit": 0,
+        "out_head": "usage: acm.py learning [-h] [--session SESSION] [--title TITLE] [--body BODY]\n                       [--topic TOPIC] [--confidence CONFIDENCE]\n\noptions:\n  -h, -"
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "variante": "cli",
+    "escenario": "dato-ausente",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 1,
+      "llamadas_bd": 1
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --help",
+        "exit": 0,
+        "out_head": "uso: cli-json.py [--schema] < entrada.json\n\nEvento `learning` con un objeto JSON completo por stdin (sin flags):\n  {\"session\": \"ses_x\", \"title\": \"...\", \"body\": "
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "variante": "acm",
+    "escenario": "enum-invalido",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 0,
+      "llamadas_bd": 0
+    },
+    "llamadas": []
+  },
+  {
+    "id": 22,
+    "variante": "cli",
+    "escenario": "enum-invalido",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 2,
+      "llamadas_bd": 2
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --help",
+        "exit": 0,
+        "out_head": "uso: cli-json.py [--schema] < entrada.json\n\nEvento `learning` con un objeto JSON completo por stdin (sin flags):\n  {\"session\": \"ses_x\", \"title\": \"...\", \"body\": "
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py <<'EOF'\n{\"session\":\"ses_exp22\",\"title\":\"Parser en UTC\",\"body\":\"Las fechas sin zona se interpretan como UTC.\",\"topic\":\"pars",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\",\"id\":\"01a20eee-1be1-747a-8e41-9050e7631ebd\",\"content_hash\":\"sha256:b5fbec22003eaf01104cec4d83f6054f3cbe6c93f11d77850a13f323e9ff7eb"
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "variante": "cli",
+    "escenario": "enum-invalido",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 1,
+      "llamadas_bd": 1
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --help",
+        "exit": 0,
+        "out_head": "uso: cli-json.py [--schema] < entrada.json\n\nEvento `learning` con un objeto JSON completo por stdin (sin flags):\n  {\"session\": \"ses_x\", \"title\": \"...\", \"body\": "
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "variante": "acm",
+    "escenario": "enum-invalido",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 3,
+      "llamadas_bd": 3
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py --help",
+        "exit": 0,
+        "out_head": "usage: acm.py [-h] COMANDO ...\n\nAdaptador ACM sobre db-ai (un comando por evento, JSON compacto).\n\npositional arguments:\n  COMANDO\n    start       abre la sesió"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --help",
+        "exit": 0,
+        "out_head": "usage: acm.py learning [-h] [--session SESSION] [--title TITLE] [--body BODY]\n                       [--topic TOPIC] [--confidence CONFIDENCE]\n\noptions:\n  -h, -"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --session ses_exp24 --title \"Parser en UTC\" --body \"Las fechas sin zona se interpretan como UTC.\" --topic parser",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\"}\n"
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "variante": "acm",
+    "escenario": "enum-invalido",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 3,
+      "llamadas_bd": 3
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py --help",
+        "exit": 0,
+        "out_head": "usage: acm.py [-h] COMANDO ...\n\nAdaptador ACM sobre db-ai (un comando por evento, JSON compacto).\n\npositional arguments:\n  COMANDO\n    start       abre la sesió"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --help",
+        "exit": 0,
+        "out_head": "usage: acm.py learning [-h] [--session SESSION] [--title TITLE] [--body BODY]\n                       [--topic TOPIC] [--confidence CONFIDENCE]\n\noptions:\n  -h, -"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --session ses_exp25 --title \"Parser en UTC\" --body \"Las fechas sin zona se interpretan como UTC.\" --topic \"parse",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\"}\n"
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "variante": "cli",
+    "escenario": "enum-invalido",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 1,
+      "llamadas_bd": 1
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --help",
+        "exit": 0,
+        "out_head": "uso: cli-json.py [--schema] < entrada.json\n\nEvento `learning` con un objeto JSON completo por stdin (sin flags):\n  {\"session\": \"ses_x\", \"title\": \"...\", \"body\": "
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "variante": "cli",
+    "escenario": "enum-invalido",
+    "rondas_usuario": 3,
+    "fixture_rondas_registradas": 2,
+    "fixture_mensaje_detectado": [
+      {
+        "ronda": 2,
+        "fixture_enviado": false
+      },
+      {
+        "ronda": 3,
+        "fixture_enviado": false
+      }
+    ],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 2,
+      "llamadas_bd": 2
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --help",
+        "exit": 0,
+        "out_head": "uso: cli-json.py [--schema] < entrada.json\n\nEvento `learning` con un objeto JSON completo por stdin (sin flags):\n  {\"session\": \"ses_x\", \"title\": \"...\", \"body\": "
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py <<'JSON'\n{\"session\":\"ses_exp27\",\"title\":\"Parser en UTC\",\"body\":\"Las fechas sin zona se interpretan como UTC.\",\"topic\":\"par",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\",\"id\":\"01a20eef-61c2-7292-bb24-c910b4411caa\",\"content_hash\":\"sha256:b5fbec22003eaf01104cec4d83f6054f3cbe6c93f11d77850a13f323e9ff7eb"
+      }
+    ]
+  },
+  {
+    "id": 28,
+    "variante": "acm",
+    "escenario": "enum-invalido",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 2,
+      "llamadas_bd": 2
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py --help",
+        "exit": 0,
+        "out_head": "usage: acm.py [-h] COMANDO ...\n\nAdaptador ACM sobre db-ai (un comando por evento, JSON compacto).\n\npositional arguments:\n  COMANDO\n    start       abre la sesió"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --help",
+        "exit": 0,
+        "out_head": "usage: acm.py learning [-h] [--session SESSION] [--title TITLE] [--body BODY]\n                       [--topic TOPIC] [--confidence CONFIDENCE]\n\noptions:\n  -h, -"
+      }
+    ]
+  },
+  {
+    "id": 29,
+    "variante": "acm",
+    "escenario": "enum-invalido",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 3,
+      "llamadas_bd": 3
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py --help",
+        "exit": 0,
+        "out_head": "usage: acm.py [-h] COMANDO ...\n\nAdaptador ACM sobre db-ai (un comando por evento, JSON compacto).\n\npositional arguments:\n  COMANDO\n    start       abre la sesió"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --help",
+        "exit": 0,
+        "out_head": "usage: acm.py learning [-h] [--session SESSION] [--title TITLE] [--body BODY]\n                       [--topic TOPIC] [--confidence CONFIDENCE]\n\noptions:\n  -h, -"
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/tools/acm.py learning --session ses_exp29 --title \"Parser en UTC\" --body \"Las fechas sin zona se interpretan como UTC.\" --topic parser",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\"}\n"
+      }
+    ]
+  },
+  {
+    "id": 30,
+    "variante": "cli",
+    "escenario": "enum-invalido",
+    "rondas_usuario": 1,
+    "fixture_rondas_registradas": 0,
+    "fixture_mensaje_detectado": [],
+    "errores_recalculados": [],
+    "notas_recalculadas": [],
+    "diffs": {
+      "errores_antes": 0,
+      "errores_recalculados": 0,
+      "llamadas_antes": 2,
+      "llamadas_bd": 2
+    },
+    "llamadas": [
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py --help",
+        "exit": 0,
+        "out_head": "uso: cli-json.py [--schema] < entrada.json\n\nEvento `learning` con un objeto JSON completo por stdin (sin flags):\n  {\"session\": \"ses_x\", \"title\": \"...\", \"body\": "
+      },
+      {
+        "cmd": "python3 /tmp/opencode/lab/cli-json.py <<< '{\"session\":\"ses_exp30\",\"title\":\"Parser en UTC\",\"body\":\"Las fechas sin zona se interpretan como UTC.\",\"topic\":\"parser-",
+        "exit": 0,
+        "out_head": "{\"ok\":true,\"result\":\"created\",\"id\":\"01a20ef0-3010-7300-ac80-203149f7dac5\",\"content_hash\":\"sha256:b5fbec22003eaf01104cec4d83f6054f3cbe6c93f11d77850a13f323e9ff7eb"
+      }
+    ]
+  }
+]

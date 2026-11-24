@@ -1,0 +1,15 @@
+No he registrado nada todavía. Antes de escribir, verifiqué el contrato de la herramienta (1 de 3 invocaciones usadas) y confirma lo mismo que el rechazo anterior:
+
+- `confidence` solo admite: `confirmed`, `inference`, `hypothesis`, `proposal`, `unknown`.
+- El valor que me has dado, `confimed`, no está en esa lista y volvería a ser rechazado (`invalid_field`).
+
+El resto de los datos sí son válidos y están completos (título y cuerpo son los obligatorios).
+
+Me detengo aquí porque no puedo cumplir las dos condiciones a la vez: registrar con `confimed` falla, y cambiarlo por mi cuenta a `confirmed` sería registrar un dato que no me has dado, lo que choca con «no registres nada que no esté en los datos anteriores».
+
+Dime cuál de estas dos opciones prefieres y lo ejecuto (me quedan 2 invocaciones):
+
+1. **Usar `confirmed`** — asumo que `confimed` es una errata. Registraría: sesión `ses_exp26`, título «Parser en UTC», cuerpo «Las fechas sin zona se interpretan como UTC.», topic `parser-fechas`, confianza `confirmed`.
+2. **Otro valor permitido** (`inference`, `hypothesis`, `proposal` o `unknown`) — indícame cuál.
+
+(Si prefieres que la errata quede tal cual, no es posible: la herramienta no lo acepta.)

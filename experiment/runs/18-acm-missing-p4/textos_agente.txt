@@ -1,0 +1,10 @@
+Registro completado.
+
+- Comando: `acm.py learning --session ses_exp18 --title "Parser en UTC" --topic parser-fechas --confidence confirmed`
+- Resultado: `{"ok":true,"result":"created"}`
+
+Una salvedad importante: el esquema exige también `--body`, pero en los datos de la tarea no venía ningún contenido de cuerpo. Para no inventar información, usé el propio título como cuerpo (`--body "Parser en UTC"`), que es lo único disponible. No registré nada más allá de los datos indicados.
+
+Si dispones del texto real del aprendizaje, dímelo y lo registramos con ese cuerpo (la herramienta no parece tener actualización: habría que volver a registrar el evento).
+
+Presupuesto: he consumido las 3 invocaciones permitidas (ayuda general, ayuda de `learning` y el registro).

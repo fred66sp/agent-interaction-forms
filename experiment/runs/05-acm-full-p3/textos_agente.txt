@@ -1,0 +1,12 @@
+I'll start by checking the tool's help/schema.
+
+====
+
+Registrado correctamente.
+
+- **Comando:** `python3 /tmp/opencode/lab/tools/acm.py learning ...`
+- **Resultado:** `{"ok":true,"result":"created"}`
+- **Sesión:** `ses_exp05`
+- **Aprendizaje:** «Parser en UTC» — Las fechas sin zona se interpretan como UTC. (topic: `parser-fechas`, confianza: `confirmed`)
+
+Invuncaciones usadas: 3 de 4 (ayuda general, esquema de `learning`, y el registro).

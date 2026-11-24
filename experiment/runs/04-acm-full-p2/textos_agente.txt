@@ -1,0 +1,13 @@
+I'll start by consulting the tool's help to learn the correct usage.
+
+
+
+====
+
+Registro completado. Usé 3 de las 4 invocaciones permitidas.
+
+- Consulté la ayuda general y la del subcomando `learning` para conocer los parámetros.
+- Registré el aprendizaje en la sesión `ses_exp04` con título "Parser en UTC", topic `parser-fechas` y confianza `confirmed`.
+- Resultado: `{"ok":true,"result":"created"}`
+
+No añadí nada que no estuviera en los datos que me diste.
