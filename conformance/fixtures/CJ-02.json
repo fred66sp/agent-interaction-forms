@@ -1,0 +1,33 @@
+{
+  "id": "CJ-02",
+  "description": "Campo obligatorio ausente (§8.2): missing exacto, fields descriptivo y collected sin pérdidas.",
+  "request": "{\"aif\":\"0.1\",\"operation\":\"record_observation\",\"input\":{\"kind\":\"learning\"}}",
+  "preconditions": {
+    "env": {},
+    "store": []
+  },
+  "assertions": {
+    "exit_code": 2,
+    "result": "input_needed",
+    "echo_operation": true,
+    "missing": ["title", "confidence"],
+    "must": ["fields", "collected"],
+    "must_not": ["invalid", "reason", "message", "outcome"],
+    "fields": {
+      "title": {
+        "required": true,
+        "type": "string",
+        "description": "Título breve de la observación"
+      },
+      "confidence": {
+        "required": true,
+        "type": "string",
+        "allowed": ["hypothesis", "confirmed"]
+      }
+    },
+    "collected": {
+      "kind": "learning"
+    },
+    "writes": 0
+  }
+}

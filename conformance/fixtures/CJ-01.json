@@ -1,0 +1,18 @@
+{
+  "id": "CJ-01",
+  "description": "Ejecución directa (§8.1): una única escritura y código 0.",
+  "request": "{\"aif\":\"0.1\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Perfil CLI decidido\",\"kind\":\"decision\",\"confidence\":\"confirmed\"}}",
+  "preconditions": {
+    "env": {},
+    "store": []
+  },
+  "assertions": {
+    "exit_code": 0,
+    "result": "executed",
+    "echo_operation": true,
+    "must": ["aif", "operation", "result", "outcome"],
+    "must_not": ["missing", "invalid", "fields", "collected", "reason", "message", "supported", "known_operations"],
+    "outcome_members": ["id", "recorded_at"],
+    "writes": 1
+  }
+}

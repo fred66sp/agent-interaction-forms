@@ -1,0 +1,19 @@
+{
+  "id": "CJ-10",
+  "description": "Operación desconocida: unknown_operation con known_operations, eco y código 3.",
+  "request": "{\"aif\":\"0.1\",\"operation\":\"no_existe\"}",
+  "preconditions": {
+    "env": {},
+    "store": []
+  },
+  "assertions": {
+    "exit_code": 3,
+    "result": "unknown_operation",
+    "echo_operation": true,
+    "operation": "no_existe",
+    "known_operations": ["record_observation"],
+    "must": ["known_operations"],
+    "must_not": ["outcome", "missing", "invalid", "fields", "collected"],
+    "writes": 0
+  }
+}

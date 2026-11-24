@@ -1,0 +1,21 @@
+{
+  "id": "CJ-06a",
+  "description": "Fallo forzado del dominio (§8.7): failed con message, código 1 y ninguna escritura.",
+  "request": "{\"aif\":\"0.1\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Fallo simulado\",\"kind\":\"discovery\",\"confidence\":\"hypothesis\"}}",
+  "preconditions": {
+    "env": {
+      "AIF_DEMO_STORAGE_FAIL": "1"
+    },
+    "store": []
+  },
+  "assertions": {
+    "exit_code": 1,
+    "result": "failed",
+    "echo_operation": true,
+    "must": ["message", "code"],
+    "must_not": ["outcome", "missing", "invalid", "fields", "collected"],
+    "message": "el almacenamiento rechazó la escritura; estado desconocido, la observación no queda registrada",
+    "code": "storage_unavailable",
+    "writes": 0
+  }
+}

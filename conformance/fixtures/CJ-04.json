@@ -1,0 +1,30 @@
+{
+  "id": "CJ-04",
+  "description": "Operación denegada (§8.6) y manipulación de permisos en el input: sigue denied.",
+  "request": "{\"aif\":\"0.1\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Sin permiso\",\"kind\":\"decision\",\"confidence\":\"confirmed\"}}",
+  "preconditions": {
+    "env": {
+      "AIF_DEMO_DENY_WRITE": "1"
+    },
+    "store": []
+  },
+  "assertions": {
+    "exit_code": 4,
+    "result": "denied",
+    "echo_operation": true,
+    "must": ["reason"],
+    "must_not": ["missing", "invalid", "fields", "collected", "outcome"],
+    "reason": "el consumidor no tiene permiso de escritura sobre el dominio",
+    "writes": 0
+  },
+  "follow_up": {
+    "request": "{\"aif\":\"0.1\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Permiso simulado\",\"kind\":\"decision\",\"confidence\":\"confirmed\",\"contact\":\"token-de-permiso\"}}",
+    "assertions": {
+      "exit_code": 4,
+      "result": "denied",
+      "echo_operation": true,
+      "reason": "el consumidor no tiene permiso de escritura sobre el dominio",
+      "writes": 0
+    }
+  }
+}
