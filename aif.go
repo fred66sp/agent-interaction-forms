@@ -1,4 +1,4 @@
-// Package aif implements the AIF v0.1 interaction contract (docs/SPECIFICATION.md
+// Package aif implements the AIF v0.2 interaction contract (docs/SPECIFICATION.md
 // §§1–6): request envelopes, the eight results, field descriptions, sensitive
 // values and stateless continuation. The CLI profile of §7 is demonstrated by
 // cmd/aifdemo.
@@ -6,8 +6,9 @@ package aif
 
 import "encoding/json"
 
-// Version is the AIF contract version implemented by this package.
-const Version = "0.1"
+// Version is the AIF contract version implemented by this package. It is the
+// only version accepted: any other declared version is unsupported.
+const Version = "0.2"
 
 // Result values defined by §2.
 const (
@@ -62,6 +63,15 @@ type Executor struct {
 type DeniedError struct{ Reason string }
 
 func (e DeniedError) Error() string { return e.Reason }
+
+// InvalidError reports a domain rule that rejected input fields (§3.2). Fields
+// maps each field name to its deterministic reason. Return it from Execute at
+// the start, before any effect: the executor rebuilds the repairable response
+// from these reasons, the request and the operation metadata, so the domain
+// never composes `invalid` or `collected` itself.
+type InvalidError struct{ Fields map[string]string }
+
+func (e InvalidError) Error() string { return "invalid input" }
 
 // DomainError reports a domain or infrastructure failure (§3.4).
 type DomainError struct {

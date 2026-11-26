@@ -1,7 +1,7 @@
 {
   "id": "CJ-09",
   "description": "Invocación sin operation (CL-05): descubrimiento con id por operación y código 0.",
-  "request": "{\"aif\":\"0.1\"}",
+  "request": "{\"aif\":\"0.2\"}",
   "preconditions": {
     "env": {},
     "store": []

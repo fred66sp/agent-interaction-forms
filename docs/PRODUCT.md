@@ -1,6 +1,6 @@
 # AIF — Agent Interaction Forms
 
-**Visión de producto · v0.1 · Aprobada por el PO**
+**Visión de producto · v0.2 · Aprobada por el PO**
 
 *Herramientas que saben interactuar con agentes de inteligencia artificial.*
 
@@ -28,9 +28,11 @@ El funcionamiento se basa en tres situaciones habituales:
 
 - **Información completa:** la herramienta ejecuta directamente la operación.
 - **Información incompleta:** la herramienta devuelve un formulario contextual indicando qué información necesita.
-- **Información incorrecta:** la herramienta identifica los errores, conserva los datos válidos no sensibles e indica cómo continuar.
+- **Información incorrecta:** la herramienta identifica todos los errores detectados, conserva los datos conocidos no sensibles y no rechazados e indica cómo continuar. La conservación evita reenviar datos, pero no certifica que sean válidos.
 
 El formulario no es una interfaz gráfica. Es una respuesta estructurada que el agente puede interpretar directamente.
+
+Cada intercambio es independiente: la herramienta no conserva estado del formulario y revalida lo que recibe antes de actuar, de modo que una petición inválida no deja efectos de dominio.
 
 ### Ejemplo
 
@@ -106,8 +108,8 @@ El proyecto dispone de una primera base técnica funcional:
 
 | Componente | Estado |
 |---|---|
-| AIF Core | Implementación inicial disponible en Go. |
-| AIF Specification | Contrato v0.1 definido y aprobado. |
+| AIF Core | Implementación disponible en Go sobre el contrato v0.2. |
+| AIF Specification | Contrato v0.2 definido y aprobado; v0.1.1 queda como contrato histórico. |
 | CLI de demostración | Disponible. |
 | Pruebas de conformidad | Disponibles. |
 | Prueba de concepto con ACM | Realizada. |

@@ -1,7 +1,7 @@
 {
   "id": "CJ-06a",
   "description": "Fallo forzado del dominio (§8.7): failed con message, código 1 y ninguna escritura.",
-  "request": "{\"aif\":\"0.1\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Fallo simulado\",\"kind\":\"discovery\",\"confidence\":\"hypothesis\"}}",
+  "request": "{\"aif\":\"0.2\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Fallo simulado\",\"kind\":\"discovery\",\"confidence\":\"hypothesis\"}}",
   "preconditions": {
     "env": {
       "AIF_DEMO_STORAGE_FAIL": "1"

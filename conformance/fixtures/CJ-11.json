@@ -15,7 +15,7 @@
       "reason": "carece de aif"
     },
     {
-      "text": "{\"aif\":\"0.1\",\"aif\":\"0.1\"}",
+      "text": "{\"aif\":\"0.2\",\"aif\":\"0.2\"}",
       "reason": "claves duplicadas"
     }
   ],
@@ -29,7 +29,7 @@
     "echo_operation": false,
     "must": ["reason"],
     "must_not": ["operation", "outcome", "missing", "invalid", "fields", "collected"],
-    "supported": ["0.1"],
+    "supported": ["0.2"],
     "writes": 0
   }
 }

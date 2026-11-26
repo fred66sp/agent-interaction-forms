@@ -1,7 +1,7 @@
 {
   "id": "CJ-07",
   "description": "Valor sensible en el input (§8.2): no aparece en ninguna parte de la respuesta y sigue input_needed.",
-  "request": "{\"aif\":\"0.1\",\"operation\":\"record_observation\",\"input\":{\"kind\":\"learning\",\"contact\":\"secreto-123\"}}",
+  "request": "{\"aif\":\"0.2\",\"operation\":\"record_observation\",\"input\":{\"kind\":\"learning\",\"contact\":\"secreto-123\"}}",
   "preconditions": {
     "env": {},
     "store": []

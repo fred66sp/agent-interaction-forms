@@ -2,6 +2,7 @@ package aif
 
 import (
 	"encoding/json"
+	"fmt"
 	"reflect"
 	"strings"
 	"testing"
@@ -82,7 +83,7 @@ func absent(t *testing.T, doc map[string]json.RawMessage, name string) {
 func TestExecuted(t *testing.T) {
 	calls := 0
 	ex := testExecutor(t, &calls, nil)
-	doc := handleJSON(t, ex, `{"aif":"0.1","operation":"test","input":{"name":"n","mode":"a","note":"x"}}`)
+	doc := handleJSON(t, ex, `{"aif":"0.2","operation":"test","input":{"name":"n","mode":"a","note":"x"}}`)
 
 	assertResult(t, doc, ResultExecuted)
 	if got := stringMember(t, doc, "operation"); got != "test" {
@@ -105,7 +106,7 @@ func TestExecuted(t *testing.T) {
 func TestInputNeededKeepsFalsyValues(t *testing.T) {
 	calls := 0
 	ex := testExecutor(t, &calls, nil)
-	doc := handleJSON(t, ex, `{"aif":"0.1","operation":"test","input":{"name":"","flag":false,"count":0,"tags":[]}}`)
+	doc := handleJSON(t, ex, `{"aif":"0.2","operation":"test","input":{"name":"","flag":false,"count":0,"tags":[]}}`)
 
 	assertResult(t, doc, ResultInputNeeded)
 	var missing []string
@@ -140,7 +141,7 @@ func TestInputNeededKeepsFalsyValues(t *testing.T) {
 func TestSensitiveValueNeverReturned(t *testing.T) {
 	calls := 0
 	ex := testExecutor(t, &calls, nil)
-	data, err := json.Marshal(ex.Handle([]byte(`{"aif":"0.1","operation":"test","input":{"name":"n","mode":"a","secret":"s3cr3t"}}`)))
+	data, err := json.Marshal(ex.Handle([]byte(`{"aif":"0.2","operation":"test","input":{"name":"n","mode":"a","secret":"s3cr3t"}}`)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -164,7 +165,7 @@ func TestSensitiveValueNeverReturned(t *testing.T) {
 func TestInvalidTakesPrecedenceOverMissing(t *testing.T) {
 	calls := 0
 	ex := testExecutor(t, &calls, nil)
-	doc := handleJSON(t, ex, `{"aif":"0.1","operation":"test","input":{"name":"n","mode":"c"}}`)
+	doc := handleJSON(t, ex, `{"aif":"0.2","operation":"test","input":{"name":"n","mode":"c"}}`)
 
 	assertResult(t, doc, ResultInvalid)
 	var missing []string
@@ -200,7 +201,7 @@ func TestInvalidTakesPrecedenceOverMissing(t *testing.T) {
 func TestOptionalInvalidAndUnknownMember(t *testing.T) {
 	calls := 0
 	ex := testExecutor(t, &calls, nil)
-	doc := handleJSON(t, ex, `{"aif":"0.1","operation":"test","input":{"name":"n","mode":"a","note":"x","flag":"yes","bogus":1}}`)
+	doc := handleJSON(t, ex, `{"aif":"0.2","operation":"test","input":{"name":"n","mode":"a","note":"x","flag":"yes","bogus":1}}`)
 
 	assertResult(t, doc, ResultInvalid)
 	var invalid map[string]FieldProblem
@@ -244,7 +245,7 @@ func TestCustomRulePublishesSchema(t *testing.T) {
 			return json.RawMessage(`{}`), nil
 		},
 	}}}
-	doc := handleJSON(t, ex, `{"aif":"0.1","operation":"test","input":{"code":"abcd"}}`)
+	doc := handleJSON(t, ex, `{"aif":"0.2","operation":"test","input":{"code":"abcd"}}`)
 	assertResult(t, doc, ResultInvalid)
 	var invalid map[string]FieldProblem
 	if err := json.Unmarshal(member(t, doc, "invalid"), &invalid); err != nil {
@@ -280,7 +281,7 @@ func TestHookWithoutReasonGetsDefaultOne(t *testing.T) {
 			return json.RawMessage(`{}`), nil
 		},
 	}}}
-	doc := handleJSON(t, ex, `{"aif":"0.1","operation":"test","input":{"code":"x"}}`)
+	doc := handleJSON(t, ex, `{"aif":"0.2","operation":"test","input":{"code":"x"}}`)
 	assertResult(t, doc, ResultInvalid)
 	var invalid map[string]FieldProblem
 	if err := json.Unmarshal(member(t, doc, "invalid"), &invalid); err != nil {
@@ -296,7 +297,7 @@ func TestDenied(t *testing.T) {
 	ex := testExecutor(t, &calls, func(map[string]json.RawMessage) (json.RawMessage, error) {
 		return nil, DeniedError{Reason: "sin permiso"}
 	})
-	doc := handleJSON(t, ex, `{"aif":"0.1","operation":"test","input":{"name":"n","mode":"a","note":"x"}}`)
+	doc := handleJSON(t, ex, `{"aif":"0.2","operation":"test","input":{"name":"n","mode":"a","note":"x"}}`)
 	assertResult(t, doc, ResultDenied)
 	if got := stringMember(t, doc, "reason"); got != "sin permiso" {
 		t.Errorf("reason = %q", got)
@@ -311,7 +312,7 @@ func TestFailed(t *testing.T) {
 	ex := testExecutor(t, &calls, func(map[string]json.RawMessage) (json.RawMessage, error) {
 		return nil, DomainError{Message: "no se pudo escribir", Code: "storage_unavailable"}
 	})
-	doc := handleJSON(t, ex, `{"aif":"0.1","operation":"test","input":{"name":"n","mode":"a","note":"x"}}`)
+	doc := handleJSON(t, ex, `{"aif":"0.2","operation":"test","input":{"name":"n","mode":"a","note":"x"}}`)
 	assertResult(t, doc, ResultFailed)
 	if got := stringMember(t, doc, "message"); got != "no se pudo escribir" {
 		t.Errorf("message = %q", got)
@@ -322,29 +323,227 @@ func TestFailed(t *testing.T) {
 	absent(t, doc, "outcome")
 }
 
-func TestUnsupportedVersionDoesNotProcessInput(t *testing.T) {
+func TestDomainInvalidIsRepairable(t *testing.T) {
 	calls := 0
-	ex := testExecutor(t, &calls, nil)
-	doc := handleJSON(t, ex, `{"aif":"1.0","operation":"test","input":{"name":"n","mode":"a","note":"x"}}`)
-	assertResult(t, doc, ResultUnsupportedVersion)
-	var supported []string
-	if err := json.Unmarshal(member(t, doc, "supported"), &supported); err != nil {
+	ex := testExecutor(t, &calls, func(map[string]json.RawMessage) (json.RawMessage, error) {
+		return nil, InvalidError{Fields: map[string]string{"mode": "combinación no permitida"}}
+	})
+	doc := handleJSON(t, ex, `{"aif":"0.2","operation":"test","input":{"name":"n","mode":"a","note":"x","secret":"s3cr3t"}}`)
+
+	assertResult(t, doc, ResultInvalid)
+	absent(t, doc, "missing")
+	absent(t, doc, "outcome")
+	var invalid map[string]FieldProblem
+	if err := json.Unmarshal(member(t, doc, "invalid"), &invalid); err != nil {
 		t.Fatal(err)
 	}
-	if want := []string{Version}; !reflect.DeepEqual(supported, want) {
-		t.Errorf("supported = %v, want %v", supported, want)
+	problem, ok := invalid["mode"]
+	if !ok {
+		t.Fatalf("invalid no describe mode: %v", invalid)
 	}
-	absent(t, doc, "operation")
-	absent(t, doc, "outcome")
+	if problem.Reason != "combinación no permitida" {
+		t.Errorf("reason = %q, want %q", problem.Reason, "combinación no permitida")
+	}
+	var value string
+	if err := json.Unmarshal(problem.Value, &value); err != nil || value != "a" {
+		t.Errorf("value = %s, want \"a\"", problem.Value)
+	}
+	if want := []string{"a", "b"}; !reflect.DeepEqual(problem.Allowed, want) {
+		t.Errorf("allowed = %v, want %v", problem.Allowed, want)
+	}
+	var collected map[string]json.RawMessage
+	if err := json.Unmarshal(member(t, doc, "collected"), &collected); err != nil {
+		t.Fatal(err)
+	}
+	want := map[string]json.RawMessage{"name": json.RawMessage(`"n"`), "note": json.RawMessage(`"x"`)}
+	if !reflect.DeepEqual(collected, want) {
+		t.Errorf("collected = %v, want %v", collected, want)
+	}
+	if calls != 1 {
+		t.Errorf("Execute llamadas = %d, want 1", calls)
+	}
+}
+
+func TestDomainInvalidReportsEveryProblemAndHidesSecrets(t *testing.T) {
+	calls := 0
+	ex := testExecutor(t, &calls, func(map[string]json.RawMessage) (json.RawMessage, error) {
+		return nil, InvalidError{Fields: map[string]string{
+			"secret": "formato no válido",
+			"mode":   "no disponible",
+		}}
+	})
+	data, err := json.Marshal(ex.Handle([]byte(`{"aif":"0.2","operation":"test","input":{"name":"n","mode":"a","note":"x","secret":"s3cr3t"}}`)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(data), "s3cr3t") {
+		t.Errorf("el valor sensible aparece en la respuesta: %s", data)
+	}
+	var doc map[string]json.RawMessage
+	if err := json.Unmarshal(data, &doc); err != nil {
+		t.Fatal(err)
+	}
+	assertResult(t, doc, ResultInvalid)
+	var invalid map[string]FieldProblem
+	if err := json.Unmarshal(member(t, doc, "invalid"), &invalid); err != nil {
+		t.Fatal(err)
+	}
+	if len(invalid) != 2 {
+		t.Errorf("invalid = %v, want los dos campos rechazados", invalid)
+	}
+	if _, ok := invalid["secret"]; !ok {
+		t.Errorf("invalid no describe secret: %v", invalid)
+	}
+	if invalid["secret"].Value != nil {
+		t.Errorf("invalid[secret].value = %s, want ausente", invalid["secret"].Value)
+	}
+	var collected map[string]json.RawMessage
+	if err := json.Unmarshal(member(t, doc, "collected"), &collected); err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range []string{"mode", "secret"} {
+		if _, ok := collected[name]; ok {
+			t.Errorf("collected no debe incluir %q: %v", name, collected)
+		}
+	}
+	if calls != 1 {
+		t.Errorf("Execute llamadas = %d, want 1", calls)
+	}
+}
+
+// A domain InvalidError that cannot be rebuilt is a domain defect: the
+// response is failed, never a reparable invalid with invented content.
+func TestUnusableInvalidErrorFails(t *testing.T) {
+	tests := []struct {
+		name   string
+		input  string
+		fields map[string]string
+	}{
+		{"mapa nulo", `{"name":"n","mode":"a","note":"x"}`, nil},
+		{"mapa vacío", `{"name":"n","mode":"a","note":"x"}`, map[string]string{}},
+		{"campo desconocido", `{"name":"n","mode":"a","note":"x"}`, map[string]string{"bogus": "no existe"}},
+		{"motivo vacío", `{"name":"n","mode":"a","note":"x"}`, map[string]string{"mode": ""}},
+		{"motivo en blanco", `{"name":"n","mode":"a","note":"x"}`, map[string]string{"mode": "   "}},
+		{"campo ausente", `{"name":"n","mode":"a","note":"x"}`, map[string]string{"flag": "no puede estar ausente"}},
+		{"campo nulo", `{"name":"n","mode":"a","note":"x","flag":null}`, map[string]string{"flag": "no puede ser nulo"}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			calls := 0
+			ex := testExecutor(t, &calls, func(map[string]json.RawMessage) (json.RawMessage, error) {
+				return nil, InvalidError{Fields: tt.fields}
+			})
+			doc := handleJSON(t, ex, `{"aif":"0.2","operation":"test","input":`+tt.input+`}`)
+			assertResult(t, doc, ResultFailed)
+			if got := stringMember(t, doc, "message"); got == "" {
+				t.Error("failed sin message")
+			}
+			for _, name := range []string{"invalid", "collected", "missing", "outcome"} {
+				absent(t, doc, name)
+			}
+			if calls != 1 {
+				t.Errorf("Execute llamadas = %d, want 1", calls)
+			}
+		})
+	}
+}
+
+func TestWrappedDomainErrors(t *testing.T) {
+	tests := []struct {
+		name   string
+		result string
+		err    error
+	}{
+		{"denied", ResultDenied, fmt.Errorf("dominio: %w", DeniedError{Reason: "sin permiso"})},
+		{"failed", ResultFailed, fmt.Errorf("dominio: %w", DomainError{Message: "no se pudo", Code: "storage"})},
+		{"invalid", ResultInvalid, fmt.Errorf("dominio: %w", InvalidError{Fields: map[string]string{"mode": "no disponible"}})},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			calls := 0
+			ex := testExecutor(t, &calls, func(map[string]json.RawMessage) (json.RawMessage, error) {
+				return nil, tt.err
+			})
+			doc := handleJSON(t, ex, `{"aif":"0.2","operation":"test","input":{"name":"n","mode":"a","note":"x"}}`)
+			assertResult(t, doc, tt.result)
+			absent(t, doc, "outcome")
+			if calls != 1 {
+				t.Errorf("Execute llamadas = %d, want 1", calls)
+			}
+		})
+	}
+}
+
+// Exhaustive validation: one exchange reports every detected problem, both
+// absent and invalid fields, not just the first one.
+func TestReportsEveryDetectedProblem(t *testing.T) {
+	calls := 0
+	ex := testExecutor(t, &calls, nil)
+	doc := handleJSON(t, ex, `{"aif":"0.2","operation":"test","input":{"name":"n","mode":"c","note":null,"flag":"yes","bogus":1}}`)
+
+	assertResult(t, doc, ResultInvalid)
+	var missing []string
+	if err := json.Unmarshal(member(t, doc, "missing"), &missing); err != nil {
+		t.Fatal(err)
+	}
+	if want := []string{"note"}; !reflect.DeepEqual(missing, want) {
+		t.Errorf("missing = %v, want %v", missing, want)
+	}
+	var invalid map[string]FieldProblem
+	if err := json.Unmarshal(member(t, doc, "invalid"), &invalid); err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range []string{"mode", "flag", "bogus"} {
+		if _, ok := invalid[name]; !ok {
+			t.Errorf("invalid no describe %q: %v", name, invalid)
+		}
+	}
+	if len(invalid) != 3 {
+		t.Errorf("invalid = %v, want 3 problemas", invalid)
+	}
+	var collected map[string]json.RawMessage
+	if err := json.Unmarshal(member(t, doc, "collected"), &collected); err != nil {
+		t.Fatal(err)
+	}
+	want := map[string]json.RawMessage{"name": json.RawMessage(`"n"`)}
+	if !reflect.DeepEqual(collected, want) {
+		t.Errorf("collected = %v, want %v", collected, want)
+	}
 	if calls != 0 {
 		t.Errorf("Execute llamadas = %d, want 0", calls)
+	}
+}
+
+func TestUnsupportedVersionDoesNotProcessInput(t *testing.T) {
+	for _, version := range []string{"0.1", "1.0"} {
+		t.Run(version, func(t *testing.T) {
+			calls := 0
+			ex := testExecutor(t, &calls, nil)
+			doc := handleJSON(t, ex, `{"aif":"`+version+`","operation":"test","input":{"name":"n","mode":"a","note":"x"}}`)
+			assertResult(t, doc, ResultUnsupportedVersion)
+			if got := stringMember(t, doc, "aif"); got != Version {
+				t.Errorf("aif = %q, want %q", got, Version)
+			}
+			var supported []string
+			if err := json.Unmarshal(member(t, doc, "supported"), &supported); err != nil {
+				t.Fatal(err)
+			}
+			if want := []string{Version}; !reflect.DeepEqual(supported, want) {
+				t.Errorf("supported = %v, want %v", supported, want)
+			}
+			absent(t, doc, "operation")
+			absent(t, doc, "outcome")
+			if calls != 0 {
+				t.Errorf("Execute llamadas = %d, want 0", calls)
+			}
+		})
 	}
 }
 
 func TestUnknownOperationEchoesIt(t *testing.T) {
 	calls := 0
 	ex := testExecutor(t, &calls, nil)
-	doc := handleJSON(t, ex, `{"aif":"0.1","operation":"nope"}`)
+	doc := handleJSON(t, ex, `{"aif":"0.2","operation":"nope"}`)
 	assertResult(t, doc, ResultUnknownOperation)
 	if got := stringMember(t, doc, "operation"); got != "nope" {
 		t.Errorf("operation = %q, want %q", got, "nope")
@@ -364,7 +563,7 @@ func TestUnknownOperationEchoesIt(t *testing.T) {
 func TestDiscovery(t *testing.T) {
 	calls := 0
 	ex := testExecutor(t, &calls, nil)
-	response := ex.Handle([]byte(`{"aif":"0.1"}`))
+	response := ex.Handle([]byte(`{"aif":"0.2"}`))
 	if response.Discovery == nil {
 		t.Fatal("se esperaba una respuesta de descubrimiento")
 	}
@@ -388,9 +587,9 @@ func TestDiscovery(t *testing.T) {
 }
 
 func TestMalformedRequests(t *testing.T) {
-	deep := `{"aif":"0.1","operation":"test","input":{"tags":` +
+	deep := `{"aif":"0.2","operation":"test","input":{"tags":` +
 		strings.Repeat("[", MaxDepth+1) + strings.Repeat("]", MaxDepth+1) + `}}`
-	large := strings.Repeat(" ", MaxInputBytes+1) + `{"aif":"0.1","operation":"test"}`
+	large := strings.Repeat(" ", MaxInputBytes+1) + `{"aif":"0.2","operation":"test"}`
 
 	tests := []struct {
 		name    string
@@ -400,13 +599,13 @@ func TestMalformedRequests(t *testing.T) {
 		{"vacía", "", malformedEmpty},
 		{"solo espacios", "   ", malformedEmpty},
 		{"json inválido", `{"aif":`, malformedSyntax},
-		{"contenido tras el objeto", `{"aif":"0.1","operation":"test"}{}`, malformedSyntax},
+		{"contenido tras el objeto", `{"aif":"0.2","operation":"test"}{}`, malformedSyntax},
 		{"no es objeto", `[1,2,3]`, malformedNotObject},
 		{"sin aif", `{"operation":"test"}`, malformedNoAIF},
 		{"aif nula", `{"aif":null,"operation":"test"}`, malformedNoAIF},
 		{"aif no textual", `{"aif":1,"operation":"test"}`, malformedAIFType},
-		{"claves duplicadas", `{"aif":"0.1","aif":"0.1","operation":"test"}`, malformedDuplicate},
-		{"input no objeto", `{"aif":"0.1","operation":"test","input":[]}`, malformedInputType},
+		{"claves duplicadas", `{"aif":"0.2","aif":"0.2","operation":"test"}`, malformedDuplicate},
+		{"input no objeto", `{"aif":"0.2","operation":"test","input":[]}`, malformedInputType},
 		{"demasiado profundo", deep, malformedTooDeep},
 		{"demasiado grande", large, malformedTooLarge},
 	}
@@ -430,9 +629,9 @@ func TestMalformedRequests(t *testing.T) {
 
 func TestDeterministic(t *testing.T) {
 	requests := []string{
-		`{"aif":"0.1","operation":"test","input":{"name":"n","mode":"a","note":"x"}}`,
-		`{"aif":"0.1","operation":"test","input":{"mode":"a"}}`,
-		`{"aif":"0.1","operation":"nope"}`,
+		`{"aif":"0.2","operation":"test","input":{"name":"n","mode":"a","note":"x"}}`,
+		`{"aif":"0.2","operation":"test","input":{"mode":"a"}}`,
+		`{"aif":"0.2","operation":"nope"}`,
 	}
 	for _, request := range requests {
 		t.Run(request, func(t *testing.T) {

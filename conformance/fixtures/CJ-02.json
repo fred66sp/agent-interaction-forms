@@ -1,7 +1,7 @@
 {
   "id": "CJ-02",
   "description": "Campo obligatorio ausente (§8.2): missing exacto, fields descriptivo y collected sin pérdidas.",
-  "request": "{\"aif\":\"0.1\",\"operation\":\"record_observation\",\"input\":{\"kind\":\"learning\"}}",
+  "request": "{\"aif\":\"0.2\",\"operation\":\"record_observation\",\"input\":{\"kind\":\"learning\"}}",
   "preconditions": {
     "env": {},
     "store": []
