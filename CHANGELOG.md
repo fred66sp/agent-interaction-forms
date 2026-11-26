@@ -6,6 +6,22 @@ al publicar; la historia de cada cambio, commit a commit, vive en Git.
 
 ## [Sin publicar]
 
+### Documentación
+
+- docs: consolidación conceptual y documental de AIF según el encargo del PO —
+  `docs/PRODUCT.md` v0.1 incorporado como fuente canónica de visión; README
+  simplificado como puerta de entrada (producto antes que detalles técnicos);
+  `docs/web` reorganizada en cuatro niveles (Comprender/Utilizar/Referencia
+  técnica/Investigación) con cuatro diagramas; `AGENTS.md` y `llms.txt`
+  alineados por referencia; tabla de fuentes de SPECIFICATION actualizada
+  (contenido normativo intacto; contrato v0.1 congelado).
+- docs: alinear `docs/PRD.md` (v0.1.6) con la visión aprobada en `docs/PRODUCT.md`
+  v0.1 — el PRD separa base técnica implementada, visión del producto completo y
+  capacidades pendientes de diseño (AIF CLI como producto y AIF Definition), sin
+  duplicar la visión, sin alterar requisitos, decisiones D-01..D-09, puerta §7 ni
+  secuencia, y deja señalada para el PO la decisión de encaje del alcance v0.1
+  cerrado con las modalidades futuras.
+
 ### Añadido
 
 - Implementación de referencia del MVP v0.1 en Go (D-03), sin dependencias externas:

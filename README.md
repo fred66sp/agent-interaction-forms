@@ -1,79 +1,102 @@
 # AIF — Agent Interaction Forms
 
-AIF es un contrato abierto, ligero e independiente del lenguaje para la interacción
-determinista entre agentes y herramientas. Su objetivo es que una operación completa se
-ejecute con una sola invocación, que una incompleta devuelva los datos necesarios para
-continuar y que una inválida permita corregir sin reconstruir los campos válidos.
+*Herramientas que saben interactuar con agentes de inteligencia artificial.*
 
-## Cómo funciona
+## Qué es AIF
 
-- **Operación completa:** los datos bastan y son válidos; el ejecutor la ejecuta y devuelve
-  el resultado mediante un contrato de máquina.
-- **Operación incompleta:** devuelve un formulario contextual con los campos pertinentes,
-  su obligatoriedad y sus restricciones, y una continuación explícita.
-- **Operación inválida:** identifica los errores y conserva los valores válidos no sensibles
-  para que el agente corrija sin repetir lo que ya era correcto.
+AIF permite dotar a una herramienta de software de una interfaz de interacción
+autodescriptiva, determinista y orientada a agentes: la herramienta comunica de
+forma estructurada qué necesita, qué admite y cómo continuar, en lugar de obligar
+al agente a descubrirlo. Cubre tres situaciones: **información completa** (se
+ejecuta), **incompleta** (formulario contextual) e **incorrecta** (se identifican
+los errores, se conservan los valores válidos no sensibles y se indica cómo seguir).
+No es un agente, un orquestador, un gestor de workflows ni un sistema de formularios
+gráficos, ni sustituye la lógica de negocio; el dominio conserva la autoridad sobre
+sus operaciones, permisos y reglas.
 
-El dominio conserva la autoridad: AIF no concede permisos y el ejecutor revalida toda
-entrada con sus propias reglas, sin confiar en los metadatos que declare el agente.
+## El problema
 
-## Estado del proyecto
+Las herramientas tradicionales están diseñadas para personas. Cuando un agente las
+usa, consulta documentación, interpreta errores, descubre parámetros, reconstruye
+peticiones y encadena invocaciones: incertidumbre, contexto y esfuerzo extra. AIF
+propone que la herramienta, no el agente, describa sus necesidades de interacción.
 
-| Elemento | Estado |
+## Ejemplo sencillo
+
+Un agente pide crear una tarea titulada «Revisar documentación». La herramienta
+necesita también la prioridad y, en lugar de un error genérico, le comunica el
+título recibido, la información pendiente (prioridad) y los valores admitidos
+(baja, media y alta). El agente la completa y repite la operación; con todos los
+datos desde el principio, se habría ejecutado en una invocación.
+
+**Principio fundamental: una necesidad, una invocación siempre que la información
+disponible sea suficiente.**
+
+## Dos modalidades
+
+- **Integración nativa:** la biblioteca AIF se incorpora al código de la aplicación,
+  que gana las capacidades de interacción sin ejecutable intermediario. Por ejemplo,
+  Tasks-AI podría integrarla en su binario Go conservando su lógica de negocio.
+- **Integración externa:** un ejecutable AIF actúa de intermediario entre el agente
+  y una herramienta existente descrita por un fichero de definición. **Pendiente de
+  diseño; no disponible.**
+
+Ambas modalidades comparten núcleo y contrato de interacción.
+
+## Estado actual
+
+| Componente | Estado |
 |---|---|
-| PRD | v0.1.5; preparación **PARCIAL**, pendiente de aprobación del PO |
-| RESEARCH | v0.1.2; investigación inicial, no normativa |
-| SPECIFICATION | v0.1.1 **APROBADO** por el PO (2026-11-24), tras la revisión integrada |
-| Experimento previo a Specification | Protocolo v0.1.6; ejecutado el 2026-11-24 (30/30 mediciones), resultado **INCONCLUSO** (PRD §7, orden 2) |
-| Implementación de referencia | **MVP v0.1 implementado** en Go: biblioteca `aif`, fixtures CJ-01..CJ-13, CLI `aifdemo` y PoC aislada con ACM |
+| AIF Core | Implementación inicial disponible en Go. |
+| AIF Specification | Contrato v0.1 definido y aprobado. |
+| CLI de demostración | Disponible. |
+| Pruebas de conformidad | Disponibles. |
+| Prueba de concepto con ACM | Realizada. |
+| AIF CLI como producto y AIF Definition | **Pendientes de diseño; no disponibles** (la CLI de demostración `aifdemo` existe, pero no es la capa externa del producto). |
 
-La secuencia acordada es RESEARCH → PRD → experimento → GO / NO-GO / INCONCLUSO →
-Specification → PoC con fixtures; no hay etapa de documento SDD (decisión D-09 del
-PO: el desarrollo sigue el flujo ODD del proyecto). El experimento quedó **INCONCLUSO**;
-el PO decidió continuar asumiendo la incertidumbre residual, y la Specification v0.1.1 y el
-MVP v0.1 se prepararon por encargo propio, sin que ello equivalga a un GO experimental. El
-alcance v0.1 cubre tres entregables, ya materializados: especificación mínima y perfil CLI,
-implementación de referencia con fixtures de conformidad, y PoC aislada con ACM. No se
-modifica ACM de producción.
+La base técnica es funcional, pero no es el producto completo ni hay beneficios
+cuantitativos demostrados: el experimento previo quedó **INCONCLUSO**
+([EXPERIMENT-RESULTS.md](docs/experiment/EXPERIMENT-RESULTS.md)).
+
+## Acceso a documentación
+
+| Documento | Qué contiene |
+|---|---|
+| [PRODUCT.md](docs/PRODUCT.md) | Visión de producto aprobada por el PO (v0.1) |
+| [PRD.md](docs/PRD.md) | Requisitos, alcance, criterios de la PoC y puerta GO/NO-GO (§7) |
+| [SPECIFICATION.md](docs/SPECIFICATION.md) | Contrato normativo v0.1.1: modelo, resultados y perfil CLI |
+| [RESEARCH.md](docs/RESEARCH.md) | Investigación previa, evidencia propia y hueco diferencial |
+| [EXPERIMENT.md](docs/experiment/EXPERIMENT.md) | Protocolo aprobado: diseño, métricas y plazo |
+| [EXPERIMENT-RESULTS.md](docs/experiment/EXPERIMENT-RESULTS.md) | Resultados y lectura; **INCONCLUSO** |
+| [EXPERIMENT-RUNBOOK.md](docs/experiment/EXPERIMENT-RUNBOOK.md) · [PLAN](docs/experiment/EXPERIMENT-PLAN.md) | Guía operativa · plan histórico superado |
+| [docs/web](docs/web/index.html) | Guía navegable: contrato, mensajes, integración y experimento |
+
+También: [AGENTS.md](AGENTS.md), [CONTRIBUTING.md](CONTRIBUTING.md),
+[CHANGELOG.md](CHANGELOG.md) y [`llms.txt`](llms.txt).
 
 ## Implementación de referencia (MVP v0.1)
 
-Implementación en Go, sin dependencias externas (solo la biblioteca estándar):
-
-- **Biblioteca [`aif`](aif.go)** — el núcleo del contrato (§§1–6): sobre de
-  peticiones, los ocho resultados, descripción de campos, valores sensibles,
-  continuación sin estado y límites de entrada (L-04: 256 KiB, profundidad 32).
-  Un integrador declara sus operaciones y ejecuta con `Executor.Handle`;
-  la lógica de negocio, la autorización y la persistencia quedan en el integrador.
-- **CLI de demostración `cmd/aifdemo`** — una operación (`record_observation`)
-  que ejercita el perfil CLI completo (§7): descubrimiento, información ausente,
-  corrección y continuación, con códigos de salida normativos.
-- **Fixtures de conformidad [`conformance/`](conformance)** — un fichero JSON por
-  caso CJ-01..CJ-13 (§9), independiente del lenguaje, más el runner que los
-  ejecuta contra la CLI.
-- **PoC aislada con ACM [`poc/acm/`](poc/acm)** — integra la biblioteca con el
-  adaptador real de ACM (copiado a un entorno efímero): ejecución directa,
-  información ausente, corrección de inválidos y conservación de las garantías
-  de ACM (deduplicación por contenido). Sin tocar ACM de producción.
+Go sin dependencias externas (los §§ remiten a [`docs/SPECIFICATION.md`](docs/SPECIFICATION.md)): [`aif`](aif.go) implementa el núcleo (§§1–6) y
+`Executor.Handle`; [`cmd/aifdemo`](cmd/aifdemo) ejercita el perfil CLI (§7);
+[`conformance/`](conformance) reúne CJ-01..CJ-13 (§9) con su runner; y
+[`poc/acm/`](poc/acm) es la PoC aislada con ACM (el proyecto que motivó AIF: su
+adaptador de memoria, montado sobre `db-ai`, fue el primer integrador real). Contrato normativo y detalle:
+[docs/SPECIFICATION.md](docs/SPECIFICATION.md) y [docs/web](docs/web/index.html).
 
 ### Ejemplo de uso de la biblioteca
 
 ```go
 op := &aif.Operation{
-    ID:          "record_observation",
-    Description: "Registra una observación",
+    ID: "record_observation", Description: "Registra una observación",
     Fields: []aif.Field{
-        {Name: "title", Required: true, Type: "string",
-            Schema: json.RawMessage(`{"maxLength":40}`)},
-        {Name: "kind", Required: true,
-            Allowed: []string{"learning", "decision"}},
+        {Name: "title", Required: true, Type: "string", Schema: json.RawMessage(`{"maxLength":40}`)},
+        {Name: "kind", Required: true, Allowed: []string{"learning", "decision"}},
     },
-    Execute: func(input map[string]json.RawMessage) (json.RawMessage, error) {
+    Execute: func(in map[string]json.RawMessage) (json.RawMessage, error) {
         return json.Marshal(map[string]string{"id": "obs_0001"}) // dominio
     },
 }
-executor := aif.Executor{Operations: []*aif.Operation{op}}
-resp := executor.Handle(rawRequest) // *Response con el resultado de §2/§3
+resp := (&aif.Executor{Operations: []*aif.Operation{op}}).Handle(rawRequest)
 ```
 
 ### Pruebas y demostración
@@ -84,32 +107,5 @@ go run ./cmd/aifdemo     # lee una petición AIF de stdin, escribe la respuesta
 bash poc/acm/run.sh      # PoC aislada de extremo a extremo (4 escenarios)
 ```
 
-La CLI no es interactiva: la petición llega por stdin, la respuesta es un único
-objeto JSON en stdout y los diagnósticos van en stderr. `docs/SPECIFICATION.md`
-permanece como única fuente normativa del contrato; este README no lo duplica.
-
-## Documentos base
-
-| Documento | Qué contiene |
-|---|---|
-| [PRD.md](docs/PRD.md) | Visión, usuarios, alcance, requisitos, criterios de aceptación de la PoC y la puerta GO/NO-GO de §7 |
-| [RESEARCH.md](docs/RESEARCH.md) | Investigación previa: antecedentes, evidencia propia de ACM, hueco diferencial y riesgos |
-| [EXPERIMENT.md](docs/experiment/EXPERIMENT.md) | Protocolo aprobado del experimento: diseño, métricas, interpretación y plazo |
-| [EXPERIMENT-PLAN.md](docs/experiment/EXPERIMENT-PLAN.md) | Plan de preparación original; **histórico y superado** por EXPERIMENT.md y el runbook |
-| [EXPERIMENT-RUNBOOK.md](docs/experiment/EXPERIMENT-RUNBOOK.md) | Guía operativa para quien ejecute el experimento en la máquina de desarrollo |
-
-## Evidencia de partida
-
-ACM demuestra viabilidad, no superioridad. Su registro informa de 22.900 tokens AIF frente
-a 12.700 de una interfaz convencional (+80,3 %) y 106.000 de db-ai directo, con n=1 por
-variante. No existe todavía una línea base comparable frente a una CLI JSON competente; el
-experimento de [EXPERIMENT.md](docs/experiment/EXPERIMENT.md) es el filtro de inversión que debe producirla
-antes de construir infraestructura.
-
-## Trabajo en el repositorio
-
-- [AGENTS.md](AGENTS.md) — mapa de dónde vive cada fuente canónica y qué leer antes de cada encargo.
-- [CONTRIBUTING.md](CONTRIBUTING.md) — política de ramas, commits, verificación y autorizaciones.
-- [CHANGELOG.md](CHANGELOG.md) — qué cambió en cada versión.
-- [`llms.txt`](llms.txt) — catálogo enlazable para agentes.
-- [`.tasks-ai/AGENTS.md`](.tasks-ai/AGENTS.md) — el tablero del proyecto y sus operaciones.
+La CLI no es interactiva: petición por stdin, respuesta JSON única en stdout y
+diagnósticos en stderr.

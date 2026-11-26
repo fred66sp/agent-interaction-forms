@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Guía de AIF v0.1: cómo se comunican agentes y herramientas, qué respuestas pueden intercambiar y cómo usar la biblioteca Go, la CLI y las pruebas del proyecto.">
+<meta name="description" content="AIF dota a las herramientas de software de una interfaz de interacción autodescriptiva y determinista para agentes. Qué es, cómo se integra y cuál es su estado.">
 <meta name="color-scheme" content="light dark">
-<title>AIF · contrato de interacción agente-herramienta</title>
+<title>AIF · interacción autodescriptiva para agentes</title>
 <script>
 (function () {
   try {
@@ -575,7 +575,16 @@
 }@media (prefers-reduced-motion: reduce){* {scroll-behavior: auto !important; transition: none !important; animation: none !important;
 }
   }
-</style>
+.level {margin-top: clamp(48px, 6vw, 68px);
+}main > .level:first-child {margin-top: 0;
+}.level-band {display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin: 0 0 26px; padding: 12px 0; border-top: 2px solid color-mix(in srgb, var(--level, var(--accent)) 55%, var(--border)); border-bottom: 1px solid var(--border);
+}.level-band .n {font-size: 10.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: color-mix(in srgb, var(--level, var(--accent)) 72%, var(--text));
+}.level-band .d {color: var(--muted); font-size: 12.8px;
+}.level + section {margin-top: 0;
+}.toc {max-height: calc(100vh - 104px); overflow-y: auto; scrollbar-width: thin;
+}.toc-lvl {margin: 14px 0 4px; padding-left: 12px; font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+}.toc-lvl:first-of-type {margin-top: 0;
+}</style>
 </head>
 <body>
 <a class="skip-link" href="#que-es">Saltar al contenido</a>
@@ -595,16 +604,14 @@
         <path d="M9 15h7" stroke="#ffffff" stroke-width="2.3" stroke-linecap="round"></path>
       </svg>
     </span>
-    <span class="brand-name">AIF<small>contrato de interacción</small></span>
+    <span class="brand-name">AIF<small>interacción autodescriptiva</small></span>
   </a>
   <span class="topbar-spacer"></span>
-  <nav class="topnav" aria-label="Secciones principales">
-    <a href="#que-es">Contrato</a>
-    <a href="#resultados">Resultados</a>
-    <a href="#mensajes">Mensajes</a>
-    <a href="#campos">Campos</a>
-    <a href="#biblioteca">Biblioteca</a>
-    <a href="#experimento">Experimento</a>
+  <nav class="topnav" aria-label="Niveles de la documentación">
+    <a href="#nivel-1">Comprender</a>
+    <a href="#nivel-2">Utilizar</a>
+    <a href="#nivel-3">Referencia</a>
+    <a href="#nivel-4">Investigación</a>
   </nav>
   <a class="icon-btn only-icon" href="https://github.com/fred66sp/agent-interaction-forms" aria-label="Repositorio en GitHub" title="Repositorio en GitHub">
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"></path></svg>
@@ -619,20 +626,20 @@
 <section class="hero" id="top">
   <div class="hero-inner">
     <div class="hero-copy">
-      <span class="pill"><span class="dot" aria-hidden="true"></span>contrato v0.1 · 13 secciones · referencia en Go</span>
-      <h1>Un lenguaje común <span class="grad">para agentes y herramientas</span></h1>
-      <p class="lead">AIF establece cómo responde una herramienta a un agente: si ha realizado lo pedido, si necesita más datos o si hay algo que corregir. Usa mensajes JSON con <strong>ocho resultados posibles</strong>, para que el agente sepa qué hacer sin tener que interpretar un mensaje escrito en lenguaje natural. Cada nueva petición lleva los datos necesarios, sin depender de una sesión anterior.</p>
+      <span class="pill"><span class="dot" aria-hidden="true"></span>visión de producto v0.1 · aprobada por el PO</span>
+      <h1>Herramientas que saben <span class="grad">interactuar con agentes</span></h1>
+      <p class="lead">AIF dota a las herramientas de software de una interfaz de interacción <strong>autodescriptiva, determinista y orientada a agentes</strong>: la herramienta comunica qué necesita y el agente sabe cómo continuar. La base técnica ya es funcional; el producto todavía no está completo.</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="#que-es">Entender el contrato
+        <a class="btn btn-primary" href="#que-es">Comprender AIF
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"></path></svg>
         </a>
-        <a class="btn btn-ghost" href="#resultados">Ver los ocho resultados</a>
+        <a class="btn btn-ghost" href="#biblioteca">Integrar la biblioteca</a>
         <a class="btn btn-ghost" href="../SPECIFICATION.md">Especificación</a>
       </div>
       <ul class="hero-feats">
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>JSON Schema 2020-12 sin motor propio</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>límites declarados: 256 KiB · 32</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Sin sesiones ni estado</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>reglas deterministas: sin modelo de IA</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>sin sesiones ni estado</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Go sin dependencias externas</li>
       </ul>
     </div>
 
@@ -646,7 +653,7 @@
  <span class="key">"missing"</span><span class="punc">:</span> <span class="punc">[</span><span class="str">"title"</span><span class="punc">,</span> <span class="str">"confidence"</span><span class="punc">],</span>
  <span class="key">"collected"</span><span class="punc">:</span> <span class="punc">{</span><span class="key">"kind"</span><span class="punc">:</span> <span class="str">"learning"</span><span class="punc">}</span>
 <span class="punc">}</span></div>
-        <div class="fm-foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>un sobre idéntico para los ocho resultados</div>
+        <div class="fm-foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>la herramienta describe lo que falta; el agente continúa</div>
       </div>
       <div class="fm-tags"><span>result</span><span>fields</span><span>collected</span></div>
     </div>
@@ -656,69 +663,597 @@
 <div class="layout">
   <nav class="toc" aria-label="Índice de la documentación">
     <h2>En esta página</h2>
+    <p class="toc-lvl">Nivel 1 · Comprender</p>
     <a href="#que-es">1. Qué es AIF</a>
-    <a href="#modelo">2. Modelo agent-first</a>
-    <a href="#ciclo">3. Ciclo y continuación</a>
-    <a href="#resultados">4. Los ocho resultados</a>
-    <a href="#mensajes">5. Mensajes JSON</a>
-    <a href="#campos">6. Campos y schema</a>
-    <a href="#biblioteca">7. Biblioteca Go</a>
-    <a href="#cli">8. Perfil CLI</a>
-    <a href="#conformidad">9. Conformidad</a>
-    <a href="#poc">10. PoC con ACM</a>
-    <a href="#responsabilidades">11. Seguridad y límites</a>
-    <a href="#experimento">12. Experimento</a>
-    <a href="#referencias">13. Referencias</a>
+    <a href="#funciona">2. Cómo funciona</a>
+    <a href="#modalidades">3. Las dos modalidades</a>
+    <a href="#componentes">4. Componentes y estado</a>
+    <p class="toc-lvl">Nivel 2 · Utilizar</p>
+    <a href="#biblioteca">5. Biblioteca Go</a>
+    <a href="#cli">6. Perfil CLI</a>
+    <a href="#poc">7. PoC con ACM</a>
+    <p class="toc-lvl">Nivel 3 · Referencia técnica</p>
+    <a href="#modelo">8. Los dos papeles</a>
+    <a href="#ciclo">9. Validación y reparación</a>
+    <a href="#resultados">10. Los ocho resultados</a>
+    <a href="#mensajes">11. Mensajes JSON</a>
+    <a href="#campos">12. Campos y schema</a>
+    <a href="#responsabilidades">13. Seguridad y límites</a>
+    <a href="#conformidad">14. Conformidad</a>
+    <p class="toc-lvl">Nivel 4 · Investigación</p>
+    <a href="#experimento">15. Experimento</a>
+    <a href="#referencias">16. Referencias</a>
     <div class="toc-extra"><a href="../../README.md">README del proyecto</a></div>
   </nav>
 
   <main id="contenido">
+    <div class="level" id="nivel-1">
+      <p class="level-band" style="--level:#0f766e"><span class="n">Nivel 1 · Comprender</span><span class="d">Qué es AIF, qué problema resuelve y en qué estado está el producto.</span></p>
+    </div>
+
     <section id="que-es" class="section">
-      <div class="section-head"><span class="section-num" style="--num:#0f766e">1</span><h2 class="title">Qué es AIF y qué problema resuelve</h2><span class="chip-repo">SPECIFICATION §0–§2</span></div>
-      <p class="sub">AIF es un conjunto de reglas para la comunicación entre un agente, que hace una petición, y una herramienta, que la atiende. En el contrato se les llama <em>consumidor</em> y <em>ejecutor</em>, respectivamente. AIF define cómo se comunican; no coordina tareas, almacena datos, concede permisos ni ejecuta operaciones por sí mismo.</p>
+      <div class="section-head"><span class="section-num" style="--num:#0f766e">1</span><h2 class="title">Qué es AIF</h2><a class="chip-repo" href="../PRODUCT.md">PRODUCT.md · visión v0.1</a></div>
+      <p class="sub">AIF — <em>Agent Interaction Forms</em> — dota a las herramientas de software de una interfaz de interacción autodescriptiva, determinista y orientada a agentes. La finalidad es que un agente pueda usar una herramienta sin descubrir constantemente cómo funciona, qué información necesita o cómo corregir una petición incorrecta: la propia herramienta se lo comunica de forma estructurada.</p>
 
       <div class="prose">
-        <p>Una herramienta puede ejecutar una petición, pedir datos que faltan o rechazarla. Si responde solo con texto libre, el agente puede tener que adivinar qué salió mal o si la operación llegó a realizarse. Con AIF, la respuesta incluye un <strong>resultado identificable</strong> y datos que el agente puede comprobar directamente.</p>
+        <h3>El problema</h3>
+        <p>Las herramientas tradicionales están diseñadas principalmente para ser utilizadas por personas. Cuando un agente necesita usarlas, frecuentemente tiene que consultar documentación, interpretar mensajes de error, descubrir parámetros, reconstruir peticiones y realizar invocaciones adicionales.</p>
+        <p>Eso introduce incertidumbre, consume contexto y aumenta el esfuerzo necesario para completar una operación. <strong>AIF propone que sea la herramienta, y no el agente, quien tenga la responsabilidad de describir sus necesidades de interacción.</strong></p>
       </div>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 880 420" role="img" aria-labelledby="d5-title d5-desc">
+          <title id="d5-title">Interacción convencional frente a interacción AIF</title>
+          <desc id="d5-desc">Sin AIF, el agente interpreta un error genérico, consulta documentación y hace invocaciones adicionales. Con AIF, la herramienta devuelve una respuesta estructurada que indica el campo pendiente, sus valores admitidos y los datos conservados; el agente compone una petición nueva con el dato.</desc>
+          <defs>
+            <marker id="ah5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--muted)"></path></marker>
+            <marker id="ah5-t" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--accent)"></path></marker>
+            <marker id="ah5-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--guide)"></path></marker>
+          </defs>
+          <text class="lbl" x="20" y="22">SIN AIF · EL AGENTE AVERIGUA</text>
+          <text class="lbl" x="470" y="22">CON AIF · LA HERRAMIENTA DESCRIBE</text>
+          <line class="divider" x1="440" y1="36" x2="440" y2="392"></line>
+
+          <rect class="box-teal" x="20" y="52" width="120" height="56" rx="10"></rect>
+          <text class="t" x="34" y="76">Agente</text>
+          <text class="s" x="34" y="96">no conoce los datos</text>
+
+          <rect class="box-soft" x="250" y="52" width="170" height="56" rx="10"></rect>
+          <text class="t" x="264" y="76">Herramienta</text>
+          <text class="s" x="264" y="96">espera datos que no declara</text>
+
+          <path class="arrow" d="M140 80 H 238" marker-end="url(#ah5)"></path>
+          <text class="lbl" x="146" y="46">petición incompleta</text>
+          <path class="arrow-amber" d="M250 128 H 152" marker-end="url(#ah5-a)"></path>
+          <text class="lbl" x="20" y="148" style="fill:var(--error-text)">«Error: los datos no son correctos»</text>
+
+          <rect class="box-soft" x="20" y="168" width="400" height="64" rx="10"></rect>
+          <text class="t" x="36" y="192">El agente consulta documentación</text>
+          <text class="s" x="36" y="212">descubre el parámetro y reconstruye la petición</text>
+
+          <path class="arrow" d="M220 236 V 270" marker-end="url(#ah5)"></path>
+
+          <rect class="box-red" x="20" y="274" width="400" height="72" rx="10"></rect>
+          <text class="s" x="36" y="298" style="fill:var(--error-text)">✕ qué campo falta · ✕ qué valores admite</text>
+          <text class="s" x="36" y="320" style="fill:var(--error-text)">✕ si la operación llegó a ejecutarse</text>
+          <text class="s" x="36" y="338">Más contexto y más invocaciones para una necesidad.</text>
+
+          <text class="s" x="20" y="382">El agente averigua; la herramienta no describe.</text>
+
+          <rect class="box-teal" x="470" y="52" width="120" height="56" rx="10"></rect>
+          <text class="t" x="484" y="76">Agente</text>
+          <text class="s" x="484" y="96">compone</text>
+
+          <rect class="box-soft" x="700" y="52" width="160" height="56" rx="10"></rect>
+          <text class="t" x="714" y="76">Herramienta + AIF</text>
+          <text class="s" x="714" y="96">comprueba y responde</text>
+
+          <path class="arrow-teal" d="M590 80 H 688" marker-end="url(#ah5-t)"></path>
+          <text class="lbl" x="596" y="46">petición</text>
+
+          <rect class="box-amber" x="470" y="140" width="390" height="88" rx="10"></rect>
+          <text class="t" x="486" y="164">Respuesta estructurada</text>
+          <text class="m" x="486" y="188" style="fill:var(--guide-ink)">falta: prioridad · admite: baja, media, alta</text>
+          <text class="s" x="486" y="210">conserva lo que el agente ya aportó</text>
+          <path class="arrow-amber" d="M780 108 V 128" marker-end="url(#ah5-a)"></path>
+          <text class="lbl" x="648" y="126" style="fill:var(--guide-ink)">describe la necesidad</text>
+
+          <rect class="box-teal" x="470" y="262" width="180" height="64" rx="10"></rect>
+          <text class="t" x="486" y="286">Nueva petición</text>
+          <text class="s" x="486" y="306">con el dato que faltaba</text>
+          <path class="arrow" d="M560 228 V 250" marker-end="url(#ah5)"></path>
+          <text class="lbl" x="570" y="246">el agente completa</text>
+
+          <rect class="box-soft" x="676" y="262" width="184" height="64" rx="10"></rect>
+          <text class="t" x="692" y="286">Ejecutada</text>
+          <text class="s" x="692" y="306" style="fill:var(--ok-text)">datos completos desde el inicio</text>
+          <path class="arrow" d="M650 294 H 664" marker-end="url(#ah5)"></path>
+
+          <text class="s" x="470" y="382">La herramienta describe; el agente no reconstruye.</text>
+        </svg>
+        <figcaption>Mismo objetivo, misma herramienta. La diferencia es quién describe lo que falta y con qué formato.</figcaption>
+      </figure>
+
+      <div class="note">
+        <p><strong>Qué no es AIF.</strong> No es un agente, ni un orquestador, ni un gestor de workflows, ni un sistema de formularios gráficos. Tampoco sustituye la lógica de negocio: su responsabilidad se limita a facilitar la interacción. <a href="#responsabilidades">Dónde queda la autoridad</a>.</p>
+      </div>
+    </section>
+
+    <section id="funciona" class="section">
+      <div class="section-head"><span class="section-num" style="--num:#2563eb">2</span><h2 class="title">Cómo funciona</h2><span class="chip-repo">PRODUCT.md §3</span></div>
+      <p class="sub">Tres situaciones habituales. La herramienta decide en cada petición cuál aplica y lo comunica de forma estructurada.</p>
 
       <div class="cards c3">
         <div class="card">
-          <span class="k">Operación completa</span>
-          <h3>Se ejecuta</h3>
-          <p>Los datos son suficientes y válidos. La herramienta realiza la operación y responde <code>executed</code> con un <code>outcome</code> cuyo contenido depende de la operación, no de AIF.</p>
+          <span class="k">Información completa</span>
+          <h3>Ejecuta</h3>
+          <p>Los datos son suficientes y válidos. La herramienta ejecuta la operación y devuelve el resultado de su dominio.</p>
         </div>
         <div class="card">
-          <span class="k">Operación incompleta</span>
+          <span class="k">Información incompleta</span>
           <h3>Devuelve el formulario</h3>
-          <p>La herramienta responde <code>input_needed</code>: indica qué campos faltan, cuáles son obligatorios y qué valores admite. En <code>collected</code> devuelve los valores válidos no sensibles que ya recibió.</p>
+          <p>Indica qué información necesita, qué valores admite y qué datos válidos ya recibió. Nada se ejecutó.</p>
         </div>
         <div class="card">
-          <span class="k">Operación inválida</span>
+          <span class="k">Información incorrecta</span>
           <h3>Permite corregir</h3>
-          <p>La herramienta responde <code>invalid</code>, explica el problema de cada campo y conserva los valores válidos que no sean sensibles. Así, el agente no tiene que reconstruirlos.</p>
+          <p>Identifica los errores, conserva los datos válidos no sensibles e indica cómo continuar.</p>
         </div>
       </div>
 
-      <div class="compare">
-        <div class="example bad">
-          <span class="ex-label">Sin contrato</span>
-          <p>«Error: los datos no son correctos»</p>
-          <p class="ex-note">El agente no sabe qué campo corregir, si falta algo o si la operación llegó a ejecutarse.</p>
+      <div class="prose">
+        <p><strong>El formulario no es una interfaz gráfica.</strong> Es una respuesta estructurada que el agente interpreta directamente.</p>
+        <h3>Un ejemplo sencillo</h3>
+        <p>Un agente solicita crear una tarea titulada «Revisar documentación». La herramienta necesita conocer también su prioridad. En lugar de devolver un error genérico, le comunica:</p>
+        <ul>
+          <li>Título recibido: <em>Revisar documentación</em>.</li>
+          <li>Información pendiente: prioridad.</li>
+          <li>Valores admitidos: baja, media y alta.</li>
+        </ul>
+        <p>El agente completa la información y vuelve a solicitar la operación. Si hubiera proporcionado todos los datos correctamente desde el principio, la operación se habría ejecutado en una única invocación.</p>
+      </div>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 880 380" role="img" aria-labelledby="d6-title d6-desc">
+          <title id="d6-title">Ciclo autodescriptivo: petición, formulario y continuación</title>
+          <desc id="d6-desc">El agente compone una petición con los datos disponibles. La herramienta comprueba datos, reglas y permisos en cada petición. Si los datos bastan, ejecuta. Si faltan o son incorrectos, devuelve un formulario estructurado con lo que falta y lo que conserva. El agente completa y reenvía la operación completa, sin sesión ni estado en el ejecutor.</desc>
+          <defs>
+            <marker id="ah6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--muted)"></path></marker>
+            <marker id="ah6-t" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--accent)"></path></marker>
+            <marker id="ah6-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--guide)"></path></marker>
+          </defs>
+          <text class="lbl" x="20" y="22">EL AGENTE COMPONE</text>
+          <text class="lbl" x="300" y="22">LA HERRAMIENTA DECIDE</text>
+
+          <rect class="box-teal" x="20" y="50" width="190" height="92" rx="12"></rect>
+          <text class="t" x="36" y="76">1 · Petición</text>
+          <text class="s" x="36" y="98">todos los datos</text>
+          <text class="s" x="36" y="116">disponibles</text>
+
+          <rect class="box-blue" x="300" y="40" width="210" height="112" rx="12"></rect>
+          <text class="t" x="316" y="66">2 · Comprueba</text>
+          <text class="s" x="316" y="88">datos, reglas y permisos</text>
+          <text class="s" x="316" y="106">en cada petición</text>
+          <text class="m" x="316" y="132">aif · operation · input</text>
+
+          <path class="arrow-teal" d="M210 96 H 288" marker-end="url(#ah6-t)"></path>
+
+          <rect class="box-violet" x="640" y="50" width="220" height="92" rx="12"></rect>
+          <text class="t" x="656" y="76">3 · Ejecuta</text>
+          <text class="m" x="656" y="98" style="fill:var(--ok-text)">executed</text>
+          <text class="s" x="656" y="118">el efecto es del dominio</text>
+          <path class="arrow-teal" d="M510 82 H 628" marker-end="url(#ah6-t)"></path>
+          <text class="lbl" x="516" y="72">datos suficientes</text>
+
+          <rect class="box-amber" x="300" y="214" width="260" height="104" rx="12"></rect>
+          <text class="t" x="316" y="240">4 · Formulario</text>
+          <text class="s" x="316" y="260">qué falta, de qué tipo</text>
+          <text class="s" x="316" y="278">y qué valores admite</text>
+          <text class="m" x="316" y="302" style="fill:var(--guide-ink)">missing · fields · collected</text>
+          <path class="arrow-amber" d="M400 152 V 202" marker-end="url(#ah6-a)"></path>
+          <text class="lbl" x="412" y="182" style="fill:var(--guide-ink)">incompleta o incorrecta</text>
+
+          <rect class="box-teal" x="20" y="214" width="210" height="104" rx="12"></rect>
+          <text class="t" x="36" y="240">5 · El agente continúa</text>
+          <text class="s" x="36" y="260">compone la misma</text>
+          <text class="s" x="36" y="278">operación con el</text>
+          <text class="s" x="36" y="296">input completo</text>
+          <path class="arrow" d="M300 264 H 242" marker-end="url(#ah6)"></path>
+          <path class="arrow-teal" d="M125 214 V 144" marker-end="url(#ah6-t)"></path>
+          <text class="lbl" x="134" y="186">reenvía</text>
+
+          <text class="s" x="20" y="352">Sin sesión: el ejecutor no recuerda nada entre llamadas. Cada petición lleva todo el input y se revalida.</text>
+        </svg>
+        <figcaption>El ciclo se cierra con datos, no con una sesión: la respuesta describe la necesidad y el agente continúa.</figcaption>
+      </figure>
+
+      <div class="note accent">
+        <p><strong>Principio fundamental:</strong> una necesidad, una invocación siempre que la información disponible sea suficiente.</p>
+      </div>
+    </section>
+
+    <section id="modalidades" class="section">
+      <div class="section-head"><span class="section-num" style="--num:#0891b2">3</span><h2 class="title">Las dos modalidades</h2><span class="chip-repo">PRODUCT.md §4</span></div>
+      <p class="sub">Dos formas complementarias de llevar AIF a una herramienta. Comparten el mismo núcleo y el mismo contrato de interacción.</p>
+
+      <div class="cards c2">
+        <div class="card">
+          <span class="k">Disponible en Go</span>
+          <h3>Integración nativa</h3>
+          <p>La biblioteca AIF se incorpora directamente al código fuente de una aplicación. La herramienta adquiere las capacidades de interacción sin necesitar un ejecutable intermediario.</p>
+          <p>Por ejemplo, Tasks-AI podría incorporar la biblioteca dentro de su propio ejecutable Go, conservando íntegramente su lógica de negocio.</p>
         </div>
-        <div class="example good">
-          <span class="ex-label">Con AIF</span>
-          <p><code>invalid</code> señala el campo <code>kind</code>, el valor recibido (<code>value</code>), el motivo (<code>reason</code>) y los valores permitidos (<code>allowed</code>). <code>collected</code> conserva <code>title</code> y <code>confidence</code>.</p>
-          <p class="ex-note">La siguiente petición se compone con datos, sin analizar el texto del error.</p>
+        <div class="card">
+          <span class="k">Conceptual · pendiente de diseño</span>
+          <h3>Integración externa</h3>
+          <p>Un ejecutable AIF actúa como intermediario entre el agente y una herramienta existente. Un archivo de definición describe las operaciones disponibles, la información necesaria, sus restricciones y cómo invocar la herramienta.</p>
+          <p>Permite adaptar herramientas sin modificar su código, siempre que dispongan de una interfaz invocable y sus resultados puedan interpretarse de forma fiable.</p>
+        </div>
+      </div>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 880 400" role="img" aria-labelledby="d7-title d7-desc">
+          <title id="d7-title">Integración nativa frente a integración externa</title>
+          <desc id="d7-desc">En la integración nativa el agente habla directamente con una aplicación que lleva la biblioteca AIF dentro de su código, junto a su lógica de negocio. En la integración externa, conceptual y pendiente de diseño, un ejecutable AIF con un archivo de definición media entre el agente y una herramienta existente con interfaz invocable.</desc>
+          <defs>
+            <marker id="ah7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--muted)"></path></marker>
+            <marker id="ah7-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--guide)"></path></marker>
+          </defs>
+          <text class="lbl" x="20" y="24">NATIVA · LA BIBLIOTECA VIVE EN EL CÓDIGO</text>
+
+          <rect class="box-teal" x="20" y="42" width="130" height="62" rx="10"></rect>
+          <text class="t" x="34" y="66">Agente</text>
+          <text class="s" x="34" y="86">petición AIF</text>
+
+          <rect x="200" y="34" width="660" height="112" rx="14" fill="none" stroke="var(--border-strong)" stroke-width="1.5" stroke-dasharray="6 5"></rect>
+          <text class="t" x="216" y="58">Aplicación de la herramienta</text>
+          <rect class="box-teal" x="220" y="68" width="240" height="62" rx="10"></rect>
+          <text class="t" x="234" y="92">AIF Core</text>
+          <text class="s" x="234" y="112">biblioteca dentro del ejecutable</text>
+          <rect class="box-soft" x="480" y="68" width="360" height="62" rx="10"></rect>
+          <text class="t" x="494" y="92">Lógica de negocio</text>
+          <text class="s" x="494" y="112">reglas, permisos y almacenamiento</text>
+
+          <path class="arrow-teal" d="M150 73 H 190" marker-end="url(#ah7)"></path>
+          <text class="s" x="20" y="132">sin ejecutable intermediario</text>
+
+          <text class="lbl" x="20" y="204">EXTERNA · CONCEPTUAL, PENDIENTE DE DISEÑO</text>
+
+          <rect class="box-teal" x="20" y="224" width="130" height="62" rx="10"></rect>
+          <text class="t" x="34" y="248">Agente</text>
+          <text class="s" x="34" y="268">petición AIF</text>
+
+          <rect class="box-amber" x="200" y="218" width="180" height="74" rx="10"></rect>
+          <text class="t" x="214" y="244">AIF CLI</text>
+          <text class="s" x="214" y="264">ejecutable intermediario</text>
+          <text class="s" x="214" y="282" style="fill:var(--guide-ink)">conceptual</text>
+
+          <rect class="box-amber" x="410" y="218" width="180" height="74" rx="10"></rect>
+          <text class="t" x="424" y="244">AIF Definition</text>
+          <text class="s" x="424" y="264">describe las operaciones</text>
+          <text class="s" x="424" y="282" style="fill:var(--guide-ink)">conceptual</text>
+
+          <rect class="box-soft" x="640" y="218" width="220" height="74" rx="10"></rect>
+          <text class="t" x="654" y="244">Herramienta existente</text>
+          <text class="s" x="654" y="264">interfaz invocable</text>
+          <text class="s" x="654" y="282">código sin modificar</text>
+
+          <path class="arrow-teal" d="M150 255 H 190" marker-end="url(#ah7)"></path>
+          <path class="arrow-amber" d="M410 255 H 392" marker-end="url(#ah7-a)"></path>
+          <path class="arrow-teal" d="M590 255 H 628" marker-end="url(#ah7)"></path>
+
+          <text class="s" x="412" y="318">el archivo configura la CLI</text>
+          <text class="s" x="640" y="318">sus resultados deben poder interpretarse</text>
+          <text class="s" x="20" y="368">Ninguna modalidad cambia la autoridad del dominio. La nativa está disponible; la externa aún no tiene sintaxis definida.</text>
+        </svg>
+        <figcaption>Las dos modalidades comparten el mismo núcleo y el mismo contrato; solo cambia dónde vive AIF.</figcaption>
+      </figure>
+
+      <div class="note">
+        <p><strong>La modalidad externa es conceptual.</strong> AIF CLI como producto y AIF Definition están <strong>pendientes de diseño</strong>: esta página describe su responsabilidad, no una sintaxis. Lo que hoy está disponible es la <a href="#biblioteca">integración nativa en Go</a>.</p>
+      </div>
+    </section>
+
+    <section id="componentes" class="section">
+      <div class="section-head"><span class="section-num" style="--num:#7c3aed">4</span><h2 class="title">Componentes y estado actual</h2><a class="chip-repo" href="../PRODUCT.md">PRODUCT.md · §5, §8</a></div>
+      <p class="sub">Cuatro responsabilidades de un único producto. No son proyectos independientes.</p>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 880 400" role="img" aria-labelledby="d8-title d8-desc">
+          <title id="d8-title">Núcleo compartido y responsabilidades del producto</title>
+          <desc id="d8-desc">Un núcleo compartido de capacidades y un único contrato. AIF Core es la biblioteca reutilizable que lo implementa; AIF Specification define el contrato común; AIF CLI expone la capa externa; AIF Definition describe operaciones de forma declarativa. Son responsabilidades de un solo producto, no paquetes ni proyectos independientes.</desc>
+          <defs>
+            <marker id="ah8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--muted)"></path></marker>
+            <marker id="ah8-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--accent-2)"></path></marker>
+            <marker id="ah8-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--guide)"></path></marker>
+          </defs>
+          <text class="lbl" x="20" y="24">RESPONSABILIDADES DE UN ÚNICO PRODUCTO</text>
+
+          <rect class="box-teal" x="310" y="150" width="260" height="110" rx="14"></rect>
+          <text class="t" x="326" y="178">Núcleo compartido</text>
+          <text class="s" x="326" y="200">mismas capacidades</text>
+          <text class="s" x="326" y="218">de interacción</text>
+          <text class="s" x="326" y="242">un solo contrato</text>
+
+          <rect class="box-blue" x="300" y="40" width="280" height="80" rx="12"></rect>
+          <text class="t" x="316" y="66">AIF Specification</text>
+          <text class="s" x="316" y="88">contrato común</text>
+          <text class="s" x="316" y="106">agente ↔ herramienta</text>
+          <path class="arrow-blue" d="M440 120 V 138" marker-end="url(#ah8-b)"></path>
+          <text class="lbl" x="450" y="134">define</text>
+
+          <rect class="box-blue" x="20" y="160" width="230" height="90" rx="12"></rect>
+          <text class="t" x="36" y="186">AIF Core</text>
+          <text class="s" x="36" y="208">biblioteca reutilizable</text>
+          <text class="s" x="36" y="226">implementa las capacidades</text>
+          <path class="arrow-blue" d="M250 205 H 298" marker-end="url(#ah8-b)"></path>
+          <text class="lbl" x="252" y="224">implementa</text>
+
+          <rect class="box-amber" x="630" y="160" width="230" height="90" rx="12"></rect>
+          <text class="t" x="646" y="186">AIF CLI</text>
+          <text class="s" x="646" y="208">capa externa sobre</text>
+          <text class="s" x="646" y="226" style="fill:var(--guide-ink)">herramientas · conceptual</text>
+          <path class="arrow-amber" d="M620 205 H 572" marker-end="url(#ah8-a)"></path>
+          <text class="lbl" x="580" y="224">expone</text>
+
+          <rect class="box-amber" x="300" y="290" width="280" height="80" rx="12"></rect>
+          <text class="t" x="316" y="316">AIF Definition</text>
+          <text class="s" x="316" y="338">formato declarativo para</text>
+          <text class="s" x="316" y="356" style="fill:var(--guide-ink)">describir operaciones · conceptual</text>
+          <path class="arrow-amber" d="M440 290 V 272" marker-end="url(#ah8-a)"></path>
+          <text class="lbl" x="450" y="286">describe</text>
+
+          <text class="s" x="20" y="392">Son responsabilidades, no cajas de paquetes: un solo producto con un mismo núcleo y contrato.</text>
+        </svg>
+        <figcaption>El núcleo es compartido; cada componente es una responsabilidad sobre él, no un proyecto aparte.</figcaption>
+      </figure>
+
+      <div class="table-wrap">
+        <table>
+          <caption>Componentes del producto (§5)</caption>
+          <thead><tr><th>Componente</th><th>Responsabilidad</th></tr></thead>
+          <tbody>
+            <tr><td><strong>AIF Core</strong></td><td>Biblioteca reutilizable que proporciona las capacidades de interacción.</td></tr>
+            <tr><td><strong>AIF CLI</strong></td><td>Ejecutable que permite utilizar AIF como capa externa sobre herramientas existentes.</td></tr>
+            <tr><td><strong>AIF Definition</strong></td><td>Formato declarativo para describir operaciones e integrar herramientas.</td></tr>
+            <tr><td><strong>AIF Specification</strong></td><td>Contrato común de comunicación entre agentes y herramientas.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <caption>Estado actual (§8)</caption>
+          <thead><tr><th>Componente</th><th>Estado</th></tr></thead>
+          <tbody>
+            <tr><td>AIF Core</td><td><span class="r-ok">Disponible</span> — implementación inicial en Go.</td></tr>
+            <tr><td>AIF Specification</td><td><span class="r-ok">Disponible</span> — contrato v0.1 definido y aprobado.</td></tr>
+            <tr><td>CLI de demostración</td><td><span class="r-ok">Disponible</span> — herramienta <code>aifdemo</code>.</td></tr>
+            <tr><td>Pruebas de conformidad</td><td><span class="r-ok">Disponibles</span>.</td></tr>
+            <tr><td>Prueba de concepto con ACM</td><td><span class="r-ok">Realizada</span>.</td></tr>
+            <tr><td>AIF CLI como producto</td><td><span class="r-repair">Pendiente de diseño</span> — conceptual, no disponible.</td></tr>
+            <tr><td>AIF Definition</td><td><span class="r-repair">Pendiente de diseño</span> — conceptual, no disponible.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="prose">
+        <p>Ocho principios guían el diseño: simplicidad, <em>agent-first</em>, autodescripción, determinismo, eficiencia, independencia, responsabilidad y reutilización. El <a href="../PRODUCT.md">documento de producto</a> es la fuente de la visión; esta página no la amplía.</p>
+      </div>
+
+      <div class="note">
+        <p><strong>Producto en construcción.</strong> La base técnica existente permite continuar hacia el producto descrito, pero todavía no constituye el producto completo. Los beneficios cuantitativos en eficiencia y fiabilidad frente a otras interfaces no han quedado demostrados experimentalmente: el <a href="#experimento">experimento</a> se clasificó INCONCLUSO.</p>
+      </div>
+    </section>
+
+    <div class="level" id="nivel-2">
+      <p class="level-band" style="--level:#2563eb"><span class="n">Nivel 2 · Utilizar</span><span class="d">Integrar AIF hoy: la biblioteca Go, la CLI de demostración y la prueba de concepto.</span></p>
+    </div>
+
+    <section id="biblioteca" class="section">
+      <div class="section-head"><span class="section-num" style="--num:#2563eb">5</span><h2 class="title">Uso e integración de la biblioteca Go</h2><span class="chip-repo">aif.go · handle.go · response.go</span></div>
+      <p class="sub">La implementación de referencia es un paquete Go sin dependencias externas. Quien lo integra declara sus operaciones y usa <code>Handle</code> para comprobar la estructura de las peticiones. Su sistema conserva las reglas, los permisos y el almacenamiento.</p>
+
+      <div class="table-wrap">
+        <table>
+          <caption>API pública de la biblioteca</caption>
+          <thead><tr><th>Símbolo</th><th>Responsabilidad</th></tr></thead>
+          <tbody>
+            <tr><td><code>aif.Operation</code></td><td>Identificador, descripción de una línea, campos y función <code>Execute</code>.</td></tr>
+            <tr><td><code>aif.Field</code></td><td><code>Required</code>, <code>Type</code>, <code>Allowed</code>, <code>Description</code>, <code>Schema</code>, <code>Sensitive</code> y el hook <code>Validate</code> para reglas finas.</td></tr>
+            <tr><td><code>aif.Executor{Operations}</code></td><td>Conjunto fijo de operaciones que el ejecutor atiende.</td></tr>
+            <tr><td><code>(*Executor).Handle([]byte)</code></td><td>Parsea el sobre, comprueba límites y versión, valida campos y ejecuta. Nunca entra en pánico con entrada malformada.</td></tr>
+            <tr><td><code>aif.Response</code></td><td>Resultado tipado. <code>json.Marshal</code> usa su <code>MarshalJSON</code>, que emite solo los miembros del resultado.</td></tr>
+            <tr><td><code>aif.DeniedError</code></td><td>Convierte un error de <code>Execute</code> en <code>denied</code> con <code>reason</code>.</td></tr>
+            <tr><td><code>aif.DomainError</code></td><td>Convierte un error de <code>Execute</code> en <code>failed</code> con <code>message</code> y <code>code</code>.</td></tr>
+            <tr><td><code>aif.MaxInputBytes</code> · <code>aif.MaxDepth</code></td><td>Límites declarados por esta implementación: 256 KiB y profundidad 32.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code"><pre><code class="language-go">package main
+
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/fred66sp/agent-interaction-forms"
+)
+
+func main() {
+	op := &amp;aif.Operation{
+		ID:          "record_observation",
+		Description: "Registra una observación con título y tipo.",
+		Fields: []aif.Field{
+			{Name: "title", Required: true, Type: "string",
+				Schema: json.RawMessage(`{"maxLength":40}`)},
+			{Name: "kind", Required: true, Type: "string",
+				Allowed: []string{"learning", "decision", "discovery", "bugfix"}},
+			{Name: "contact", Type: "string", Sensitive: true},
+		},
+		Execute: func(input map[string]json.RawMessage) (json.RawMessage, error) {
+			<span class="comment">// El dominio ejecuta su efecto y devuelve datos opacos.</span>
+			return json.RawMessage(`{"id":"obs_0001"}`), nil
+		},
+	}
+	executor := aif.Executor{Operations: []*aif.Operation{op}}
+
+	<span class="comment">// La petición llega como bytes: CLI, HTTP o cola; el contrato no cambia.</span>
+	raw := []byte(`{"aif":"0.1","operation":"record_observation",
+		"input":{"kind":"learning"}}`)
+	resp := executor.Handle(raw)
+
+	<span class="comment">// MarshalJSON emite exactamente los miembros que exige §3.</span>
+	out, err := json.Marshal(resp)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(out))
+}</code></pre></div>
+
+      <div class="prose">
+        <p>Con esa petición, el programa escribe una respuesta <code>input_needed</code>: <code>missing</code> contiene <code>title</code>, <code>collected</code> conserva <code>kind</code> y <code>fields</code> describe los tres campos declarados, incluido el opcional y sensible <code>contact</code>. El nombre de <code>contact</code> aparece como descriptor; su valor nunca se devuelve.</p>
+        <h3>Qué pone el integrador y qué pone AIF</h3>
+      </div>
+
+      <div class="cards c2">
+        <div class="card">
+          <span class="k">AIF</span>
+          <h3>El sobre (el objeto JSON de la petición) y la mecánica</h3>
+          <ul>
+            <li>Comprueba tamaño, profundidad, claves duplicadas, <code>aif</code>, versión y tipo de <code>operation</code> e <code>input</code>.</li>
+            <li>Resuelve la operación y valida <code>Type</code>, <code>Allowed</code> y el hook <code>Validate</code> de cada campo.</li>
+            <li>Aplica exclusividad, precedencia, <code>collected</code> y omisión de sensibles.</li>
+            <li>Serializa los miembros del resultado de forma determinista.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="k">Integrador</span>
+          <h3>El dominio y sus reglas</h3>
+          <ul>
+            <li>Declara los campos una sola vez y qué regla fina publica cada <code>Schema</code>.</li>
+            <li>Escribe en <code>Execute</code> solo lo que AIF no puede expresar: reglas de negocio, permisos, persistencia y transacciones.</li>
+            <li>Devuelve <code>DeniedError</code> para una denegación y <code>DomainError</code> para un fallo con código.</li>
+            <li>Marca con <code>Sensitive</code> lo que no debe volver en ninguna respuesta.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note accent">
+        <p><strong>No construyas el JSON a mano.</strong> Usa <code>json.Marshal(resp)</code>: el <code>MarshalJSON</code> del paquete elige los miembros según <code>result</code> y omite los que no corresponden. Construir el mapa por tu cuenta duplica el contrato y abre la puerta a respuestas que dicen dos cosas a la vez.</p>
+      </div>
+
+      <div class="code"><pre><code class="language-bash">go get github.com/fred66sp/agent-interaction-forms
+go test ./...                     <span class="comment"># biblioteca, conformidad y PoC</span></code></pre></div>
+
+      <div class="note">
+        <p><strong>Nativa frente a externa.</strong> Esta sección cubre la <em>integración nativa</em>: la biblioteca entra en el ejecutable de la aplicación y no hay intermediario. La <em>integración externa</em> — un ejecutable AIF que adapta herramientas existentes mediante un archivo de definición — está <strong>pendiente de diseño</strong>: no tiene sintaxis publicada y esta página no la inventa. Su responsabilidad está descrita en <a href="#modalidades">las dos modalidades</a>.</p>
+      </div>
+    </section>
+
+    <section id="cli" class="section">
+      <div class="section-head"><span class="section-num" style="--num:#c2410c">6</span><h2 class="title">Perfil CLI y códigos de salida</h2><span class="chip-repo">cmd/aifdemo/main.go · §7</span></div>
+      <p class="sub">El perfil CLI adapta el contrato a herramientas de línea de comandos sin ampliar sus reglas básicas. La herramienta de demostración <code>aifdemo</code> ofrece la operación <code>record_observation</code> y muestra cómo consultar operaciones, corregir datos, continuar y leer los códigos de salida. Lo descrito aquí es esa herramienta; el AIF CLI como producto, con AIF Definition, sigue <strong>pendiente de diseño</strong>.</p>
+
+      <ul class="rules">
+        <li><strong>No interactiva.</strong> Lee una petición de <code>stdin</code>, escribe exactamente un objeto JSON con salto de línea final en <code>stdout</code> y manda diagnósticos y avisos a <code>stderr</code>.</li>
+        <li><strong>El código depende solo del resultado.</strong> Es determinista; <code>stderr</code> no lo altera. El descubrimiento también sale con 0.</li>
+        <li><strong>Continuación = nueva invocación</strong> con el <code>input</code> íntegro y corregido. El ejecutor no reserva estado entre invocaciones.</li>
+      </ul>
+
+      <div class="table-wrap">
+        <table>
+          <caption>CL-04 · códigos de salida del perfil CLI</caption>
+          <thead><tr><th>Código</th><th><code>result</code></th><th>Lectura para el agente</th></tr></thead>
+          <tbody>
+            <tr><td><strong>0</strong></td><td><code>executed</code> y descubrimiento</td><td>Hay efecto completado o lista de operaciones.</td></tr>
+            <tr><td><strong>1</strong></td><td><code>failed</code></td><td>Fallo del dominio o de infraestructura; estado posiblemente desconocido.</td></tr>
+            <tr><td><strong>2</strong></td><td><code>input_needed</code>, <code>invalid</code></td><td>La petición es reparable: completar o corregir y reenviar.</td></tr>
+            <tr><td><strong>3</strong></td><td><code>unsupported_version</code>, <code>malformed_request</code>, <code>unknown_operation</code></td><td>Problema de contrato: versión, sintaxis u operación. No hay nada que reparar campo a campo.</td></tr>
+            <tr><td><strong>4</strong></td><td><code>denied</code></td><td>El dominio niega la operación; no es un trámite reparable.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code"><pre><code class="language-bash">go build -o aifdemo ./cmd/aifdemo
+
+printf '%s' '{"aif":"0.1","operation":"record_observation","input":{"kind":"learning"}}' \
+  | ./aifdemo
+<span class="comment"># stdout: una respuesta input_needed con missing, fields y collected</span>
+<span class="comment"># exit: 2</span></code></pre></div>
+
+      <div class="code"><pre><code class="language-bash"><span class="comment"># La operación ejecuta si AIF_DEMO_STORE apunta a un fichero JSON Lines.</span>
+AIF_DEMO_STORE=/tmp/observaciones.jsonl \
+  ./aifdemo &lt; peticion.json
+
+<span class="comment"># Precondiciones de dominio para los escenarios de error:</span>
+<span class="comment"># AIF_DEMO_DENY_WRITE=1  → denied  (exit 4)</span>
+<span class="comment"># AIF_DEMO_STORAGE_FAIL=1 → failed (exit 1)</span></code></pre></div>
+
+      <div class="details">
+        <summary>¿Por qué tres resultados comparten el código 3?</summary>
+        <div class="details-body">
+          <p><strong>Porque comparten la misma consecuencia operativa para el consumidor:</strong> el contrato no permite ejecutar y no hay campos que corregir. La distinción accionable sigue estando en <code>result</code>: versión no soportada (<code>supported</code>), entrada no interpretable (<code>reason</code>) u operación inexistente (<code>known_operations</code>).</p>
+          <p>Separar la causa es trabajo del miembro <code>result</code>; el código de salida solo clasifica la reparabilidad para scripts. Por eso <code>input_needed</code> e <code>invalid</code> sí comparten el 2: ambos piden una petición nueva con el <code>input</code> completo.</p>
         </div>
       </div>
 
       <div class="note">
-        <p><strong>AIF no concede autoridad.</strong> La herramienta y el sistema al que pertenece siguen a cargo de las reglas de negocio, los permisos, la validación, el almacenamiento y las garantías para evitar efectos duplicados. AIF v0.1 tampoco define sesiones, identificadores de formulario, caducidad, reintentos garantizados, servidores MCP ni perfiles HTTP.</p>
+        <p><strong>Cuidado con <code>go run</code>.</strong> <code>go run</code> devuelve 1 cuando el programa sale con cualquier código distinto de 0. Para observar los códigos reales 0/1/2/3/4, compila el binario y ejecútalo directamente.</p>
       </div>
     </section>
 
+    <section id="poc" class="section">
+      <div class="section-head"><span class="section-num" style="--num:#7c3aed">7</span><h2 class="title">PoC real con ACM</h2><span class="chip-repo">poc/acm/ · 4 escenarios</span></div>
+      <p class="sub">La prueba de concepto (PoC) conecta la biblioteca con el adaptador real de ACM y usa una memoria temporal. No cambia las reglas de ACM ni toca la memoria de producción: trabaja con una copia intacta y ejecuta la operación <code>learning</code> en un proceso separado.</p>
+
+      <div class="prose">
+        <p>El <code>acmpoc</code> de esta PoC ejercita el perfil CLI de AIF (el mismo mecanismo que usará la futura integración externa, aún sin sintaxis decidida). AIF decide el sobre, la estructura de campos y el conjunto cerrado de <code>confidence</code>; ACM conserva su validación, su deduplicación por contenido (<code>content_hash</code>), la idempotencia de <code>form_id</code>, el ETag y las transacciones. El <code>outcome</code> es la respuesta de ACM, sin reinterpretar.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <caption>Operación <code>learning</code> de la PoC</caption>
+          <thead><tr><th>Campo</th><th>Obligatorio</th><th>Restricción</th></tr></thead>
+          <tbody>
+            <tr><td><code>title</code></td><td>Sí</td><td><code>string</code>, no en blanco; <code>schema</code>: <code>{"minLength":1}</code></td></tr>
+            <tr><td><code>body</code></td><td>Sí</td><td><code>string</code>, no en blanco; <code>schema</code>: <code>{"minLength":1}</code></td></tr>
+            <tr><td><code>topic</code></td><td>No</td><td>Clave de tema libre; ACM la normaliza</td></tr>
+            <tr><td><code>confidence</code></td><td>No</td><td>Conjunto cerrado de ACM: <code>confirmed</code>, <code>inference</code>, <code>hypothesis</code>, <code>proposal</code>, <code>unknown</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <caption>Escenarios de <code>poc/acm/run.sh</code></caption>
+          <thead><tr><th>Escenario</th><th>Qué ocurre</th><th>Qué se afirma</th></tr></thead>
+          <tbody>
+            <tr><td><strong>S1</strong> · ejecución directa</td><td>Datos completos y válidos.</td><td><code>executed</code>, una fila, salida 0.</td></tr>
+            <tr><td><strong>S2</strong> · información ausente</td><td>Faltan <code>title</code> y <code>body</code>.</td><td><code>input_needed</code>, <code>missing</code> exacto, sin <code>invalid</code>, ninguna fila nueva.</td></tr>
+            <tr><td><strong>S3</strong> · inválido y corrección</td><td><code>confidence: "certain"</code> no pertenece al conjunto; después se corrige.</td><td><code>invalid</code> con <code>allowed</code> íntegro y, tras corregir, <code>executed</code> con una fila nueva.</td></tr>
+            <tr><td><strong>S4</strong> · mismo contenido</td><td>Se reenvía la observación de S1.</td><td><code>executed</code> con <code>consolidated</code>: ACM deduplica, no hay segunda fila y <code>duplicate_count</code> vale 2.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"learning","input":{"title":"El parser exige UTC","body":"Las fechas sin zona se interpretan como UTC; el test lo fija.","topic":"parser-fechas","confidence":"confirmed"}}</code></pre></div>
+
+      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"learning","outcome":{"ok":true,"result":"created"},"result":"executed"}</code></pre></div>
+
+      <div class="code"><pre><code class="language-bash">bash poc/acm/run.sh      <span class="comment"># 4 escenarios aislados; RESULT: 4/4 PASS</span></code></pre></div>
+
+      <div class="note">
+        <p><strong>Las garantías que se prueban son de ACM, no de AIF.</strong> La deduplicación, la idempotencia real y las transacciones siguen siendo del adaptador. AIF solo comprueba que su vocabulario puede envolver esa operación sin robarle autoridad ni prometer garantías que no existen en el contrato.</p>
+      </div>
+    </section>
+
+    <div class="level" id="nivel-3">
+      <p class="level-band" style="--level:#7c3aed"><span class="n">Nivel 3 · Referencia técnica</span><span class="d">El contrato normativo y su implementación. Fuente: docs/SPECIFICATION.md v0.1.1.</span></p>
+    </div>
+
     <section id="modelo" class="section">
-      <div class="section-head"><span class="section-num" style="--num:#2563eb">2</span><h2 class="title">Cómo se comunican el agente y la herramienta</h2><span class="chip-repo">SPECIFICATION §1, §5, §6</span></div>
+      <div class="section-head"><span class="section-num" style="--num:#2563eb">8</span><h2 class="title">Los dos papeles del contrato</h2><span class="chip-repo">SPECIFICATION §1, §5, §6</span></div>
       <p class="sub">Cada petición debe contener todos los datos que necesita la herramienta, que vuelve a comprobarlos en cada llamada. El contrato no guarda una sesión ni define un identificador de formulario o una relación entre llamadas.</p>
 
       <div class="table-wrap">
@@ -747,7 +1282,7 @@
     </section>
 
     <section id="ciclo" class="section">
-      <div class="section-head"><span class="section-num" style="--num:#0891b2">3</span><h2 class="title">Ciclo de petición, respuesta y continuación</h2><span class="chip-repo">SPECIFICATION §5, §7 CL-06</span></div>
+      <div class="section-head"><span class="section-num" style="--num:#0891b2">9</span><h2 class="title">Flujo de validación y reparación</h2><span class="chip-repo">SPECIFICATION §5, §7 CL-06</span></div>
       <p class="sub">La herramienta comprueba cada petición antes de actuar. Si los datos son válidos, puede ejecutar la operación; si faltan datos o hay errores, responde con la información necesaria para corregirla.</p>
 
       <figure class="diagram">
@@ -894,7 +1429,7 @@
     </section>
 
     <section id="resultados" class="section">
-      <div class="section-head"><span class="section-num" style="--num:#7c3aed">4</span><h2 class="title">Los ocho resultados del contrato</h2><span class="chip-repo">aif.go · response.go</span></div>
+      <div class="section-head"><span class="section-num" style="--num:#7c3aed">10</span><h2 class="title">Los ocho resultados del contrato</h2><span class="chip-repo">aif.go · response.go</span></div>
       <p class="sub">Hay ocho resultados posibles y cada uno exige determinados datos en la respuesta. La tabla muestra cuándo se usa cada resultado, qué campos emite <code>Response.MarshalJSON</code> y qué código de salida le corresponde en la CLI.</p>
 
       <div class="table-wrap">
@@ -950,7 +1485,7 @@
     </section>
 
     <section id="mensajes" class="section">
-      <div class="section-head"><span class="section-num" style="--num:#b45309">5</span><h2 class="title">Estructura de los mensajes JSON</h2><span class="chip-repo">SPECIFICATION §1, §7 CL-05</span></div>
+      <div class="section-head"><span class="section-num" style="--num:#b45309">11</span><h2 class="title">Estructura de los mensajes JSON</h2><span class="chip-repo">SPECIFICATION §1, §7 CL-05</span></div>
       <p class="sub">Las peticiones y respuestas son objetos JSON (RFC 8259). No se usan XML, formularios binarios ni un lenguaje de expresiones. La misma estructura sirve para una herramienta de línea de comandos (CLI), una función local u otro medio elegido por quien la integre.</p>
 
       <div class="table-wrap">
@@ -1001,7 +1536,7 @@
     </section>
 
     <section id="campos" class="section">
-      <div class="section-head"><span class="section-num" style="--num:#0f766e">6</span><h2 class="title">Campos, reglas y datos conservados</h2><span class="chip-repo">SPECIFICATION §3.2, §4</span></div>
+      <div class="section-head"><span class="section-num" style="--num:#0f766e">12</span><h2 class="title">Campos, reglas y datos conservados</h2><span class="chip-repo">SPECIFICATION §3.2, §4</span></div>
       <p class="sub">Cuando faltan datos o hay errores, la respuesta describe los campos y sus reglas. Así, el agente sabe qué corregir y conserva los valores válidos que no sean sensibles.</p>
 
       <div class="table-wrap">
@@ -1137,264 +1672,8 @@
       </div>
     </section>
 
-    <section id="biblioteca" class="section">
-      <div class="section-head"><span class="section-num" style="--num:#2563eb">7</span><h2 class="title">Uso e integración de la biblioteca Go</h2><span class="chip-repo">aif.go · handle.go · response.go</span></div>
-      <p class="sub">La implementación de referencia es un paquete Go sin dependencias externas. Quien lo integra declara sus operaciones y usa <code>Handle</code> para comprobar la estructura de las peticiones. Su sistema conserva las reglas, los permisos y el almacenamiento.</p>
-
-      <div class="table-wrap">
-        <table>
-          <caption>API pública de la biblioteca</caption>
-          <thead><tr><th>Símbolo</th><th>Responsabilidad</th></tr></thead>
-          <tbody>
-            <tr><td><code>aif.Operation</code></td><td>Identificador, descripción de una línea, campos y función <code>Execute</code>.</td></tr>
-            <tr><td><code>aif.Field</code></td><td><code>Required</code>, <code>Type</code>, <code>Allowed</code>, <code>Description</code>, <code>Schema</code>, <code>Sensitive</code> y el hook <code>Validate</code> para reglas finas.</td></tr>
-            <tr><td><code>aif.Executor{Operations}</code></td><td>Conjunto fijo de operaciones que el ejecutor atiende.</td></tr>
-            <tr><td><code>(*Executor).Handle([]byte)</code></td><td>Parsea el sobre, comprueba límites y versión, valida campos y ejecuta. Nunca entra en pánico con entrada malformada.</td></tr>
-            <tr><td><code>aif.Response</code></td><td>Resultado tipado. <code>json.Marshal</code> usa su <code>MarshalJSON</code>, que emite solo los miembros del resultado.</td></tr>
-            <tr><td><code>aif.DeniedError</code></td><td>Convierte un error de <code>Execute</code> en <code>denied</code> con <code>reason</code>.</td></tr>
-            <tr><td><code>aif.DomainError</code></td><td>Convierte un error de <code>Execute</code> en <code>failed</code> con <code>message</code> y <code>code</code>.</td></tr>
-            <tr><td><code>aif.MaxInputBytes</code> · <code>aif.MaxDepth</code></td><td>Límites declarados por esta implementación: 256 KiB y profundidad 32.</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="code"><pre><code class="language-go">package main
-
-import (
-	"encoding/json"
-	"fmt"
-
-	"github.com/fred66sp/agent-interaction-forms"
-)
-
-func main() {
-	op := &amp;aif.Operation{
-		ID:          "record_observation",
-		Description: "Registra una observación con título y tipo.",
-		Fields: []aif.Field{
-			{Name: "title", Required: true, Type: "string",
-				Schema: json.RawMessage(`{"maxLength":40}`)},
-			{Name: "kind", Required: true, Type: "string",
-				Allowed: []string{"learning", "decision", "discovery", "bugfix"}},
-			{Name: "contact", Type: "string", Sensitive: true},
-		},
-		Execute: func(input map[string]json.RawMessage) (json.RawMessage, error) {
-			<span class="comment">// El dominio ejecuta su efecto y devuelve datos opacos.</span>
-			return json.RawMessage(`{"id":"obs_0001"}`), nil
-		},
-	}
-	executor := aif.Executor{Operations: []*aif.Operation{op}}
-
-	<span class="comment">// La petición llega como bytes: CLI, HTTP o cola; el contrato no cambia.</span>
-	raw := []byte(`{"aif":"0.1","operation":"record_observation",
-		"input":{"kind":"learning"}}`)
-	resp := executor.Handle(raw)
-
-	<span class="comment">// MarshalJSON emite exactamente los miembros que exige §3.</span>
-	out, err := json.Marshal(resp)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(string(out))
-}</code></pre></div>
-
-      <div class="prose">
-        <p>Con esa petición, el programa escribe una respuesta <code>input_needed</code>: <code>missing</code> contiene <code>title</code>, <code>collected</code> conserva <code>kind</code> y <code>fields</code> describe los tres campos declarados, incluido el opcional y sensible <code>contact</code>. El nombre de <code>contact</code> aparece como descriptor; su valor nunca se devuelve.</p>
-        <h3>Qué pone el integrador y qué pone AIF</h3>
-      </div>
-
-      <div class="cards c2">
-        <div class="card">
-          <span class="k">AIF</span>
-          <h3>El sobre y la mecánica</h3>
-          <ul>
-            <li>Comprueba tamaño, profundidad, claves duplicadas, <code>aif</code>, versión y tipo de <code>operation</code> e <code>input</code>.</li>
-            <li>Resuelve la operación y valida <code>Type</code>, <code>Allowed</code> y el hook <code>Validate</code> de cada campo.</li>
-            <li>Aplica exclusividad, precedencia, <code>collected</code> y omisión de sensibles.</li>
-            <li>Serializa los miembros del resultado de forma determinista.</li>
-          </ul>
-        </div>
-        <div class="card">
-          <span class="k">Integrador</span>
-          <h3>El dominio y sus reglas</h3>
-          <ul>
-            <li>Declara los campos una sola vez y qué regla fina publica cada <code>Schema</code>.</li>
-            <li>Escribe en <code>Execute</code> solo lo que AIF no puede expresar: reglas de negocio, permisos, persistencia y transacciones.</li>
-            <li>Devuelve <code>DeniedError</code> para una denegación y <code>DomainError</code> para un fallo con código.</li>
-            <li>Marca con <code>Sensitive</code> lo que no debe volver en ninguna respuesta.</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="note accent">
-        <p><strong>No construyas el JSON a mano.</strong> Usa <code>json.Marshal(resp)</code>: el <code>MarshalJSON</code> del paquete elige los miembros según <code>result</code> y omite los que no corresponden. Construir el mapa por tu cuenta duplica el contrato y abre la puerta a respuestas que dicen dos cosas a la vez.</p>
-      </div>
-
-      <div class="code"><pre><code class="language-bash">go get github.com/fred66sp/agent-interaction-forms
-go test ./...                     <span class="comment"># biblioteca, conformidad y PoC</span></code></pre></div>
-    </section>
-
-    <section id="cli" class="section">
-      <div class="section-head"><span class="section-num" style="--num:#c2410c">8</span><h2 class="title">Perfil CLI y códigos de salida</h2><span class="chip-repo">cmd/aifdemo/main.go · §7</span></div>
-      <p class="sub">El perfil CLI adapta el contrato a herramientas de línea de comandos sin ampliar sus reglas básicas. La herramienta de demostración <code>aifdemo</code> ofrece la operación <code>record_observation</code> y muestra cómo consultar operaciones, corregir datos, continuar y leer los códigos de salida.</p>
-
-      <ul class="rules">
-        <li><strong>No interactiva.</strong> Lee una petición de <code>stdin</code>, escribe exactamente un objeto JSON con salto de línea final en <code>stdout</code> y manda diagnósticos y avisos a <code>stderr</code>.</li>
-        <li><strong>El código depende solo del resultado.</strong> Es determinista; <code>stderr</code> no lo altera. El descubrimiento también sale con 0.</li>
-        <li><strong>Continuación = nueva invocación</strong> con el <code>input</code> íntegro y corregido. El ejecutor no reserva estado entre invocaciones.</li>
-      </ul>
-
-      <div class="table-wrap">
-        <table>
-          <caption>CL-04 · códigos de salida del perfil CLI</caption>
-          <thead><tr><th>Código</th><th><code>result</code></th><th>Lectura para el agente</th></tr></thead>
-          <tbody>
-            <tr><td><strong>0</strong></td><td><code>executed</code> y descubrimiento</td><td>Hay efecto completado o lista de operaciones.</td></tr>
-            <tr><td><strong>1</strong></td><td><code>failed</code></td><td>Fallo del dominio o de infraestructura; estado posiblemente desconocido.</td></tr>
-            <tr><td><strong>2</strong></td><td><code>input_needed</code>, <code>invalid</code></td><td>La petición es reparable: completar o corregir y reenviar.</td></tr>
-            <tr><td><strong>3</strong></td><td><code>unsupported_version</code>, <code>malformed_request</code>, <code>unknown_operation</code></td><td>Problema de contrato: versión, sintaxis u operación. No hay nada que reparar campo a campo.</td></tr>
-            <tr><td><strong>4</strong></td><td><code>denied</code></td><td>El dominio niega la operación; no es un trámite reparable.</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="code"><pre><code class="language-bash">go build -o aifdemo ./cmd/aifdemo
-
-printf '%s' '{"aif":"0.1","operation":"record_observation","input":{"kind":"learning"}}' \
-  | ./aifdemo
-<span class="comment"># stdout: una respuesta input_needed con missing, fields y collected</span>
-<span class="comment"># exit: 2</span></code></pre></div>
-
-      <div class="code"><pre><code class="language-bash"><span class="comment"># La operación ejecuta si AIF_DEMO_STORE apunta a un fichero JSON Lines.</span>
-AIF_DEMO_STORE=/tmp/observaciones.jsonl \
-  ./aifdemo &lt; peticion.json
-
-<span class="comment"># Precondiciones de dominio para los escenarios de error:</span>
-<span class="comment"># AIF_DEMO_DENY_WRITE=1  → denied  (exit 4)</span>
-<span class="comment"># AIF_DEMO_STORAGE_FAIL=1 → failed (exit 1)</span></code></pre></div>
-
-      <div class="details">
-        <summary>¿Por qué tres resultados comparten el código 3?</summary>
-        <div class="details-body">
-          <p><strong>Porque comparten la misma consecuencia operativa para el consumidor:</strong> el contrato no permite ejecutar y no hay campos que corregir. La distinción accionable sigue estando en <code>result</code>: versión no soportada (<code>supported</code>), entrada no interpretable (<code>reason</code>) u operación inexistente (<code>known_operations</code>).</p>
-          <p>Separar la causa es trabajo del miembro <code>result</code>; el código de salida solo clasifica la reparabilidad para scripts. Por eso <code>input_needed</code> e <code>invalid</code> sí comparten el 2: ambos piden una petición nueva con el <code>input</code> completo.</p>
-        </div>
-      </div>
-
-      <div class="note">
-        <p><strong>Cuidado con <code>go run</code>.</strong> <code>go run</code> devuelve 1 cuando el programa sale con cualquier código distinto de 0. Para observar los códigos reales 0/1/2/3/4, compila el binario y ejecútalo directamente.</p>
-      </div>
-    </section>
-
-    <section id="conformidad" class="section">
-      <div class="section-head"><span class="section-num" style="--num:#15803d">9</span><h2 class="title">Pruebas de conformidad</h2><span class="chip-repo">conformance/ · CJ-01…CJ-13</span></div>
-      <p class="sub">Estas pruebas comprueban que la implementación cumple el contrato, sin necesitar un modelo de lenguaje ni conexión a la red. Cada caso de prueba o <em>fixture</em> describe una petición, las condiciones necesarias y las respuestas esperadas. El programa que ejecuta las pruebas también comprueba que no se haya producido ningún efecto cuando no debía haberlo.</p>
-
-      <div class="prose">
-        <p>Hay <strong>trece casos</strong> y <strong>catorce ficheros</strong>: CJ-06 se divide en <code>CJ-06a</code> (fallo) y <code>CJ-06b</code> (versión incompatible). Los casos usan JSON y son independientes del lenguaje. El programa de pruebas está escrito en Go y compila la CLI en un directorio temporal antes de ejecutarlos.</p>
-      </div>
-
-      <div class="table-wrap">
-        <table>
-          <caption>Matriz de conformidad (§9)</caption>
-          <thead><tr><th>Caso</th><th>Qué verifica</th><th>Salida</th></tr></thead>
-          <tbody>
-            <tr><td><code>CJ-01</code></td><td>Ejecución directa: <code>executed</code>, <code>outcome</code> y exactamente una escritura.</td><td>0</td></tr>
-            <tr><td><code>CJ-02</code></td><td>Campo obligatorio ausente: <code>missing</code> exacto, <code>fields</code> y <code>collected</code> sin pérdidas.</td><td>2</td></tr>
-            <tr><td><code>CJ-03</code></td><td>Enumeración inválida con <code>reason</code>, <code>allowed</code> y <code>fields</code>; el reenvío corregido ejecuta.</td><td>2 → 0</td></tr>
-            <tr><td><code>CJ-04</code></td><td><code>denied</code> con <code>reason</code>, sin miembros de reparación, y sigue denegado si el input simula permisos.</td><td>4</td></tr>
-            <tr><td><code>CJ-05</code></td><td>Misma petición, mismo dominio: mismos miembros de decisión (determinismo).</td><td>0</td></tr>
-            <tr><td><code>CJ-06a</code></td><td>Fallo forzado del dominio: <code>failed</code> con <code>message</code>, nunca <code>executed</code>.</td><td>1</td></tr>
-            <tr><td><code>CJ-06b</code></td><td>Versión incompatible: <code>supported</code>, sin eco de <code>operation</code>, <code>input</code> no procesado.</td><td>3</td></tr>
-            <tr><td><code>CJ-07</code></td><td>Valor sensible: no aparece en ninguna parte de la respuesta y sigue <code>input_needed</code>.</td><td>2</td></tr>
-            <tr><td><code>CJ-08</code></td><td>Miembro desconocido: <code>invalid</code> con <code>reason</code> que lo identifica.</td><td>2</td></tr>
-            <tr><td><code>CJ-09</code></td><td>Invocación sin <code>operation</code>: descubrimiento con un <code>id</code> por operación.</td><td>0</td></tr>
-            <tr><td><code>CJ-10</code></td><td>Operación desconocida: <code>known_operations</code> y eco del identificador.</td><td>3</td></tr>
-            <tr><td><code>CJ-11</code></td><td>Entrada no interpretable en cuatro formas: no JSON, no objeto, sin <code>aif</code> y claves duplicadas.</td><td>3</td></tr>
-            <tr><td><code>CJ-12</code></td><td>Mezcla de ausente e inválido: <code>invalid</code> por precedencia, ambos informes, <code>collected</code> conservado.</td><td>2</td></tr>
-            <tr><td><code>CJ-13</code></td><td>Restricción fina: <code>schema</code> con la regla incumplida en sintaxis JSON Schema 2020-12.</td><td>2</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="code"><pre><code class="language-json">{
-  "id": "CJ-09",
-  "description": "Invocación sin operation (CL-05): descubrimiento con id por operación y código 0.",
-  "request": "{\"aif\":\"0.1\"}",
-  "preconditions": {
-    "env": {},
-    "store": []
-  },
-  "assertions": {
-    "exit_code": 0,
-    "discovery": true,
-    "must": ["aif", "operations"],
-    "must_not": ["result", "operation"],
-    "operations_must_id": ["record_observation"],
-    "writes": 0
-  }
-}</code></pre></div>
-
-      <div class="code"><pre><code class="language-bash">go test ./...                 <span class="comment"># biblioteca + conformidad + PoC</span>
-go test ./conformance/ -v     <span class="comment"># detalle de la matriz CJ</span>
-go test ./conformance/ -run TestConformance -v</code></pre></div>
-
-      <div class="prose">
-        <p>El runner comprueba código de salida, <code>result</code>, eco de <code>operation</code>, presencia y ausencia de miembros, subcadenas que no deben aparecer (el valor sensible), número de escrituras y repetición determinista. Las precondiciones de entorno y de almacén se aplican por fixture. El <a href="../../CHANGELOG.md">CHANGELOG</a> registra el resultado de la suite en <strong>14/14 PASS</strong>; es una comprobación de conformidad, no una medida de rendimiento.</p>
-      </div>
-
-      <div class="note">
-        <p><strong>La suite no necesita un agente.</strong> Los fixtures son datos y el runner es código: misma entrada, mismas aserciones, mismo veredicto. Eso es lo que hace comprobable la promesa de determinismo del contrato.</p>
-      </div>
-    </section>
-
-    <section id="poc" class="section">
-      <div class="section-head"><span class="section-num" style="--num:#7c3aed">10</span><h2 class="title">PoC real con ACM</h2><span class="chip-repo">poc/acm/ · 4 escenarios</span></div>
-      <p class="sub">La prueba de concepto (PoC) conecta la biblioteca con el adaptador real de ACM y usa una memoria temporal. No cambia las reglas de ACM ni toca la memoria de producción: trabaja con una copia intacta y ejecuta la operación <code>learning</code> en un proceso separado.</p>
-
-      <div class="prose">
-        <p>El comando <code>acmpoc</code> es el perfil CLI de AIF para una operación real. AIF decide el sobre, la estructura de campos y el conjunto cerrado de <code>confidence</code>; ACM conserva su validación, su deduplicación por contenido (<code>content_hash</code>), la idempotencia de <code>form_id</code>, el ETag y las transacciones. El <code>outcome</code> es la respuesta de ACM, sin reinterpretar.</p>
-      </div>
-
-      <div class="table-wrap">
-        <table>
-          <caption>Operación <code>learning</code> de la PoC</caption>
-          <thead><tr><th>Campo</th><th>Obligatorio</th><th>Restricción</th></tr></thead>
-          <tbody>
-            <tr><td><code>title</code></td><td>Sí</td><td><code>string</code>, no en blanco; <code>schema</code>: <code>{"minLength":1}</code></td></tr>
-            <tr><td><code>body</code></td><td>Sí</td><td><code>string</code>, no en blanco; <code>schema</code>: <code>{"minLength":1}</code></td></tr>
-            <tr><td><code>topic</code></td><td>No</td><td>Clave de tema libre; ACM la normaliza</td></tr>
-            <tr><td><code>confidence</code></td><td>No</td><td>Conjunto cerrado de ACM: <code>confirmed</code>, <code>inference</code>, <code>hypothesis</code>, <code>proposal</code>, <code>unknown</code></td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="table-wrap">
-        <table>
-          <caption>Escenarios de <code>poc/acm/run.sh</code></caption>
-          <thead><tr><th>Escenario</th><th>Qué ocurre</th><th>Qué se afirma</th></tr></thead>
-          <tbody>
-            <tr><td><strong>S1</strong> · ejecución directa</td><td>Datos completos y válidos.</td><td><code>executed</code>, una fila, salida 0.</td></tr>
-            <tr><td><strong>S2</strong> · información ausente</td><td>Faltan <code>title</code> y <code>body</code>.</td><td><code>input_needed</code>, <code>missing</code> exacto, sin <code>invalid</code>, ninguna fila nueva.</td></tr>
-            <tr><td><strong>S3</strong> · inválido y corrección</td><td><code>confidence: "certain"</code> no pertenece al conjunto; después se corrige.</td><td><code>invalid</code> con <code>allowed</code> íntegro y, tras corregir, <code>executed</code> con una fila nueva.</td></tr>
-            <tr><td><strong>S4</strong> · mismo contenido</td><td>Se reenvía la observación de S1.</td><td><code>executed</code> con <code>consolidated</code>: ACM deduplica, no hay segunda fila y <code>duplicate_count</code> vale 2.</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"learning","input":{"title":"El parser exige UTC","body":"Las fechas sin zona se interpretan como UTC; el test lo fija.","topic":"parser-fechas","confidence":"confirmed"}}</code></pre></div>
-
-      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"learning","outcome":{"ok":true,"result":"created"},"result":"executed"}</code></pre></div>
-
-      <div class="code"><pre><code class="language-bash">bash poc/acm/run.sh      <span class="comment"># 4 escenarios aislados; RESULT: 4/4 PASS</span></code></pre></div>
-
-      <div class="note">
-        <p><strong>Las garantías que se prueban son de ACM, no de AIF.</strong> La deduplicación, la idempotencia real y las transacciones siguen siendo del adaptador. AIF solo comprueba que su vocabulario puede envolver esa operación sin robarle autoridad ni prometer garantías que no existen en el contrato.</p>
-      </div>
-    </section>
-
     <section id="responsabilidades" class="section">
-      <div class="section-head"><span class="section-num" style="--num:#b91c1c">11</span><h2 class="title">Responsabilidades, seguridad y límites</h2><span class="chip-repo">SPECIFICATION §6 · L-01…L-05</span></div>
+      <div class="section-head"><span class="section-num" style="--num:#b91c1c">13</span><h2 class="title">Responsabilidades, seguridad y límites</h2><span class="chip-repo">SPECIFICATION §6 · L-01…L-05</span></div>
       <p class="sub">El contrato describe la interacción; el ejecutor y su dominio retienen toda la autoridad. Esta separación no es una recomendación de estilo: es el límite que impide que una respuesta JSON se convierta en permiso o en prueba de ejecución.</p>
 
       <figure class="diagram">
@@ -1498,8 +1777,74 @@ go test ./conformance/ -run TestConformance -v</code></pre></div>
       </div>
     </section>
 
+    <section id="conformidad" class="section">
+      <div class="section-head"><span class="section-num" style="--num:#15803d">14</span><h2 class="title">Pruebas de conformidad</h2><span class="chip-repo">conformance/ · CJ-01…CJ-13</span></div>
+      <p class="sub">Estas pruebas comprueban que la implementación cumple el contrato, sin necesitar un modelo de lenguaje ni conexión a la red. Cada caso de prueba o <em>fixture</em> describe una petición, las condiciones necesarias y las respuestas esperadas. El programa que ejecuta las pruebas también comprueba que no se haya producido ningún efecto cuando no debía haberlo.</p>
+
+      <div class="prose">
+        <p>Hay <strong>trece casos</strong> y <strong>catorce ficheros</strong>: CJ-06 se divide en <code>CJ-06a</code> (fallo) y <code>CJ-06b</code> (versión incompatible). Los casos usan JSON y son independientes del lenguaje. El programa de pruebas está escrito en Go y compila la CLI en un directorio temporal antes de ejecutarlos.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <caption>Matriz de conformidad (§9)</caption>
+          <thead><tr><th>Caso</th><th>Qué verifica</th><th>Salida</th></tr></thead>
+          <tbody>
+            <tr><td><code>CJ-01</code></td><td>Ejecución directa: <code>executed</code>, <code>outcome</code> y exactamente una escritura.</td><td>0</td></tr>
+            <tr><td><code>CJ-02</code></td><td>Campo obligatorio ausente: <code>missing</code> exacto, <code>fields</code> y <code>collected</code> sin pérdidas.</td><td>2</td></tr>
+            <tr><td><code>CJ-03</code></td><td>Enumeración inválida con <code>reason</code>, <code>allowed</code> y <code>fields</code>; el reenvío corregido ejecuta.</td><td>2 → 0</td></tr>
+            <tr><td><code>CJ-04</code></td><td><code>denied</code> con <code>reason</code>, sin miembros de reparación, y sigue denegado si el input simula permisos.</td><td>4</td></tr>
+            <tr><td><code>CJ-05</code></td><td>Misma petición, mismo dominio: mismos miembros de decisión (determinismo).</td><td>0</td></tr>
+            <tr><td><code>CJ-06a</code></td><td>Fallo forzado del dominio: <code>failed</code> con <code>message</code>, nunca <code>executed</code>.</td><td>1</td></tr>
+            <tr><td><code>CJ-06b</code></td><td>Versión incompatible: <code>supported</code>, sin eco de <code>operation</code>, <code>input</code> no procesado.</td><td>3</td></tr>
+            <tr><td><code>CJ-07</code></td><td>Valor sensible: no aparece en ninguna parte de la respuesta y sigue <code>input_needed</code>.</td><td>2</td></tr>
+            <tr><td><code>CJ-08</code></td><td>Miembro desconocido: <code>invalid</code> con <code>reason</code> que lo identifica.</td><td>2</td></tr>
+            <tr><td><code>CJ-09</code></td><td>Invocación sin <code>operation</code>: descubrimiento con un <code>id</code> por operación.</td><td>0</td></tr>
+            <tr><td><code>CJ-10</code></td><td>Operación desconocida: <code>known_operations</code> y eco del identificador.</td><td>3</td></tr>
+            <tr><td><code>CJ-11</code></td><td>Entrada no interpretable en cuatro formas: no JSON, no objeto, sin <code>aif</code> y claves duplicadas.</td><td>3</td></tr>
+            <tr><td><code>CJ-12</code></td><td>Mezcla de ausente e inválido: <code>invalid</code> por precedencia, ambos informes, <code>collected</code> conservado.</td><td>2</td></tr>
+            <tr><td><code>CJ-13</code></td><td>Restricción fina: <code>schema</code> con la regla incumplida en sintaxis JSON Schema 2020-12.</td><td>2</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code"><pre><code class="language-json">{
+  "id": "CJ-09",
+  "description": "Invocación sin operation (CL-05): descubrimiento con id por operación y código 0.",
+  "request": "{\"aif\":\"0.1\"}",
+  "preconditions": {
+    "env": {},
+    "store": []
+  },
+  "assertions": {
+    "exit_code": 0,
+    "discovery": true,
+    "must": ["aif", "operations"],
+    "must_not": ["result", "operation"],
+    "operations_must_id": ["record_observation"],
+    "writes": 0
+  }
+}</code></pre></div>
+
+      <div class="code"><pre><code class="language-bash">go test ./...                 <span class="comment"># biblioteca + conformidad + PoC</span>
+go test ./conformance/ -v     <span class="comment"># detalle de la matriz CJ</span>
+go test ./conformance/ -run TestConformance -v</code></pre></div>
+
+      <div class="prose">
+        <p>El runner comprueba código de salida, <code>result</code>, eco de <code>operation</code>, presencia y ausencia de miembros, subcadenas que no deben aparecer (el valor sensible), número de escrituras y repetición determinista. Las precondiciones de entorno y de almacén se aplican por fixture. El <a href="../../CHANGELOG.md">CHANGELOG</a> registra el resultado de la suite en <strong>14/14 PASS</strong>; es una comprobación de conformidad, no una medida de rendimiento.</p>
+      </div>
+
+      <div class="note">
+        <p><strong>La suite no necesita un agente.</strong> Los fixtures son datos y el runner es código: misma entrada, mismas aserciones, mismo veredicto. Eso es lo que hace comprobable la promesa de determinismo del contrato.</p>
+      </div>
+    </section>
+
+    <div class="level" id="nivel-4">
+      <p class="level-band" style="--level:#b45309"><span class="n">Nivel 4 · Investigación</span><span class="d">Fundamentos, experimento y límites. No normativo y sin reinterpretar sus resultados.</span></p>
+    </div>
+
     <section id="experimento" class="section">
-      <div class="section-head"><span class="section-num" style="--num:#b45309">12</span><h2 class="title">Resultados y limitaciones del experimento</h2><span class="chip-repo">docs/experiment/EXPERIMENT-RESULTS.md</span></div>
+      <div class="section-head"><span class="section-num" style="--num:#b45309">15</span><h2 class="title">Resultados y limitaciones del experimento</h2><span class="chip-repo">docs/experiment/EXPERIMENT-RESULTS.md</span></div>
       <p class="sub">Antes de la Specification se realizó un experimento de viabilidad: 3 escenarios × 5 pares × 2 variantes = 30 mediciones, para comparar ACM con una CLI JSON competente. Esta sección cuenta lo ocurrido; no mide la adopción ni representa una decisión de producto.</p>
 
       <div class="note">
@@ -1550,10 +1895,14 @@ go test ./conformance/ -run TestConformance -v</code></pre></div>
     </section>
 
     <section id="referencias" class="section">
-      <div class="section-head"><span class="section-num" style="--num:#5f6b80">13</span><h2 class="title">Referencias</h2><span class="chip-repo">rutas del repositorio</span></div>
+      <div class="section-head"><span class="section-num" style="--num:#5f6b80">16</span><h2 class="title">Referencias</h2><span class="chip-repo">rutas del repositorio</span></div>
       <p class="sub">Cada fuente canónica vive en su fichero. Si esta página y una fuente discrepan, manda la fuente enlazada.</p>
 
       <div class="cards c2">
+        <div class="card">
+          <h3><a href="../PRODUCT.md">PRODUCT.md</a></h3>
+          <p>Visión de producto v0.1 aprobada por el PO: qué es AIF, qué problema resuelve, cómo funciona, las dos modalidades, los componentes y el estado actual.</p>
+        </div>
         <div class="card">
           <h3><a href="../SPECIFICATION.md">SPECIFICATION.md</a></h3>
           <p>Contrato AIF v0.1.1, APROBADO por el PO el 2026-11-24. Norma de §§1–7 y 9–10; ejemplos en §8; trazabilidad y decisiones en §§11–12.</p>
@@ -1632,7 +1981,7 @@ go test ./conformance/ -run TestConformance -v</code></pre></div>
           <path d="M9 15h7" stroke="#ffffff" stroke-width="2.3" stroke-linecap="round"></path>
         </svg>
       </span>
-      <span class="brand-name">AIF<small>contrato de interacción</small></span>
+      <span class="brand-name">AIF<small>interacción autodescriptiva</small></span>
     </a>
     <nav class="footer-nav" aria-label="Enlaces del repositorio">
       <a href="../SPECIFICATION.md">Especificación</a>
@@ -1642,7 +1991,7 @@ go test ./conformance/ -run TestConformance -v</code></pre></div>
       <a href="../../CHANGELOG.md">CHANGELOG</a>
       <a href="https://github.com/fred66sp/agent-interaction-forms">GitHub</a>
     </nav>
-    <p class="footer-note">Documentación estática: sin tipografías, scripts ni peticiones externas. Fuente normativa: <code>docs/SPECIFICATION.md</code> v0.1.1. El contenido de esta página se limita a ese contrato y a la implementación de referencia.</p>
+    <p class="footer-note">Documentación estática: sin tipografías, scripts ni peticiones externas. Visión: <code>docs/PRODUCT.md</code> v0.1. Fuente normativa del contrato: <code>docs/SPECIFICATION.md</code> v0.1.1. Esta página resume ambas y no las amplía.</p>
   </div>
 </footer>
 
@@ -1757,7 +2106,7 @@ go test ./conformance/ -run TestConformance -v</code></pre></div>
         links[entry.target.id].forEach(function (a) { a.classList.add("active"); });
       });
     }, { rootMargin: "-20% 0px -70% 0px", threshold: 0 });
-    document.querySelectorAll("main section").forEach(function (s) {
+    document.querySelectorAll("main section, main .level").forEach(function (s) {
       if (links[s.id]) { observer.observe(s); }
     });
   }

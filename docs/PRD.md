@@ -4,17 +4,23 @@
 | Metadato | Valor |
 |---|---|
 | ID | AIF-PRD |
-| Versión | 0.1.5 |
-| Fecha | 2026-11-24 |
+| Versión | 0.1.6 |
+| Fecha | 2026-11-26 |
 | Estado de preparación | PARCIAL |
-| Fuente | [RESEARCH.md](RESEARCH.md), v0.1.2 |
+| Fuentes | [RESEARCH.md](RESEARCH.md), v0.1.2 · [PRODUCT.md](PRODUCT.md), v0.1 (visión aprobada por el PO) |
 | Estado de aprobación | Pendiente de revisión del PO |
 
 ## 1. Visión y problema
 
-AIF aspira a ser un contrato abierto, ligero e independiente del lenguaje para la interacción determinista entre agentes y herramientas. Una operación completa se ejecuta directamente; una incompleta devuelve los datos necesarios para continuar; una inválida permite corregir sin reconstruir los campos válidos.
+AIF dota a las herramientas de una interfaz autodescriptiva, determinista y orientada a agentes; su núcleo es un contrato abierto, ligero e independiente del lenguaje para la interacción determinista entre agentes y herramientas ([PRODUCT.md](PRODUCT.md) §1). Una operación completa se ejecuta directamente; una incompleta devuelve los datos necesarios para continuar; una inválida permite corregir sin reconstruir los campos válidos.
 
 El problema es la fricción de descubrir sintaxis, interpretar errores y reconstruir argumentos. ACM demuestra viabilidad, no superioridad: su README informa de 22.900 tokens AIF frente a 12.700 convencional (+80,3 %) y 106.000 db-ai directo, con n=1 por variante. No existe todavía una línea base comparable frente a una CLI JSON competente.
+
+### 1.1 Visión aprobada y jerarquía documental
+
+La visión de producto está aprobada y vive en [PRODUCT.md](PRODUCT.md) v0.1: qué es AIF, el problema, las dos modalidades de uso, los componentes y el estado actual. Este PRD no la repite; fija los requisitos verificables que la materializan y la referencia.
+
+Jerarquía de fuentes: PRODUCT.md es la visión aprobada; este PRD, los requisitos; [SPECIFICATION.md](SPECIFICATION.md), el contrato normativo. Si la visión y un requisito discrepan, la discrepancia se eleva al PO antes de modificarse. El reparto entre base implementada, visión completa y capacidades pendientes de diseño está en §3.
 
 ## 2. Usuarios y objetivos
 
@@ -24,11 +30,44 @@ Personas hipotéticas, no validadas mediante entrevistas: agente consumidor que 
 - OBJ-02: mantener una sola invocación cuando los datos bastan.
 - OBJ-03: demostrar utilidad frente a una CLI JSON bien diseñada antes de construir infraestructura.
 
-## 3. Alcance v0.1
+## 3. Alcance v0.1, base implementada y visión de producto
 
-Tres entregables, condicionados a la puerta de producto: (1) especificación mínima y perfil CLI; (2) implementación de referencia con fixtures de conformidad; (3) PoC aislada con ACM. Go es candidato, no decisión cerrada. No se modifica ACM de producción.
+Este apartado separa tres cosas que no deben confundirse: lo ya implementado y verificado (§3.1), la visión del producto completo aprobada en [PRODUCT.md](PRODUCT.md) (§3.2) y lo que sigue pendiente de diseño (§3.3). Las tres conviven; §3.2 y §3.3 no amplían el alcance v0.1 ni los requisitos de §§4–6.
+
+### 3.1 Base técnica implementada (alcance v0.1)
+
+El alcance v0.1 se fijó en tres entregables, condicionados a la puerta de producto: (1) especificación mínima y perfil CLI; (2) implementación de referencia con fixtures de conformidad; (3) PoC aislada con ACM. Go figuraba como candidato, no como decisión cerrada; la implementación entregada está en Go y D-03 conserva su estado en §8. No se modifica ACM de producción.
+
+Entregado y verificado (detalle en [CHANGELOG.md](../CHANGELOG.md)):
+
+| Pieza | Estado |
+|---|---|
+| Biblioteca Go `aif` | Implementada: materializa el contrato v0.1 sobre `aif`/`operation`/`input`, con los ocho resultados y su contenido exigible, precedencia de `invalid` y conservación de valores válidos no sensibles. |
+| Contrato v0.1 | [SPECIFICATION.md](SPECIFICATION.md) v0.1.1, aprobada por el PO el 2026-11-24. |
+| Fixtures de conformidad | CJ-01..CJ-13, independientes del lenguaje, con runner determinista (14/14 PASS). |
+| CLI de demostración | `cmd/aifdemo`, conforme al perfil CLI: códigos de salida 0/1/2/3/4 y diagnósticos separados. |
+| PoC con ACM | `poc/acm` con base efímera y copia intacta del adaptador (4/4 escenarios PASS). |
+
+Trazabilidad: la puerta de §7 concluyó **INCONCLUSO** y la Specification v0.1.1 se aprobó después por decisión del PO, registrada en el CHANGELOG. §7 conserva su texto original y este PRD no reescribe la secuencia de §9.
 
 El núcleo no administra sesiones, almacenamiento, claves idempotentes, caducidad, revisiones ni concurrencia. Las garantías existentes de ACM permanecen en ACM; no se eliminan ni se generalizan. El runner, Python como segunda implementación, MCP/HTTP y las garantías de reintento quedan como candidatos v0.2, sujetos a una nueva decisión de producto. Tampoco entran orquestación, GUI ni servicios residentes.
+
+### 3.2 Visión del producto completo
+
+La visión aprobada ([PRODUCT.md](PRODUCT.md) §§4–5) describe un producto único con dos modalidades complementarias:
+
+- **Integración nativa:** la biblioteca AIF se incorpora al código de la aplicación, sin ejecutable intermediario.
+- **Integración externa:** un ejecutable AIF actúa como intermediario; un archivo de definición describe las operaciones y sus restricciones.
+
+Y cuatro componentes como responsabilidades conceptuales de ese único producto, no como proyectos separados: AIF Core (biblioteca reutilizable), AIF CLI (ejecutable), AIF Definition (formato declarativo) y AIF Specification (contrato común). Ambas modalidades comparten núcleo y contrato.
+
+Esta sección describe el destino del producto; no añade requisitos a §§4–6 ni decide su implementación.
+
+### 3.3 Capacidades pendientes de diseño
+
+Dos capacidades de la visión siguen **pendientes de diseño**: **AIF CLI como producto** (capa externa sobre herramientas existentes) y **AIF Definition** (formato declarativo que describe operaciones, información necesaria, restricciones e invocación). Son **conceptuales, no disponibles**: no tienen requisitos, formato ni interfaz decididos, y nada de lo escrito aquí debe leerse como decisión de implementación.
+
+> **Decisión pendiente del PO.** Cómo encaja el alcance v0.1 ya cerrado con las dos modalidades de la visión, y con D-03 —que mantiene el lenguaje como propuesta pese a la implementación Go existente—, no está decidido. Este PRD lo deja señalado y no lo resuelve.
 
 ## 4. Requisitos funcionales
 
@@ -105,7 +144,7 @@ Orden de evaluación, aprobado por el PO: (1) defecto de integridad → **NO-GO*
 | D-08: umbrales y protocolo | Aprobados por el PO el 2026-11-24 (umbrales en §7, protocolo en EXPERIMENT.md) |
 | D-09: metodología de desarrollo — sin documento SDD; flujo ODD del proyecto (tablero Tasks-AI, Orchestrator, ACM) | Aprobada por el PO el 2026-11-24, en la revisión de SPECIFICATION v0.1 |
 
-**PARCIAL:** alcance y criterios definidos; hipótesis de usuarios sin validación externa; línea base comparable y experimento pendientes; auditoría externa de fuentes parcial (véase RESEARCH, adenda); decisión de lenguaje y aprobación del PO pendientes. No listo para implementación.
+**PARCIAL:** alcance y criterios definidos; base técnica v0.1 implementada y verificada (§3.1); hipótesis de usuarios sin validación externa; experimento ejecutado con resultado **INCONCLUSO** por medición no comparable (§7), sin evidencia de superioridad frente a una CLI JSON competente; auditoría externa de fuentes parcial (véase RESEARCH, adenda); aprobación de este PRD pendiente. El producto completo de PRODUCT.md no está listo: AIF CLI como producto y AIF Definition siguen pendientes de diseño (§3.3).
 
 ## 9. Secuencia y control de cambios
 
@@ -114,4 +153,4 @@ PoC y fixtures. Benchmark ampliado solo si la evidencia lo justifica. No hay eta
 documento SDD (D-09): la Specification aprobada es la entrada directa de la
 implementación, dirigida por el flujo ODD del proyecto.
 
-v0.1.0: borrador inicial. v0.1.1: recorte del MVP, elimina dependencias implícitas con el Runner, puerta temprana con objetivos medibles, estado PARCIAL. v0.1.2: se corrige la numeración (un ID por requisito, CA contiguos), se recuperan D-02, D-04, D-06 y D-07 y se conserva RNF-04 (Linux/WSL inicial); el protocolo experimental pasa a EXPERIMENT.md; §7 conserva la puerta con cuatro criterios. Un baseline sin margen de mejora da INCONCLUSO, no GO ni NO-GO. Se cierra el hueco de la puerta: cualquier criterio incumplido con medición válida es NO-GO. Se corrigen la referencia a RESEARCH v0.1.2 y la matriz comparativa de RESEARCH §5 (reintento seguro diferido a v0.2). v0.1.3: el PO aprueba el orden de evaluación de la puerta (§7) y la primera llamada prefijada del experimento ([EXPERIMENT.md](experiment/EXPERIMENT.md) §4). v0.1.4: el PO aprueba el protocolo y los umbrales (D-08), el modelo `nan/deepseek-v4-flash#medium` y el aislamiento y registro mínimos; la ejecución sigue pendiente de autorización de destino. v0.1.5: decisión del PO (D-09): la secuencia §9 no incluye etapa de documento SDD; el desarrollo sigue el flujo ODD del proyecto (tablero Tasks-AI, Orchestrator, ACM), sin documento sustitutivo ni metodología paralela.
+v0.1.0: borrador inicial. v0.1.1: recorte del MVP, elimina dependencias implícitas con el Runner, puerta temprana con objetivos medibles, estado PARCIAL. v0.1.2: se corrige la numeración (un ID por requisito, CA contiguos), se recuperan D-02, D-04, D-06 y D-07 y se conserva RNF-04 (Linux/WSL inicial); el protocolo experimental pasa a EXPERIMENT.md; §7 conserva la puerta con cuatro criterios. Un baseline sin margen de mejora da INCONCLUSO, no GO ni NO-GO. Se cierra el hueco de la puerta: cualquier criterio incumplido con medición válida es NO-GO. Se corrigen la referencia a RESEARCH v0.1.2 y la matriz comparativa de RESEARCH §5 (reintento seguro diferido a v0.2). v0.1.3: el PO aprueba el orden de evaluación de la puerta (§7) y la primera llamada prefijada del experimento ([EXPERIMENT.md](experiment/EXPERIMENT.md) §4). v0.1.4: el PO aprueba el protocolo y los umbrales (D-08), el modelo `nan/deepseek-v4-flash#medium` y el aislamiento y registro mínimos; la ejecución sigue pendiente de autorización de destino. v0.1.5: decisión del PO (D-09): la secuencia §9 no incluye etapa de documento SDD; el desarrollo sigue el flujo ODD del proyecto (tablero Tasks-AI, Orchestrator, ACM), sin documento sustitutivo ni metodología paralela. v0.1.6: alineación con la visión de producto aprobada en [PRODUCT.md](PRODUCT.md); el PRD separa base técnica implementada (§3.1), visión del producto completo (§3.2) y capacidades pendientes de diseño (§3.3), sin duplicar la visión ni alterar requisitos, decisiones D-01..D-09, puerta de §7 ni secuencia de §9.

@@ -1,13 +1,30 @@
 # AGENTS.md
 
-Este repositorio documenta y valida AIF antes de escribir software. Este fichero dice
+Este repositorio alberga AIF: una base técnica funcional (biblioteca Go y contrato
+v0.1) dentro de una visión de producto aprobada en [`docs/PRODUCT.md`](docs/PRODUCT.md).
+Durante la consolidación documental el desarrollo está congelado. Este fichero dice
 dónde vive cada fuente canónica y qué leer antes de cada encargo; no guarda contenido,
 solo enlaza.
+
+## Visión de producto y estado (resumen, no fuente)
+
+- AIF es un producto con dos modalidades complementarias que comparten núcleo y contrato:
+  **integración nativa** (biblioteca Go reutilizable dentro del ejecutable de la
+  aplicación) e **integración externa** (ejecutable AIF como capa sobre herramientas
+  existentes, con definiciones declarativas, pendiente de diseño). La visión completa
+  vive en [`docs/PRODUCT.md`](docs/PRODUCT.md); este fichero no la duplica.
+- El desarrollo está **temporalmente congelado** hasta que el PO apruebe la
+  consolidación conceptual y documental: no tocar código, contrato ni experimentos.
+- Jerarquía de fuentes: visión → [`PRODUCT.md`](docs/PRODUCT.md); requisitos →
+  [`PRD.md`](docs/PRD.md); contrato normativo → [`SPECIFICATION.md`](docs/SPECIFICATION.md);
+  investigación → [`RESEARCH.md`](docs/RESEARCH.md); evidencia → [`docs/experiment/`](docs/experiment).
 
 ## Qué se busca → dónde vive
 
 | Qué se busca | Dónde vive |
 |---|---|
+| La visión de producto aprobada (qué es AIF, problema, modalidades, componentes, estado) | [`PRODUCT.md`](docs/PRODUCT.md) — fuente canónica de visión, aprobada por el PO |
+| Requisitos y alcance | [`PRD.md`](docs/PRD.md) |
 | Qué es AIF, alcance y requisitos | [`PRD.md`](docs/PRD.md) y [`README.md`](README.md) |
 | Investigación previa: antecedentes, evidencia propia y hueco diferencial | [`RESEARCH.md`](docs/RESEARCH.md) |
 | La puerta GO/NO-GO y sus umbrales | [`PRD.md`](docs/PRD.md) §7 |
@@ -35,6 +52,10 @@ solo enlaza.
 ## Autoridad
 
 Este mapa no es fuente de nada: enlaza. Si una ruta o una afirmación de este archivo
-contradice a la fuente que enlaza, manda la fuente y se corrige aquí. Los contratos
-vigentes son [`PRD.md`](docs/PRD.md) y, dentro de la puerta, [`EXPERIMENT.md`](docs/experiment/EXPERIMENT.md);
-si discrepan, prevalece el PRD.
+contradice a la fuente que enlaza, manda la fuente y se corrige aquí. Fuente canónica
+de la visión del producto: [`docs/PRODUCT.md`](docs/PRODUCT.md), aprobada por el PO.
+Los contratos vigentes son [`PRD.md`](docs/PRD.md) y, dentro de la puerta,
+[`EXPERIMENT.md`](docs/experiment/EXPERIMENT.md) (registro INCONCLUSO conservado como
+evidencia histórica); si discrepan en requisitos, prevalece el PRD; en visión, PRODUCT.
+El desarrollo está temporalmente congelado hasta que el PO apruebe la consolidación
+conceptual y documental.

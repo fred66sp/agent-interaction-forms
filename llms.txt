@@ -1,11 +1,12 @@
 # agent-interaction-forms
 
-> AIF (Agent Interaction Forms): contrato abierto, ligero e independiente del lenguaje para la interacción determinista entre agentes y herramientas — una operación completa se ejecuta directamente, una incompleta devuelve un formulario con lo que falta y una instrucción de continuación, y una inválida permite corregir sin reconstruir los campos válidos. Proyecto tras el experimento de viabilidad (ejecutado, clasificado INCONCLUSO según la puerta del PRD §7; el PO decidió continuar). Cada fuente canónica vive en su fichero; este fichero solo enlaza y no duplica descripciones.
+> AIF (Agent Interaction Forms): producto con dos modalidades de integración que comparten núcleo y contrato — biblioteca Go reutilizable para incorporar dentro del ejecutable de una aplicación (integración nativa) y ejecutable AIF como capa de interacción sobre herramientas existentes mediante definiciones declarativas, pendiente de diseño (integración externa). La interacción es autodescriptiva y determinista: una operación completa se ejecuta directamente, una incompleta devuelve un formulario con lo que falta y una instrucción de continuación, y una inválida permite corregir sin reconstruir los campos válidos. Visión de producto aprobada: [docs/PRODUCT.md](docs/PRODUCT.md). Estado: AIF Core (biblioteca Go) y AIF Specification (contrato v0.1) con base funcional; AIF CLI como producto y AIF Definition pendientes de diseño; desarrollo temporalmente congelado hasta aprobación del PO. Cada fuente canónica vive en su fichero; este fichero solo enlaza y no duplica descripciones.
 
 ## Documentación
 
+- [Visión de producto aprobada](docs/PRODUCT.md) (v0.1, aprobada por el PO — fuente canónica de visión)
 - [README del proyecto](README.md)
-- [PRD — requisitos y alcance](docs/PRD.md) (v0.1.5, PARCIAL, pendiente de aprobación del PO)
+- [PRD — requisitos y alcance](docs/PRD.md) (v0.1.6, PARCIAL, pendiente de aprobación del PO)
 - [SPECIFICATION — contrato de interacción](docs/SPECIFICATION.md) (v0.1.1, APROBADO por el PO el 2026-11-24)
 - [RESEARCH — investigación de origen](docs/RESEARCH.md)
 - [Protocolo del experimento GO/NO-GO](docs/experiment/EXPERIMENT.md) (aprobado por el PO; ejecutado, resultado INCONCLUSO)
