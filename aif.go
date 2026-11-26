@@ -49,8 +49,10 @@ type Operation struct {
 	Description string
 	Fields      []Field
 	// Execute receives the validated raw input and returns the opaque outcome.
-	// Return DeniedError to deny, DomainError to report a failure, or any other
-	// error to report a failure without a code.
+	// Return DeniedError to deny, InvalidError to report rejected input fields
+	// as a repairable invalid response, DomainError to report a failure, or any
+	// other error to report a failure without a code. The value or the pointer
+	// form is accepted alike.
 	Execute func(input map[string]json.RawMessage) (json.RawMessage, error)
 }
 

@@ -448,6 +448,39 @@ func TestUnusableInvalidErrorFails(t *testing.T) {
 	}
 }
 
+// A typed-nil error pointer (the classic `var e *DeniedError; return e` bug)
+// reaches the executor as a non-nil error with no data: the response is
+// failed, and the host process must not panic dereferencing the receiver.
+func TestNilDomainErrorPointerFails(t *testing.T) {
+	tests := []struct {
+		name string
+		err  error
+	}{
+		{"denied nulo", (*DeniedError)(nil)},
+		{"invalid nulo", (*InvalidError)(nil)},
+		{"domain nulo", (*DomainError)(nil)},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			calls := 0
+			ex := testExecutor(t, &calls, func(map[string]json.RawMessage) (json.RawMessage, error) {
+				return nil, tt.err
+			})
+			doc := handleJSON(t, ex, `{"aif":"0.2","operation":"test","input":{"name":"n","mode":"a","note":"x"}}`)
+			assertResult(t, doc, ResultFailed)
+			if got := stringMember(t, doc, "message"); got == "" {
+				t.Error("failed sin message")
+			}
+			for _, name := range []string{"invalid", "collected", "missing", "outcome"} {
+				absent(t, doc, name)
+			}
+			if calls != 1 {
+				t.Errorf("Execute llamadas = %d, want 1", calls)
+			}
+		})
+	}
+}
+
 func TestWrappedDomainErrors(t *testing.T) {
 	tests := []struct {
 		name   string
@@ -457,6 +490,10 @@ func TestWrappedDomainErrors(t *testing.T) {
 		{"denied", ResultDenied, fmt.Errorf("dominio: %w", DeniedError{Reason: "sin permiso"})},
 		{"failed", ResultFailed, fmt.Errorf("dominio: %w", DomainError{Message: "no se pudo", Code: "storage"})},
 		{"invalid", ResultInvalid, fmt.Errorf("dominio: %w", InvalidError{Fields: map[string]string{"mode": "no disponible"}})},
+		{"invalid puntero", ResultInvalid, &InvalidError{Fields: map[string]string{"mode": "no disponible"}}},
+		{"invalid puntero envuelto", ResultInvalid, wrapPtr{&InvalidError{Fields: map[string]string{"mode": "no disponible"}}}},
+		{"denied puntero", ResultDenied, &DeniedError{Reason: "sin permiso"}},
+		{"failed puntero", ResultFailed, &DomainError{Message: "no se pudo", Code: "storage"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -473,6 +510,13 @@ func TestWrappedDomainErrors(t *testing.T) {
 		})
 	}
 }
+
+// wrapPtr mimics an adapter that returns a pointer-form library error wrapped
+// in its own error, without tripping vet's %w operand rule.
+type wrapPtr struct{ err error }
+
+func (w wrapPtr) Error() string { return "dominio: " + w.err.Error() }
+func (w wrapPtr) Unwrap() error { return w.err }
 
 // Exhaustive validation: one exchange reports every detected problem, both
 // absent and invalid fields, not just the first one.

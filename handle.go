@@ -185,6 +185,11 @@ func problemFor(f Field, raw json.RawMessage, reason string) FieldProblem {
 	return p
 }
 
+// execute maps a domain error to its response. Each of the three library
+// error types is accepted in the value and in the pointer form, matched in
+// that order: the Error methods have value receivers, so either form may be
+// returned, and errors.As only matches the exact dynamic type, so the pointer
+// check goes first.
 func execute(op *Operation, input map[string]json.RawMessage) *Response {
 	if op.Execute == nil {
 		return &Response{
@@ -202,13 +207,40 @@ func execute(op *Operation, input map[string]json.RawMessage) *Response {
 		}
 		return &Response{AIF: Version, Operation: op.ID, Result: ResultExecuted, Outcome: outcome}
 	}
+	var deniedPtr *DeniedError
+	if errors.As(err, &deniedPtr) {
+		if deniedPtr == nil {
+			return brokenDomainError(op)
+		}
+		return &Response{AIF: Version, Operation: op.ID, Result: ResultDenied, Reason: deniedPtr.Reason}
+	}
 	var denied DeniedError
 	if errors.As(err, &denied) {
 		return &Response{AIF: Version, Operation: op.ID, Result: ResultDenied, Reason: denied.Reason}
 	}
+	var invalidPtr *InvalidError
+	if errors.As(err, &invalidPtr) {
+		if invalidPtr == nil {
+			return brokenDomainError(op)
+		}
+		return reparableFromDomain(op, input, invalidPtr.Fields)
+	}
 	var invalid InvalidError
 	if errors.As(err, &invalid) {
 		return reparableFromDomain(op, input, invalid.Fields)
+	}
+	var domainPtr *DomainError
+	if errors.As(err, &domainPtr) {
+		if domainPtr == nil {
+			return brokenDomainError(op)
+		}
+		return &Response{
+			AIF:       Version,
+			Operation: op.ID,
+			Result:    ResultFailed,
+			Message:   domainPtr.Message,
+			Code:      domainPtr.Code,
+		}
 	}
 	var domain DomainError
 	if errors.As(err, &domain) {
@@ -265,6 +297,19 @@ func invalidErrorFailed(op *Operation) *Response {
 		Operation: op.ID,
 		Result:    ResultFailed,
 		Message:   "el dominio informó de campos inválidos que la operación no puede describir",
+	}
+}
+
+// brokenDomainError is the response for an unusable domain error: a typed-nil
+// error pointer (the classic `var e *DeniedError; return e` bug) is a non-nil
+// error interface with no data, a domain defect — never a denial or a repair,
+// and never dereferenced.
+func brokenDomainError(op *Operation) *Response {
+	return &Response{
+		AIF:       Version,
+		Operation: op.ID,
+		Result:    ResultFailed,
+		Message:   "el dominio devolvió un error que el ejecutor no puede interpretar",
 	}
 }
 
