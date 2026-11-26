@@ -96,7 +96,7 @@ type expectations struct {
 
 var requiredIDs = []string{
 	"CJ-01", "CJ-02", "CJ-03", "CJ-04", "CJ-05", "CJ-06a", "CJ-06b",
-	"CJ-07", "CJ-08", "CJ-09", "CJ-10", "CJ-11", "CJ-12", "CJ-13",
+	"CJ-07", "CJ-08", "CJ-09", "CJ-10", "CJ-11", "CJ-12", "CJ-13", "CJ-14",
 }
 
 func TestConformance(t *testing.T) {

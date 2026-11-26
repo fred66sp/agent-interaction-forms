@@ -1,7 +1,7 @@
 {
   "id": "CJ-03",
   "description": "Enumeración inválida (§8.4) y reenvío corregido (§8.5): salida 2 y después 0.",
-  "request": "{\"aif\":\"0.1\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Perfil CLI decidido\",\"kind\":\"Learning\",\"confidence\":\"confirmed\"}}",
+  "request": "{\"aif\":\"0.2\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Perfil CLI decidido\",\"kind\":\"Learning\",\"confidence\":\"confirmed\"}}",
   "preconditions": {
     "env": {},
     "store": []
@@ -33,7 +33,7 @@
     "writes": 0
   },
   "follow_up": {
-    "request": "{\"aif\":\"0.1\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Perfil CLI decidido\",\"kind\":\"decision\",\"confidence\":\"confirmed\"}}",
+    "request": "{\"aif\":\"0.2\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Perfil CLI decidido\",\"kind\":\"decision\",\"confidence\":\"confirmed\"}}",
     "assertions": {
       "exit_code": 0,
       "result": "executed",

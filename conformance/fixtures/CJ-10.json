@@ -1,7 +1,7 @@
 {
   "id": "CJ-10",
   "description": "Operación desconocida: unknown_operation con known_operations, eco y código 3.",
-  "request": "{\"aif\":\"0.1\",\"operation\":\"no_existe\"}",
+  "request": "{\"aif\":\"0.2\",\"operation\":\"no_existe\"}",
   "preconditions": {
     "env": {},
     "store": []

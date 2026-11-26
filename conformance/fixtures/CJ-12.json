@@ -1,7 +1,7 @@
 {
   "id": "CJ-12",
   "description": "Mezcla de ausente e inválido (§8.9): invalid por precedencia, missing y collected en un único intercambio.",
-  "request": "{\"aif\":\"0.1\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Perfil CLI decidido\",\"kind\":\"Learning\"}}",
+  "request": "{\"aif\":\"0.2\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Perfil CLI decidido\",\"kind\":\"Learning\"}}",
   "preconditions": {
     "env": {},
     "store": []

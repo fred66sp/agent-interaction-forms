@@ -1,4 +1,4 @@
-// Command aifdemo demonstrates the AIF v0.1 CLI profile (§7) with one
+// Command aifdemo demonstrates the AIF v0.2 CLI profile (§7) with one
 // operation, record_observation, backed by the JSON Lines file named by
 // AIF_DEMO_STORE. It reads one request from stdin (limits: 256 KiB and depth
 // 32), writes one JSON object to stdout and diagnostics to stderr. Domain
@@ -116,6 +116,13 @@ func recordObservation(getenv func(string) string, now func() time.Time) *aif.Op
 }
 
 func record(input map[string]json.RawMessage, getenv func(string) string, now func() time.Time) (json.RawMessage, error) {
+	// Domain rule before any effect: metadata validates each field, but only
+	// the domain can decide that a combination is unacceptable.
+	if stringValue(input["kind"]) == "decision" && stringValue(input["confidence"]) == "hypothesis" {
+		return nil, aif.InvalidError{Fields: map[string]string{
+			"confidence": "una decisión no puede ser una hipótesis",
+		}}
+	}
 	if getenv("AIF_DEMO_DENY_WRITE") == "1" {
 		return nil, aif.DeniedError{Reason: "el consumidor no tiene permiso de escritura sobre el dominio"}
 	}

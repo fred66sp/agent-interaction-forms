@@ -1,4 +1,4 @@
-// Command acmpoc is the AIF v0.1 CLI profile (§7) for one real ACM operation.
+// Command acmpoc is the AIF v0.2 CLI profile (§7) for one real ACM operation.
 // The learning operation mirrors EVENT_FORMS["learning"] of the ACM adapter,
 // which is run as a child process (ACM_POC_TOOL): AIF decides the envelope,
 // the field structure and the closed confidence set, while ACM keeps its own
@@ -14,7 +14,6 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"sort"
 	"strings"
 	"syscall"
 
@@ -192,23 +191,12 @@ func acmFailure(reply acmReply) error {
 	if reply.Error == "E_DENIED" {
 		return aif.DeniedError{Reason: reply.Message}
 	}
-	message := reply.Message
 	if len(reply.Invalid) > 0 {
-		// The AIF invalid result is decided before Execute, so a validation
-		// failure surfaced by the domain is reported as failed with the
-		// domain's own reasons, in a deterministic order.
-		names := make([]string, 0, len(reply.Invalid))
-		for name := range reply.Invalid {
-			names = append(names, name)
-		}
-		sort.Strings(names)
-		problems := make([]string, len(names))
-		for i, name := range names {
-			problems[i] = name + ": " + reply.Invalid[name]
-		}
-		message = "ACM rechazó los campos: " + strings.Join(problems, "; ")
+		// ACM validates before writing; AIF rebuilds the repairable response
+		// from these reasons and the request, and never echoes secrets.
+		return aif.InvalidError{Fields: reply.Invalid}
 	}
-	return aif.DomainError{Message: message, Code: reply.Error}
+	return aif.DomainError{Message: reply.Message, Code: reply.Error}
 }
 
 // text reads a value the library already validated as a string.

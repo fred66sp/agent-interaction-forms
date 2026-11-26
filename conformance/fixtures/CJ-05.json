@@ -1,7 +1,7 @@
 {
   "id": "CJ-05",
   "description": "§8.1 repetida sobre el mismo dominio: mismo result y mismos miembros de decisión.",
-  "request": "{\"aif\":\"0.1\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Perfil CLI decidido\",\"kind\":\"decision\",\"confidence\":\"confirmed\"}}",
+  "request": "{\"aif\":\"0.2\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Perfil CLI decidido\",\"kind\":\"decision\",\"confidence\":\"confirmed\"}}",
   "preconditions": {
     "env": {},
     "store": []

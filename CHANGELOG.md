@@ -6,13 +6,36 @@ al publicar; la historia de cada cambio, commit a commit, vive en Git.
 
 ## [Sin publicar]
 
+### Protocolo AIF 0.2 (evolución autorizada; no es una publicación)
+
+- SPECIFICATION v0.2.0 (**APROBADO** como evolución autorizada por el PO): única
+  versión soportada, `"0.2"`; la validación puede ser progresiva o exhaustiva y el
+  consumidor no debe suponer que `invalid` enumera todos los problemas detectables;
+  `collected` conserva lo aportado en la petición sin certificar su validez;
+  `invalid` es estructurado (`value`, `reason`, `allowed`, `schema`); las respuestas
+  reparables (`input_needed` e `invalid`) no producen efecto de dominio; el dominio
+  valida por completo antes de cualquier efecto; continuación sin estado; y `schema`
+  admite fragmentos JSON Schema 2020-12 para las reglas que `type` y `allowed` no
+  expresan. v0.1.1 queda como contrato histórico implementado. La autorización no
+  aprueba una publicación.
+- Biblioteca `aif` actualizada al contrato 0.2: `InvalidError` estructurado que el
+  dominio devuelve antes de producir efectos y que el ejecutor recompone en
+  `invalid` —el dominio no compone `collected` ni la respuesta—, validación
+  exhaustiva por intercambio con precedencia determinista de `invalid`, omisión de
+  valores sensibles en toda la respuesta, rechazo de versiones distintas de `"0.2"`
+  sin procesar `input`, y caso de conformidad CJ-14 para la regla de dominio
+  aplicada antes del efecto.
+- README, AGENTS.md y llms.txt alineados con el versionado vigente 0.2, el fin de la
+  congelación únicamente para esta evolución autorizada y el carácter histórico de
+  v0.1.1.
+
 ### Documentación
 
 - docs: consolidación conceptual y documental de AIF según el encargo del PO —
   `docs/PRODUCT.md` v0.1 incorporado como fuente canónica de visión; README
   simplificado como puerta de entrada (producto antes que detalles técnicos);
   `docs/web` reorganizada en cuatro niveles (Comprender/Utilizar/Referencia
-  técnica/Investigación) con cuatro diagramas; `AGENTS.md` y `llms.txt`
+  técnica/Investigación) con diagramas; `AGENTS.md` y `llms.txt`
   alineados por referencia; tabla de fuentes de SPECIFICATION actualizada
   (contenido normativo intacto; contrato v0.1 congelado).
 - docs: alinear `docs/PRD.md` (v0.1.6) con la visión aprobada en `docs/PRODUCT.md`

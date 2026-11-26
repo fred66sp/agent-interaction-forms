@@ -1,0 +1,46 @@
+{
+  "id": "CJ-14",
+  "description": "Regla de dominio antes del efecto: una decisión no puede ser una hipótesis; invalid reparable, sin escritura y con reenvío corregido.",
+  "request": "{\"aif\":\"0.2\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Regla de dominio\",\"kind\":\"decision\",\"confidence\":\"hypothesis\"}}",
+  "preconditions": {
+    "env": {},
+    "store": []
+  },
+  "assertions": {
+    "exit_code": 2,
+    "result": "invalid",
+    "echo_operation": true,
+    "must": ["invalid", "fields", "collected"],
+    "must_not": ["missing", "outcome"],
+    "invalid": {
+      "confidence": {
+        "value": "hypothesis",
+        "reason": "una decisión no puede ser una hipótesis",
+        "allowed": ["hypothesis", "confirmed"]
+      }
+    },
+    "fields": {
+      "confidence": {
+        "required": true,
+        "type": "string",
+        "allowed": ["hypothesis", "confirmed"]
+      }
+    },
+    "collected": {
+      "title": "Regla de dominio",
+      "kind": "decision"
+    },
+    "writes": 0
+  },
+  "follow_up": {
+    "request": "{\"aif\":\"0.2\",\"operation\":\"record_observation\",\"input\":{\"title\":\"Regla de dominio\",\"kind\":\"decision\",\"confidence\":\"confirmed\"}}",
+    "assertions": {
+      "exit_code": 0,
+      "result": "executed",
+      "echo_operation": true,
+      "must": ["outcome"],
+      "outcome_members": ["id", "recorded_at"],
+      "writes": 1
+    }
+  }
+}

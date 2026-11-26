@@ -1,8 +1,9 @@
 # AGENTS.md
 
 Este repositorio alberga AIF: una base técnica funcional (biblioteca Go y contrato
-v0.1) dentro de una visión de producto aprobada en [`docs/PRODUCT.md`](docs/PRODUCT.md).
-Durante la consolidación documental el desarrollo está congelado. Este fichero dice
+v0.2) dentro de una visión de producto aprobada en [`docs/PRODUCT.md`](docs/PRODUCT.md).
+La evolución v0.2 está autorizada por el PO y no constituye una publicación; v0.1.1
+queda como contrato histórico implementado. Este fichero dice
 dónde vive cada fuente canónica y qué leer antes de cada encargo; no guarda contenido,
 solo enlaza.
 
@@ -13,8 +14,9 @@ solo enlaza.
   aplicación) e **integración externa** (ejecutable AIF como capa sobre herramientas
   existentes, con definiciones declarativas, pendiente de diseño). La visión completa
   vive en [`docs/PRODUCT.md`](docs/PRODUCT.md); este fichero no la duplica.
-- El desarrollo está **temporalmente congelado** hasta que el PO apruebe la
-  consolidación conceptual y documental: no tocar código, contrato ni experimentos.
+- La congelación documental se levanta únicamente para la evolución autorizada v0.2
+  (protocolo y biblioteca); esa autorización no equivale a una publicación ni aprueba
+  el producto completo.
 - Jerarquía de fuentes: visión → [`PRODUCT.md`](docs/PRODUCT.md); requisitos →
   [`PRD.md`](docs/PRD.md); contrato normativo → [`SPECIFICATION.md`](docs/SPECIFICATION.md);
   investigación → [`RESEARCH.md`](docs/RESEARCH.md); evidencia → [`docs/experiment/`](docs/experiment).
@@ -54,8 +56,10 @@ solo enlaza.
 Este mapa no es fuente de nada: enlaza. Si una ruta o una afirmación de este archivo
 contradice a la fuente que enlaza, manda la fuente y se corrige aquí. Fuente canónica
 de la visión del producto: [`docs/PRODUCT.md`](docs/PRODUCT.md), aprobada por el PO.
-Los contratos vigentes son [`PRD.md`](docs/PRD.md) y, dentro de la puerta,
-[`EXPERIMENT.md`](docs/experiment/EXPERIMENT.md) (registro INCONCLUSO conservado como
-evidencia histórica); si discrepan en requisitos, prevalece el PRD; en visión, PRODUCT.
-El desarrollo está temporalmente congelado hasta que el PO apruebe la consolidación
-conceptual y documental.
+Los contratos vigentes son [`PRD.md`](docs/PRD.md) y
+[`SPECIFICATION.md`](docs/SPECIFICATION.md) v0.2 (evolución autorizada por el PO;
+historia de versiones en [`CHANGELOG.md`](CHANGELOG.md)), junto con
+[`EXPERIMENT.md`](docs/experiment/EXPERIMENT.md) dentro de la puerta (registro
+INCONCLUSO conservado como evidencia histórica); si discrepan en requisitos,
+prevalece el PRD; en visión, PRODUCT. La congelación se levanta únicamente para la
+evolución autorizada v0.2, que no equivale a una publicación.

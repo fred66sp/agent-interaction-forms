@@ -22,13 +22,16 @@ type FieldDescriptor struct {
 // Response is one AIF response. Discovery is set instead of Result when the
 // request omits the operation member (CL-05).
 type Response struct {
-	AIF             string
-	Operation       string
-	Result          string
-	Outcome         json.RawMessage
-	Missing         []string
-	Invalid         map[string]FieldProblem
-	Fields          map[string]FieldDescriptor
+	AIF       string
+	Operation string
+	Result    string
+	Outcome   json.RawMessage
+	Missing   []string
+	Invalid   map[string]FieldProblem
+	Fields    map[string]FieldDescriptor
+	// Collected echoes the known, present, non-null, non-sensitive values the
+	// request supplied, minus the fields reported in Invalid. It is not a
+	// validity claim: Fields and Invalid carry the descriptors.
 	Collected       map[string]json.RawMessage
 	Reason          string
 	Message         string

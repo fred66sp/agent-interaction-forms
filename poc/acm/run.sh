@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# PoC: AIF v0.1 over a real ACM operation (§9) with a throwaway memory.
+# PoC: AIF v0.2 over a real ACM operation (§9) with a throwaway memory.
 #
 # Copies an untouched snapshot of the ACM example (acm.py, content-hash.py,
 # init.sh, schema.sql) into a temporary directory, initialises an isolated
@@ -33,10 +33,10 @@ export ACM_POC_TOOL="$tmp/tools/acm.py"
 
 db="$tmp/.agent-memory/memory.db"
 bin="$tmp/acmpoc"
-req1='{"aif":"0.1","operation":"learning","input":{"title":"El parser exige UTC","body":"Las fechas sin zona se interpretan como UTC; el test lo fija.","topic":"parser-fechas","confidence":"confirmed"}}'
-req2='{"aif":"0.1","operation":"learning","input":{"topic":"parser-fechas"}}'
-req3='{"aif":"0.1","operation":"learning","input":{"title":"Confianza sin corregir","body":"La confianza se corrige tras el rechazo.","confidence":"certain"}}'
-req4='{"aif":"0.1","operation":"learning","input":{"title":"Confianza sin corregir","body":"La confianza se corrige tras el rechazo.","confidence":"inference"}}'
+req1='{"aif":"0.2","operation":"learning","input":{"title":"El parser exige UTC","body":"Las fechas sin zona se interpretan como UTC; el test lo fija.","topic":"parser-fechas","confidence":"confirmed"}}'
+req2='{"aif":"0.2","operation":"learning","input":{"topic":"parser-fechas"}}'
+req3='{"aif":"0.2","operation":"learning","input":{"title":"Confianza sin corregir","body":"La confianza se corrige tras el rechazo.","confidence":"certain"}}'
+req4='{"aif":"0.2","operation":"learning","input":{"title":"Confianza sin corregir","body":"La confianza se corrige tras el rechazo.","confidence":"inference"}}'
 
 mkdir -p "$tmp/tools" || die "no se pudo preparar $tmp"
 cp "$snapshot/init.sh" "$snapshot/schema.sql" "$tmp/" || die "no se pudo copiar la instantánea de init.sh/schema.sql"
@@ -72,7 +72,7 @@ out=$(printf '%s' "$req1" | "$bin"); code=$?
 show "$out" "$code"
 ok=0
 if [ "$code" -eq 0 ] &&
-  printf '%s' "$out" | grep -Fq '{"aif":"0.1","operation":"learning","outcome":{"ok":true,"result":"created"},"result":"executed"}' &&
+  printf '%s' "$out" | grep -Fq '{"aif":"0.2","operation":"learning","outcome":{"ok":true,"result":"created"},"result":"executed"}' &&
   [ "$(count_rows)" -eq 1 ] && [ "$(count_titled 'El parser exige UTC')" -eq 1 ]; then
   ok=1
 fi
@@ -122,7 +122,7 @@ out=$(printf '%s' "$req1" | "$bin"); code=$?
 show "$out" "$code"
 ok=0
 if [ "$code" -eq 0 ] &&
-  printf '%s' "$out" | grep -Fq '{"aif":"0.1","operation":"learning","outcome":{"ok":true,"result":"consolidated"},"result":"executed"}' &&
+  printf '%s' "$out" | grep -Fq '{"aif":"0.2","operation":"learning","outcome":{"ok":true,"result":"consolidated"},"result":"executed"}' &&
   [ "$(count_rows)" -eq 2 ] &&
   [ "$(sqlite3 "$db" "SELECT duplicate_count FROM observations WHERE title='El parser exige UTC';")" -eq 2 ]; then
   ok=1

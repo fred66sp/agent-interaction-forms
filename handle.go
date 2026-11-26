@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"strings"
 )
 
 // Structural diagnostics of §3.5. Each reason identifies one cause so the
@@ -205,6 +206,10 @@ func execute(op *Operation, input map[string]json.RawMessage) *Response {
 	if errors.As(err, &denied) {
 		return &Response{AIF: Version, Operation: op.ID, Result: ResultDenied, Reason: denied.Reason}
 	}
+	var invalid InvalidError
+	if errors.As(err, &invalid) {
+		return reparableFromDomain(op, input, invalid.Fields)
+	}
 	var domain DomainError
 	if errors.As(err, &domain) {
 		return &Response{
@@ -216,6 +221,51 @@ func execute(op *Operation, input map[string]json.RawMessage) *Response {
 		}
 	}
 	return &Response{AIF: Version, Operation: op.ID, Result: ResultFailed, Message: err.Error()}
+}
+
+// reparableFromDomain rebuilds an `invalid` response from a domain rule. The
+// domain must name known, present, non-null fields with a non-empty reason;
+// anything else is a defect it cannot report as repairable, so it is failed.
+// Collected is rebuilt from the request, never from the domain, and sensitive
+// values stay out of both members.
+func reparableFromDomain(op *Operation, input map[string]json.RawMessage, problems map[string]string) *Response {
+	if len(problems) == 0 {
+		return invalidErrorFailed(op)
+	}
+	known := make(map[string]Field, len(op.Fields))
+	for _, f := range op.Fields {
+		known[f.Name] = f
+	}
+	invalid := make(map[string]FieldProblem, len(problems))
+	for name, reason := range problems {
+		f, ok := known[name]
+		raw, present := input[name]
+		if !ok || !present || isNull(raw) || strings.TrimSpace(reason) == "" {
+			return invalidErrorFailed(op)
+		}
+		invalid[name] = problemFor(f, raw, reason)
+	}
+	collected := make(map[string]json.RawMessage, len(op.Fields))
+	for _, f := range op.Fields {
+		raw, present := input[f.Name]
+		if !present || isNull(raw) || f.Sensitive {
+			continue
+		}
+		if _, rejected := invalid[f.Name]; rejected {
+			continue
+		}
+		collected[f.Name] = raw
+	}
+	return reparable(op, ResultInvalid, nil, invalid, collected)
+}
+
+func invalidErrorFailed(op *Operation) *Response {
+	return &Response{
+		AIF:       Version,
+		Operation: op.ID,
+		Result:    ResultFailed,
+		Message:   "el dominio informó de campos inválidos que la operación no puede describir",
+	}
 }
 
 func malformed(reason string) *Response {

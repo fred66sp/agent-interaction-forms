@@ -647,7 +647,7 @@
       <div class="art-blob"></div>
       <div class="fm-card">
         <div class="fm-head"><span class="dot"></span>respuesta.json<span class="fm-badge">input_needed</span></div>
-        <div class="fm-code"><span class="punc">{</span><span class="key">"aif"</span><span class="punc">:</span> <span class="str">"0.1"</span><span class="punc">,</span>
+        <div class="fm-code"><span class="punc">{</span><span class="key">"aif"</span><span class="punc">:</span> <span class="str">"0.2"</span><span class="punc">,</span>
  <span class="key">"operation"</span><span class="punc">:</span> <span class="str">"record_observation"</span><span class="punc">,</span>
  <span class="key">"result"</span><span class="punc">:</span> <span class="val">"input_needed"</span><span class="punc">,</span>
  <span class="key">"missing"</span><span class="punc">:</span> <span class="punc">[</span><span class="str">"title"</span><span class="punc">,</span> <span class="str">"confidence"</span><span class="punc">],</span>
@@ -797,7 +797,7 @@
         <div class="card">
           <span class="k">Información incorrecta</span>
           <h3>Permite corregir</h3>
-          <p>Identifica los errores, conserva los datos válidos no sensibles e indica cómo continuar.</p>
+          <p>Identifica los errores, devuelve los campos conocidos presentes que no son sensibles ni están rechazados e indica cómo continuar.</p>
         </div>
       </div>
 
@@ -1027,7 +1027,7 @@
           <thead><tr><th>Componente</th><th>Estado</th></tr></thead>
           <tbody>
             <tr><td>AIF Core</td><td><span class="r-ok">Disponible</span> — implementación inicial en Go.</td></tr>
-            <tr><td>AIF Specification</td><td><span class="r-ok">Disponible</span> — contrato v0.1 definido y aprobado.</td></tr>
+            <tr><td>AIF Specification</td><td><span class="r-ok">Disponible</span> — contrato v0.2 aprobado; implementación en curso.</td></tr>
             <tr><td>CLI de demostración</td><td><span class="r-ok">Disponible</span> — herramienta <code>aifdemo</code>.</td></tr>
             <tr><td>Pruebas de conformidad</td><td><span class="r-ok">Disponibles</span>.</td></tr>
             <tr><td>Prueba de concepto con ACM</td><td><span class="r-ok">Realizada</span>.</td></tr>
@@ -1066,6 +1066,7 @@
             <tr><td><code>aif.Response</code></td><td>Resultado tipado. <code>json.Marshal</code> usa su <code>MarshalJSON</code>, que emite solo los miembros del resultado.</td></tr>
             <tr><td><code>aif.DeniedError</code></td><td>Convierte un error de <code>Execute</code> en <code>denied</code> con <code>reason</code>.</td></tr>
             <tr><td><code>aif.DomainError</code></td><td>Convierte un error de <code>Execute</code> en <code>failed</code> con <code>message</code> y <code>code</code>.</td></tr>
+            <tr><td><code>aif.InvalidError</code></td><td>Convierte una regla de dominio que rechaza al ejecutar en <code>invalid</code> reparable con <code>Fields</code>; se declara antes de cualquier efecto.</td></tr>
             <tr><td><code>aif.MaxInputBytes</code> · <code>aif.MaxDepth</code></td><td>Límites declarados por esta implementación: 256 KiB y profundidad 32.</td></tr>
           </tbody>
         </table>
@@ -1099,7 +1100,7 @@ func main() {
 	executor := aif.Executor{Operations: []*aif.Operation{op}}
 
 	<span class="comment">// La petición llega como bytes: CLI, HTTP o cola; el contrato no cambia.</span>
-	raw := []byte(`{"aif":"0.1","operation":"record_observation",
+	raw := []byte(`{"aif":"0.2","operation":"record_observation",
 		"input":{"kind":"learning"}}`)
 	resp := executor.Handle(raw)
 
@@ -1112,7 +1113,7 @@ func main() {
 }</code></pre></div>
 
       <div class="prose">
-        <p>Con esa petición, el programa escribe una respuesta <code>input_needed</code>: <code>missing</code> contiene <code>title</code>, <code>collected</code> conserva <code>kind</code> y <code>fields</code> describe los tres campos declarados, incluido el opcional y sensible <code>contact</code>. El nombre de <code>contact</code> aparece como descriptor; su valor nunca se devuelve.</p>
+        <p>Con esa petición, el programa escribe una respuesta <code>input_needed</code>: <code>missing</code> contiene <code>title</code>, <code>collected</code> incluye <code>kind</code> —presente, no nulo, no sensible y no rechazado— y <code>fields</code> describe los tres campos declarados, incluido el opcional y sensible <code>contact</code>. El nombre de <code>contact</code> aparece como descriptor; su valor nunca se devuelve. <code>collected</code> no certifica validez: es la copia de lo aportado.</p>
         <h3>Qué pone el integrador y qué pone AIF</h3>
       </div>
 
@@ -1122,8 +1123,8 @@ func main() {
           <h3>El sobre (el objeto JSON de la petición) y la mecánica</h3>
           <ul>
             <li>Comprueba tamaño, profundidad, claves duplicadas, <code>aif</code>, versión y tipo de <code>operation</code> e <code>input</code>.</li>
-            <li>Resuelve la operación y valida <code>Type</code>, <code>Allowed</code> y el hook <code>Validate</code> de cada campo.</li>
-            <li>Aplica exclusividad, precedencia, <code>collected</code> y omisión de sensibles.</li>
+            <li>Resuelve la operación y valida <code>Type</code>, <code>Allowed</code> y el hook <code>Validate</code> de cada campo; puede hacerlo de forma progresiva o exhaustiva e informa de todos los problemas detectados, sin prometer detección exhaustiva.</li>
+            <li>Aplica exclusividad, precedencia y omisión de sensibles; <code>collected</code> copia los campos conocidos presentes, no nulos, no sensibles y no rechazados, sin certificar su validez.</li>
             <li>Serializa los miembros del resultado de forma determinista.</li>
           </ul>
         </div>
@@ -1133,7 +1134,7 @@ func main() {
           <ul>
             <li>Declara los campos una sola vez y qué regla fina publica cada <code>Schema</code>.</li>
             <li>Escribe en <code>Execute</code> solo lo que AIF no puede expresar: reglas de negocio, permisos, persistencia y transacciones.</li>
-            <li>Devuelve <code>DeniedError</code> para una denegación y <code>DomainError</code> para un fallo con código.</li>
+            <li>Devuelve <code>DeniedError</code> para una denegación y <code>DomainError</code> para un fallo con código; <code>InvalidError</code> cuando una regla de dominio rechaza el <code>input</code> antes de cualquier efecto.</li>
             <li>Marca con <code>Sensitive</code> lo que no debe volver en ninguna respuesta.</li>
           </ul>
         </div>
@@ -1159,6 +1160,7 @@ go test ./...                     <span class="comment"># biblioteca, conformida
         <li><strong>No interactiva.</strong> Lee una petición de <code>stdin</code>, escribe exactamente un objeto JSON con salto de línea final en <code>stdout</code> y manda diagnósticos y avisos a <code>stderr</code>.</li>
         <li><strong>El código depende solo del resultado.</strong> Es determinista; <code>stderr</code> no lo altera. El descubrimiento también sale con 0.</li>
         <li><strong>Continuación = nueva invocación</strong> con el <code>input</code> íntegro y corregido. El ejecutor no reserva estado entre invocaciones.</li>
+        <li><strong>Un <code>invalid</code> señalado en <code>Execute</code> sigue siendo reparable.</strong> El dominio lo declara antes de cualquier efecto, la CLI sale con 2 y el reenvío corregido ejecuta.</li>
       </ul>
 
       <div class="table-wrap">
@@ -1177,7 +1179,7 @@ go test ./...                     <span class="comment"># biblioteca, conformida
 
       <div class="code"><pre><code class="language-bash">go build -o aifdemo ./cmd/aifdemo
 
-printf '%s' '{"aif":"0.1","operation":"record_observation","input":{"kind":"learning"}}' \
+printf '%s' '{"aif":"0.2","operation":"record_observation","input":{"kind":"learning"}}' \
   | ./aifdemo
 <span class="comment"># stdout: una respuesta input_needed con missing, fields y collected</span>
 <span class="comment"># exit: 2</span></code></pre></div>
@@ -1237,9 +1239,9 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
         </table>
       </div>
 
-      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"learning","input":{"title":"El parser exige UTC","body":"Las fechas sin zona se interpretan como UTC; el test lo fija.","topic":"parser-fechas","confidence":"confirmed"}}</code></pre></div>
+      <div class="code"><pre><code class="language-json">{"aif":"0.2","operation":"learning","input":{"title":"El parser exige UTC","body":"Las fechas sin zona se interpretan como UTC; el test lo fija.","topic":"parser-fechas","confidence":"confirmed"}}</code></pre></div>
 
-      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"learning","outcome":{"ok":true,"result":"created"},"result":"executed"}</code></pre></div>
+      <div class="code"><pre><code class="language-json">{"aif":"0.2","operation":"learning","outcome":{"ok":true,"result":"created"},"result":"executed"}</code></pre></div>
 
       <div class="code"><pre><code class="language-bash">bash poc/acm/run.sh      <span class="comment"># 4 escenarios aislados; RESULT: 4/4 PASS</span></code></pre></div>
 
@@ -1249,7 +1251,7 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
     </section>
 
     <div class="level" id="nivel-3">
-      <p class="level-band" style="--level:#7c3aed"><span class="n">Nivel 3 · Referencia técnica</span><span class="d">El contrato normativo y su implementación. Fuente: docs/SPECIFICATION.md v0.1.1.</span></p>
+      <p class="level-band" style="--level:#7c3aed"><span class="n">Nivel 3 · Referencia técnica</span><span class="d">El contrato normativo y su implementación. Fuente: docs/SPECIFICATION.md v0.2.0.</span></p>
     </div>
 
     <section id="modelo" class="section">
@@ -1271,7 +1273,7 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
         <li><strong>Camino directo.</strong> Si el consumidor ya dispone de todos los datos, invoca la operación y recibe <code>executed</code> sin ningún intercambio previo impuesto por AIF.</li>
         <li><strong>Una sola estructura.</strong> Todos los resultados usan la misma estructura JSON. El campo <code>result</code> indica cuál de los ocho resultados se ha producido.</li>
         <li><strong>Datos, no prosa.</strong> Solo <code>result</code> y los miembros exigidos por la especificación son fiables para decidir cómo continuar. Interpretar texto libre es un error de conformidad.</li>
-        <li><strong>Comprobación completa.</strong> El <code>result</code> de la petición anterior no concede ningún derecho: la herramienta vuelve a comprobar todo el <code>input</code> en cada petición.</li>
+        <li><strong>Comprobación completa y sin estado.</strong> El <code>result</code> de la petición anterior no concede ningún derecho: cada petición es stateless, la herramienta vuelve a comprobar todo el <code>input</code> y el dominio lo valida íntegramente antes de producir efectos.</li>
         <li><strong>Ni permisos ni pruebas de ejecución.</strong> Una respuesta AIF no autoriza ni demuestra que algo se ejecutó; esas garantías se obtienen del dominio.</li>
         <li><strong>Rechazo explícito.</strong> Los miembros desconocidos de <code>input</code> se rechazan como <code>invalid</code>; el silencio ante un nombre mal escrito ocultaría errores del consumidor. En las respuestas, en cambio, las extensiones son toleradas y el consumidor debe ignorar lo que no reconozca.</li>
       </ul>
@@ -1301,7 +1303,7 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
 
           <rect class="box-teal" x="20" y="118" width="190" height="104" rx="12"></rect>
           <text class="t" x="36" y="146">Petición</text>
-          <text class="m" x="36" y="170">aif: "0.1"</text>
+          <text class="m" x="36" y="170">aif: "0.2"</text>
           <text class="m" x="36" y="188">operation: id</text>
           <text class="m" x="36" y="206">input: { … }</text>
 
@@ -1311,8 +1313,8 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
           <text class="s" x="318" y="156">2 · operación conocida</text>
           <text class="s" x="318" y="176">3 · campos, uno a uno</text>
           <text class="s" x="318" y="204" style="fill: var(--guide)">missing · invalid</text>
-          <text class="s" x="318" y="222">se informa de todo</text>
-          <text class="s" x="318" y="240">en un solo intercambio</text>
+          <text class="s" x="318" y="222">se informa de todo lo</text>
+          <text class="s" x="318" y="240">detectado en un intercambio</text>
 
           <rect class="box-violet" x="620" y="118" width="210" height="104" rx="12"></rect>
           <text class="t" x="638" y="146">Ejecución en el dominio</text>
@@ -1364,7 +1366,7 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
       </div>
       <ul class="rules">
         <li><strong>Tras <code>input_needed</code> o <code>invalid</code></strong>, la siguiente petición válida es la misma operación con un <code>input</code> completo: los valores de <code>collected</code>, los que el consumidor añada y una corrección por cada campo de <code>invalid</code>.</li>
-        <li><strong><code>collected</code> es copia fiable</strong> de lo que el consumidor ya aportó. <code>fields</code> y <code>description</code> son información para elegir valores, no datos que reenviar.</li>
+        <li><strong><code>collected</code> es copia de lo aportado</strong>: todos los campos conocidos presentes, no nulos, no sensibles y no rechazados. No certifica validez ni exime de corregir los campos de <code>invalid</code>. <code>fields</code> y <code>description</code> son información para elegir valores, no datos que reenviar.</li>
         <li><strong>Tras <code>denied</code>, <code>failed</code></strong> o un error de contrato, AIF no define continuación: decide el consumidor con la información del resultado y la documentación del dominio.</li>
         <li><strong>Reenviar puede repetir el efecto.</strong> Cada envío es una petición nueva y sus efectos dependen del sistema. Ninguna respuesta AIF garantiza autenticidad, ejecución única ni que sea seguro reintentar.</li>
       </ul>
@@ -1434,12 +1436,12 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
 
       <div class="table-wrap">
         <table>
-          <caption>Resultados de AIF v0.1 y miembros propios de cada uno</caption>
+          <caption>Resultados de AIF v0.2 y miembros propios de cada uno</caption>
           <thead><tr><th><code>result</code></th><th>Cuándo</th><th>Miembros propios</th><th>CLI</th></tr></thead>
           <tbody>
             <tr><td><span class="r-ok">executed</span></td><td>La operación completó su efecto de dominio.</td><td><code>outcome</code> (opaco, del dominio)</td><td>0</td></tr>
             <tr><td><span class="r-repair">input_needed</span></td><td>Faltan campos obligatorios; nada se ejecutó.</td><td><code>missing</code>, <code>fields</code>, <code>collected</code></td><td>2</td></tr>
-            <tr><td><span class="r-repair">invalid</span></td><td>Hay campos inválidos; nada se ejecutó. Puede acompañar a <code>missing</code>.</td><td><code>invalid</code>, <code>fields</code>, <code>collected</code> y, si los hay, <code>missing</code></td><td>2</td></tr>
+            <tr><td><span class="r-repair">invalid</span></td><td>Hay campos inválidos; nada se ejecutó. Puede acompañar a <code>missing</code> o señalar una regla de dominio que rechaza en <code>Execute</code>.</td><td><code>invalid</code>, <code>fields</code>, <code>collected</code> y, si los hay, <code>missing</code></td><td>2</td></tr>
             <tr><td><span class="r-deny">denied</span></td><td>El dominio niega la operación; nada se ejecutó.</td><td><code>reason</code></td><td>4</td></tr>
             <tr><td><span class="r-fail">failed</span></td><td>La ejecución no se completó o su estado es desconocido.</td><td><code>message</code> y, si el dominio lo aporta, <code>code</code></td><td>1</td></tr>
             <tr><td><span class="r-contract">unsupported_version</span></td><td>La versión de <code>aif</code> no es soportada; <code>input</code> no se procesa.</td><td><code>supported</code>; sin eco de <code>operation</code></td><td>3</td></tr>
@@ -1455,32 +1457,32 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
         <p>Los cinco resultados restantes no comparten miembros de campos: cada uno informa de lo que el agente necesita para decidir si detenerse, informar o cambiar de contrato.</p>
       </div>
 
-      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"record_observation","result":"denied",
+      <div class="code"><pre><code class="language-json">{"aif":"0.2","operation":"record_observation","result":"denied",
  "reason":"el consumidor no tiene permiso de escritura sobre el dominio"}</code></pre></div>
 
-      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"record_observation","result":"failed",
+      <div class="code"><pre><code class="language-json">{"aif":"0.2","operation":"record_observation","result":"failed",
  "message":"el almacenamiento rechazó la escritura; estado desconocido, la observación no queda registrada",
  "code":"storage_unavailable"}</code></pre></div>
 
-      <div class="code"><pre><code class="language-json">{"aif":"0.1","result":"unsupported_version","supported":["0.1"]}</code></pre></div>
+      <div class="code"><pre><code class="language-json">{"aif":"0.2","result":"unsupported_version","supported":["0.2"]}</code></pre></div>
 
-      <div class="code"><pre><code class="language-json">{"aif":"0.1","result":"malformed_request",
+      <div class="code"><pre><code class="language-json">{"aif":"0.2","result":"malformed_request",
  "reason":"carece de aif",
- "supported":["0.1"]}</code></pre></div>
+ "supported":["0.2"]}</code></pre></div>
 
-      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"no_existe","result":"unknown_operation",
+      <div class="code"><pre><code class="language-json">{"aif":"0.2","operation":"no_existe","result":"unknown_operation",
  "known_operations":["record_observation"]}</code></pre></div>
 
       <div class="details">
         <summary>¿Por qué ocho resultados y no un código de error con subcódigos?</summary>
         <div class="details-body">
           <p><strong>Porque cada resultado cambia la decisión del agente.</strong> Reparar (<code>input_needed</code>, <code>invalid</code>), detenerse (<code>denied</code>), informar de un fallo real (<code>failed</code>) y corregir el contrato (<code>unsupported_version</code>, <code>malformed_request</code>, <code>unknown_operation</code>) son continuaciones distintas. Un código anidado obligaría al consumidor a interpretar una jerarquía que el contrato no define.</p>
-          <p>La separación entre <code>unsupported_version</code> y <code>malformed_request</code> es de causa: la primera declara una versión que el ejecutor no soporta; la segunda ni siquiera establece el contrato. Y <code>unknown_operation</code> existe para que el agente pueda elegir entre las operaciones declaradas en <code>known_operations</code>.</p>
+          <p>La separación entre <code>unsupported_version</code> y <code>malformed_request</code> es de causa: la primera declara una versión que el ejecutor no soporta; la segunda ni siquiera establece el contrato. Y <code>unknown_operation</code> existe para que el agente pueda elegir entre las operaciones declaradas en <code>known_operations</code>. Esta versión solo reconoce el literal <code>"0.2"</code>: <code>"0.1"</code> también recibe <code>unsupported_version</code>.</p>
         </div>
       </div>
 
       <div class="note">
-        <p><strong>Una respuesta, un sentido.</strong> <code>input_needed</code>, <code>invalid</code>, <code>denied</code> y los tres errores de contrato no producen efecto de dominio. <code>failed</code> tampoco puede presentarse como <code>executed</code>: si el ejecutor duda, lo dice.</p>
+        <p><strong>Una respuesta, un sentido.</strong> <code>input_needed</code>, <code>invalid</code>, <code>denied</code> y los tres errores de contrato no producen efecto de dominio; el <code>invalid</code> que el dominio señala en <code>Execute</code> se declara antes de actuar y tampoco deja efecto. <code>failed</code> tampoco puede presentarse como <code>executed</code>: si el ejecutor duda, lo dice.</p>
       </div>
     </section>
 
@@ -1493,7 +1495,7 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
           <caption>Petición · miembros del sobre</caption>
           <thead><tr><th>Miembro</th><th>Condición</th><th>Contenido</th></tr></thead>
           <tbody>
-            <tr><td><code>aif</code></td><td>DEBE</td><td>Versión del contrato. Literal <code>"0.1"</code> en esta versión.</td></tr>
+            <tr><td><code>aif</code></td><td>DEBE</td><td>Versión del contrato. Literal <code>"0.2"</code> en esta versión.</td></tr>
             <tr><td><code>operation</code></td><td>PUEDE faltar solo para descubrimiento</td><td>Identificador textual de la operación.</td></tr>
             <tr><td><code>input</code></td><td>PUEDE faltar</td><td>Objeto con los datos, campo a campo. Puede ser <code>null</code>: equivale a vacío.</td></tr>
           </tbody>
@@ -1512,10 +1514,10 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
         </table>
       </div>
 
-      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"record_observation",
+      <div class="code"><pre><code class="language-json">{"aif":"0.2","operation":"record_observation",
  "input":{"title":"Perfil CLI decidido","kind":"decision","confidence":"confirmed"}}</code></pre></div>
 
-      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"record_observation","result":"executed",
+      <div class="code"><pre><code class="language-json">{"aif":"0.2","operation":"record_observation","result":"executed",
  "outcome":{"id":"obs_0142","recorded_at":"2026-11-24T19:41:00Z"}}</code></pre></div>
 
       <div class="prose">
@@ -1524,9 +1526,9 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
         <p>Si la petición omite <code>operation</code>, el ejecutor responde con la lista de operaciones y una descripción de una línea. Esta respuesta no es una operación: no lleva <code>result</code> ni <code>operation</code>.</p>
       </div>
 
-      <div class="code"><pre><code class="language-json">{"aif":"0.1"}</code></pre></div>
+      <div class="code"><pre><code class="language-json">{"aif":"0.2"}</code></pre></div>
 
-      <div class="code"><pre><code class="language-json">{"aif":"0.1","operations":[
+      <div class="code"><pre><code class="language-json">{"aif":"0.2","operations":[
   {"id":"record_observation",
    "description":"Registra una observación con título, tipo y confianza."}]}</code></pre></div>
 
@@ -1537,7 +1539,7 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
 
     <section id="campos" class="section">
       <div class="section-head"><span class="section-num" style="--num:#0f766e">12</span><h2 class="title">Campos, reglas y datos conservados</h2><span class="chip-repo">SPECIFICATION §3.2, §4</span></div>
-      <p class="sub">Cuando faltan datos o hay errores, la respuesta describe los campos y sus reglas. Así, el agente sabe qué corregir y conserva los valores válidos que no sean sensibles.</p>
+      <p class="sub">Cuando faltan datos o hay errores, la respuesta describe los campos y sus reglas. Así, el agente sabe qué corregir. <code>collected</code> devuelve los campos conocidos presentes, no nulos, no sensibles y no rechazados; su presencia no certifica validez.</p>
 
       <div class="table-wrap">
         <table>
@@ -1550,7 +1552,7 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
             <tr><td><code>type</code></td><td>opcional</td><td><code>string</code>, <code>number</code>, <code>boolean</code>, <code>object</code> o <code>array</code>.</td></tr>
             <tr><td><code>allowed</code></td><td>opcional</td><td>Valores permitidos cuando el conjunto es cerrado.</td></tr>
             <tr><td><code>description</code></td><td>opcional</td><td>Indicación contextual en texto; no sustituye a una regla mecánica.</td></tr>
-            <tr><td><code>schema</code></td><td>opcional</td><td>Fragmento JSON Schema 2020-12 de la regla. Obligatorio cuando la regla comprobada no se expresa con <code>type</code> ni <code>allowed</code>.</td></tr>
+            <tr><td><code>schema</code></td><td>opcional</td><td>Fragmento JSON Schema 2020-12 de la regla. Obligatorio cuando la regla se expresa fielmente con esa sintaxis y no con <code>type</code> ni <code>allowed</code>; si no se expresa fielmente, la regla va en <code>reason</code> y <code>schema</code> puede omitirse.</td></tr>
           </tbody>
         </table>
       </div>
@@ -1558,11 +1560,11 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
       <figure class="diagram">
         <svg viewBox="0 0 880 430" role="img" aria-labelledby="d2-title d2-desc">
           <title id="d2-title">Anatomía de una respuesta AIF reparable</title>
-          <desc id="d2-desc">La respuesta conserva el sobre aif, operation y result. En input_needed e invalid añade missing con los campos ausentes, invalid con un descriptor por campo incorrecto, fields con la descripción de los campos y collected con los valores válidos no sensibles. missing e invalid son excluyentes por campo, invalid tiene precedencia sobre input_needed y los valores sensibles nunca aparecen.</desc>
+          <desc id="d2-desc">La respuesta conserva el sobre aif, operation y result. En input_needed e invalid añade missing con los campos ausentes, invalid con un descriptor por campo incorrecto, fields con la descripción de los campos y collected con los campos conocidos presentes, no nulos, no sensibles y no rechazados. missing e invalid son excluyentes por campo, invalid tiene precedencia sobre input_needed y los valores sensibles nunca aparecen.</desc>
           <rect class="box-teal" x="20" y="34" width="250" height="344" rx="14"></rect>
           <text class="t" x="38" y="62">Sobre de respuesta</text>
           <line class="divider" x1="38" y1="76" x2="252" y2="76"></line>
-          <text class="m" x="38" y="104">aif: "0.1"</text>
+          <text class="m" x="38" y="104">aif: "0.2"</text>
           <text class="m" x="38" y="132">operation: "…"</text>
           <text class="m" x="38" y="160" style="fill: var(--guide-ink)">result: "input_needed"</text>
           <text class="s" x="38" y="184">o "invalid"</text>
@@ -1590,8 +1592,8 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
 
           <rect class="box-blue" x="310" y="254" width="550" height="92" rx="12"></rect>
           <text class="t" x="328" y="280">fields · descriptor mínimo</text>
-          <text class="s" x="328" y="300">Al menos cada campo de missing e invalid, con required, type, allowed, description y schema.</text>
-          <text class="m" x="328" y="324">collected · valores válidos no sensibles que el consumidor ya aportó</text>
+          <text class="s" x="328" y="300">Al menos cada campo de missing e invalid, con sus miembros aplicables.</text>
+          <text class="m" x="328" y="324">collected · campos conocidos presentes, no nulos, no sensibles y no rechazados</text>
 
           <line class="divider" x1="310" y1="366" x2="860" y2="366"></line>
           <text class="lbl" x="310" y="392">excluyentes por campo</text>
@@ -1608,13 +1610,14 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
       <ul class="rules">
         <li><strong>Ausencia frente a invalidez.</strong> <code>missing</code> e <code>invalid</code> son excluyentes por campo: un campo no figura en ambos. Una petición puede tener los dos problemas y recibe <strong>una única respuesta</strong> con ambos informes.</li>
         <li><strong>Si hay varios problemas.</strong> Si hay al menos un campo inválido, el resultado es <code>invalid</code>; si no lo hay y faltan campos obligatorios, es <code>input_needed</code>.</li>
+        <li><strong>Validación progresiva o exhaustiva.</strong> El ejecutor puede detenerse en el primer problema de cada campo o recorrer todas las reglas; en ambos casos informa de todos los problemas que detecta. La respuesta no promete detección exhaustiva.</li>
         <li><strong>Todo valor proporcionado se valida</strong>, sea de un campo obligatorio u opcional. El fallo de un opcional se reporta igual que el de un obligatorio.</li>
-        <li><strong><code>collected</code> es obligatorio</strong> en las respuestas reparables. Conserva los valores válidos no sensibles de esa misma petición. La <strong>única omisión legítima</strong> es la de un valor sensible; omitir otro valor válido rompe la garantía y es un defecto de conformidad.</li>
+        <li><strong><code>collected</code> es obligatorio</strong> en las respuestas reparables. Contiene todos los campos conocidos de la operación que la petición trae presentes con valor distinto de <code>null</code>, no sensibles y no rechazados. No certifica validez: es copia de lo aportado. La <strong>única omisión legítima</strong> es la de un valor sensible; omitir un campo conocido presente, no nulo y no rechazado rompe la garantía y es un defecto de conformidad.</li>
         <li><strong>Los valores sensibles no vuelven</strong> en ningún miembro: ni en <code>collected</code>, ni en <code>value</code>, ni en <code>reason</code>, ni en <code>message</code>, ni en <code>outcome</code>, ni en <code>description</code>.</li>
-        <li><strong><code>schema</code> se publica, no se evalúa.</strong> Su sintaxis es la de JSON Schema 2020-12, reutilizada tal cual. AIF no añade un lenguaje de validación ni un motor; quien valida es el dominio. Lo declarado debe expresar el comportamiento que realmente se comprueba.</li>
+        <li><strong><code>schema</code> se publica, no se evalúa.</strong> Su sintaxis es la de JSON Schema 2020-12, reutilizada tal cual. AIF no añade un lenguaje de validación ni un motor; quien valida es el dominio. Lo declarado debe expresar el comportamiento que realmente se comprueba. Si la regla no se expresa fielmente con <code>schema</code>, deja de ser obligatorio: <code>reason</code> la expone y <code>schema</code> puede omitirse o limitarse a la parte que sí expresa.</li>
       </ul>
 
-      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"record_observation","result":"input_needed",
+      <div class="code"><pre><code class="language-json">{"aif":"0.2","operation":"record_observation","result":"input_needed",
  "missing":["title","confidence"],
  "fields":{"title":{"required":true,"type":"string",
                    "description":"Título breve de la observación"},
@@ -1622,7 +1625,7 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
                          "allowed":["hypothesis","confirmed"]}},
  "collected":{"kind":"learning"}}</code></pre></div>
 
-      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"record_observation","result":"invalid",
+      <div class="code"><pre><code class="language-json">{"aif":"0.2","operation":"record_observation","result":"invalid",
  "invalid":{"kind":{"value":"Learning",
                     "reason":"valor no permitido",
                     "allowed":["learning","decision","discovery","bugfix"]}},
@@ -1634,7 +1637,7 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
         <p>Cuando la petición mezcla campos ausentes e inválidos, la respuesta sigue siendo una sola. La exclusividad se aplica campo a campo, no al documento:</p>
       </div>
 
-      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"record_observation","result":"invalid",
+      <div class="code"><pre><code class="language-json">{"aif":"0.2","operation":"record_observation","result":"invalid",
  "missing":["confidence"],
  "invalid":{"kind":{"value":"Learning",
                     "reason":"valor no permitido",
@@ -1650,16 +1653,16 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
       <div class="details">
         <summary>¿Por qué <code>collected</code> no es opcional?</summary>
         <div class="details-body">
-          <p><strong>Porque el objetivo es corregir sin reconstruir.</strong> Si el ejecutor pudiera omitir valores válidos sin explicación, el agente no sabría si el dato se perdió, si no se leyó o si debe volver a enviarlo. La omisión solo se permite por sensibilidad, y esa omisión no significa nada más: no convierte el valor en inválido ni en ausente.</p>
-          <p><code>collected</code> es copia fiable de lo aportado; <code>fields</code> es información para elegir valores nuevos, no datos que reenviar.</p>
+          <p><strong>Porque el objetivo es corregir sin reconstruir.</strong> Si el ejecutor pudiera omitir campos conocidos presentes, no nulos y no rechazados sin explicación, el agente no sabría si el dato se perdió, si no se leyó o si debe volver a enviarlo. La omisión solo se permite por sensibilidad, y esa omisión no significa nada más: no convierte el valor en inválido ni en ausente.</p>
+          <p><code>collected</code> es copia de lo aportado y no certifica validez; <code>fields</code> es información para elegir valores nuevos, no datos que reenviar.</p>
         </div>
       </div>
 
       <div class="prose">
-        <p>Las reglas que no se pueden expresar con <code>type</code> ni <code>allowed</code> se declaran en <code>schema</code>. Este ejemplo muestra la regla que causó el rechazo:</p>
+        <p>Las reglas que no se expresan con <code>type</code> ni <code>allowed</code> se declaran en <code>schema</code> cuando JSON Schema 2020-12 las expresa fielmente. Este ejemplo muestra la regla que causó el rechazo:</p>
       </div>
 
-      <div class="code"><pre><code class="language-json">{"aif":"0.1","operation":"record_observation","result":"invalid",
+      <div class="code"><pre><code class="language-json">{"aif":"0.2","operation":"record_observation","result":"invalid",
  "invalid":{"title":{"value":"Perfil CLI decidido durante la revisión final de la especificación",
                      "reason":"supera la longitud máxima",
                      "schema":{"maxLength":40}}},
@@ -1748,7 +1751,7 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
 
       <ul class="rules">
         <li><strong>L-01 · Sin autorización implícita.</strong> Los datos de una respuesta AIF no son autorización ni evidencia de ejecución. Toda continuación la revalida el ejecutor.</li>
-        <li><strong>L-02 · Sin efecto en los rechazos.</strong> Entrada inválida o denegada no produce efecto de dominio, y el resultado debe permitir comprobarlo.</li>
+        <li><strong>L-02 · Sin efecto en los rechazos.</strong> Entrada inválida o denegada no produce efecto de dominio, y el resultado debe permitir comprobarlo. El <code>invalid</code> que el dominio señala al ejecutar se declara antes de actuar y no deja efecto.</li>
         <li><strong>L-03 · Sin valores sensibles.</strong> El ejecutor no devuelve un valor sensible en ningún miembro. La sensibilidad la declara el dominio. En <code>collected</code> la única omisión legítima es la de un valor sensible.</li>
         <li><strong>L-04 · Límites declarados.</strong> El ejecutor documenta los límites de tamaño y profundidad de su <code>input</code>. La especificación no fija números: exige declararlos. Esta implementación usa 256 KiB y profundidad 32.</li>
         <li><strong>L-05 · Prosa honesta.</strong> <code>outcome</code>, <code>reason</code> y <code>message</code> son del dominio; AIF solo exige su presencia y que no mientan sobre el estado del efecto.</li>
@@ -1773,16 +1776,16 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
       </div>
 
       <div class="note">
-        <p><strong>Publicar un <code>schema</code> no es validar con él.</strong> La biblioteca transporta el fragmento JSON Schema 2020-12 tal cual y no ejecuta un motor. Si una regla no se comprueba de verdad, publicarla sería una promesa falsa: el contrato exige que lo declarado exprese el comportamiento real del dominio.</p>
+        <p><strong>Publicar un <code>schema</code> no es validar con él.</strong> La biblioteca transporta el fragmento JSON Schema 2020-12 tal cual y no ejecuta un motor. Si una regla no se comprueba de verdad, publicarla sería una promesa falsa: el contrato exige que lo declarado exprese el comportamiento real del dominio. Cuando la regla no se expresa fielmente con esa sintaxis, <code>reason</code> la expone y <code>schema</code> puede omitirse o limitarse a la parte que sí expresa.</p>
       </div>
     </section>
 
     <section id="conformidad" class="section">
-      <div class="section-head"><span class="section-num" style="--num:#15803d">14</span><h2 class="title">Pruebas de conformidad</h2><span class="chip-repo">conformance/ · CJ-01…CJ-13</span></div>
+      <div class="section-head"><span class="section-num" style="--num:#15803d">14</span><h2 class="title">Pruebas de conformidad</h2><span class="chip-repo">conformance/ · CJ-01…CJ-14</span></div>
       <p class="sub">Estas pruebas comprueban que la implementación cumple el contrato, sin necesitar un modelo de lenguaje ni conexión a la red. Cada caso de prueba o <em>fixture</em> describe una petición, las condiciones necesarias y las respuestas esperadas. El programa que ejecuta las pruebas también comprueba que no se haya producido ningún efecto cuando no debía haberlo.</p>
 
       <div class="prose">
-        <p>Hay <strong>trece casos</strong> y <strong>catorce ficheros</strong>: CJ-06 se divide en <code>CJ-06a</code> (fallo) y <code>CJ-06b</code> (versión incompatible). Los casos usan JSON y son independientes del lenguaje. El programa de pruebas está escrito en Go y compila la CLI en un directorio temporal antes de ejecutarlos.</p>
+        <p>Hay <strong>catorce casos</strong> y <strong>quince ficheros</strong>: CJ-06 se divide en <code>CJ-06a</code> (fallo) y <code>CJ-06b</code> (versión incompatible). Los casos usan JSON y son independientes del lenguaje. El programa de pruebas está escrito en Go y compila la CLI en un directorio temporal antes de ejecutarlos.</p>
       </div>
 
       <div class="table-wrap">
@@ -1804,6 +1807,7 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
             <tr><td><code>CJ-11</code></td><td>Entrada no interpretable en cuatro formas: no JSON, no objeto, sin <code>aif</code> y claves duplicadas.</td><td>3</td></tr>
             <tr><td><code>CJ-12</code></td><td>Mezcla de ausente e inválido: <code>invalid</code> por precedencia, ambos informes, <code>collected</code> conservado.</td><td>2</td></tr>
             <tr><td><code>CJ-13</code></td><td>Restricción fina: <code>schema</code> con la regla incumplida en sintaxis JSON Schema 2020-12.</td><td>2</td></tr>
+            <tr><td><code>CJ-14</code></td><td>Regla de dominio que rechaza antes del efecto: <code>invalid</code> reparable, sin escritura y con reenvío corregido.</td><td>2 → 0</td></tr>
           </tbody>
         </table>
       </div>
@@ -1811,7 +1815,7 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
       <div class="code"><pre><code class="language-json">{
   "id": "CJ-09",
   "description": "Invocación sin operation (CL-05): descubrimiento con id por operación y código 0.",
-  "request": "{\"aif\":\"0.1\"}",
+  "request": "{\"aif\":\"0.2\"}",
   "preconditions": {
     "env": {},
     "store": []
@@ -1831,7 +1835,7 @@ go test ./conformance/ -v     <span class="comment"># detalle de la matriz CJ</s
 go test ./conformance/ -run TestConformance -v</code></pre></div>
 
       <div class="prose">
-        <p>El runner comprueba código de salida, <code>result</code>, eco de <code>operation</code>, presencia y ausencia de miembros, subcadenas que no deben aparecer (el valor sensible), número de escrituras y repetición determinista. Las precondiciones de entorno y de almacén se aplican por fixture. El <a href="../../CHANGELOG.md">CHANGELOG</a> registra el resultado de la suite en <strong>14/14 PASS</strong>; es una comprobación de conformidad, no una medida de rendimiento.</p>
+        <p>El runner comprueba código de salida, <code>result</code>, eco de <code>operation</code>, presencia y ausencia de miembros, subcadenas que no deben aparecer (el valor sensible), número de escrituras y repetición determinista. Las precondiciones de entorno y de almacén se aplican por fixture. La ejecución de <code>go test ./...</code> es la comprobación de conformidad, no una medida de rendimiento.</p>
       </div>
 
       <div class="note">
@@ -1905,7 +1909,7 @@ go test ./conformance/ -run TestConformance -v</code></pre></div>
         </div>
         <div class="card">
           <h3><a href="../SPECIFICATION.md">SPECIFICATION.md</a></h3>
-          <p>Contrato AIF v0.1.1, APROBADO por el PO el 2026-11-24. Norma de §§1–7 y 9–10; ejemplos en §8; trazabilidad y decisiones en §§11–12.</p>
+          <p>Contrato AIF v0.2.0, APROBADO por el PO el 2026-11-26; implementación en curso, sin publicación. Norma de §§1–7 y 9–10; ejemplos en §8; trazabilidad y decisiones en §§11–12. v0.1.1 queda como contrato histórico.</p>
         </div>
         <div class="card">
           <h3><a href="../PRD.md">PRD.md</a></h3>
@@ -1951,7 +1955,7 @@ go test ./conformance/ -run TestConformance -v</code></pre></div>
       </div>
 
       <div class="note">
-        <p><strong>Versiones.</strong> Contrato <code>aif: "0.1"</code>; especificación v0.1.1; implementación de referencia MVP v0.1. Esta página documenta ese estado y no anticipa versiones futuras: la idempotencia del núcleo, las sesiones y los perfiles HTTP quedan fuera de v0.1.</p>
+        <p><strong>Versiones.</strong> Contrato <code>aif: "0.2"</code>; especificación v0.2.0; implementación en curso. v0.1.1 queda como contrato histórico implementado. Esta página documenta ese estado y no anticipa versiones futuras: la idempotencia del núcleo, las sesiones y los perfiles HTTP quedan fuera del contrato.</p>
       </div>
 
       <div class="next" style="display:grid;gap:18px;margin-top:26px;padding:22px;border-radius:var(--radius);border:1px solid color-mix(in srgb, var(--accent) 26%, var(--border));background:linear-gradient(120deg,color-mix(in srgb, var(--accent) 8%, var(--bg-elev)),var(--bg-elev) 60%);box-shadow:var(--shadow)">
@@ -1991,7 +1995,7 @@ go test ./conformance/ -run TestConformance -v</code></pre></div>
       <a href="../../CHANGELOG.md">CHANGELOG</a>
       <a href="https://github.com/fred66sp/agent-interaction-forms">GitHub</a>
     </nav>
-    <p class="footer-note">Documentación estática: sin tipografías, scripts ni peticiones externas. Visión: <code>docs/PRODUCT.md</code> v0.1. Fuente normativa del contrato: <code>docs/SPECIFICATION.md</code> v0.1.1. Esta página resume ambas y no las amplía.</p>
+    <p class="footer-note">Documentación estática: sin tipografías, scripts ni peticiones externas. Visión: <code>docs/PRODUCT.md</code> v0.1. Fuente normativa del contrato: <code>docs/SPECIFICATION.md</code> v0.2.0. Esta página resume ambas y no las amplía.</p>
   </div>
 </footer>
 
