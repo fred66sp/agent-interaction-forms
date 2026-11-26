@@ -297,9 +297,10 @@ Consecuencias normativas:
 - L-03. El ejecutor NO DEBE devolver en la respuesta valores sensibles, sea cual
   sea el miembro: ni en `collected`, ni en `value`, ni en `reason`, ni en `message`,
   ni en `outcome`, ni en `description` (RNF-07). Sensibilidad la declara el dominio.
-  En `collected` la única omisión legítima es la de valores sensibles (RF-05):
-  omitir un valor válido no sensible rompe la garantía de conservación y es un
-  defecto de conformidad. En los demás miembros, el ejecutor PUEDE omitir cualquier
+  En `collected` las únicas omisiones legítimas son la de valores sensibles (RF-05)
+  y la de campos rechazados que figuran en `invalid` (RF-04): omitir un valor
+  válido no sensible fuera de esos casos rompe la garantía de conservación y es
+  un defecto de conformidad. En los demás miembros, el ejecutor PUEDE omitir cualquier
   valor por sensibilidad u otra prudencia, y la omisión no significa invalidez.
 - L-04. El ejecutor DEBE documentar los límites de tamaño y profundidad de su
   `input` (RNF-03): la especificación no fija números, exige que se declaren.
@@ -679,9 +680,9 @@ su cuenta (como las de ACM) permanecen en el ejecutor y no se generalizan ni nie
    `unsupported_version` del primer borrador; el diagnóstico sintáctico va en
    `reason` (determinista) y cumple el rechazo explícito que RESEARCH §8 pide
    para JSON ambiguo y claves duplicadas.
-11. `collected` obligatorio en las respuestas reparables, con la sensibilidad como
-   única omisión legítima (§3.2, L-03): el PRD lo exige para corregir sin
-   reconstruir (RF-05, CA-03); el primer borrador lo dejaba opcional.
+11. `collected` obligatorio en las respuestas reparables, con la sensibilidad y los
+   campos rechazados como únicas omisiones legítimas (§3.2, L-03): el PRD lo exige
+   para corregir sin reconstruir (RF-05, CA-03); el primer borrador lo dejaba opcional.
 12. Toda entrada proporcionada se valida, obligatoria u opcional (§3.2, RF-08);
    el primer borrador permitía no validar los opcionales.
 13. Ausencia = no presente o `null`; `false`, `0`, `""` y `[]` son valores
