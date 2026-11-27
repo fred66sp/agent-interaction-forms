@@ -20,4 +20,4 @@
 
 - [`.tasks-ai/AGENTS.md`](.tasks-ai/AGENTS.md) — trabajo del repositorio: crear, mover, bloquear y cerrar tareas
 - [`.tasks-ai/CONTRATO_ETIQUETAS.md`](.tasks-ai/CONTRATO_ETIQUETAS.md) — tipos y catálogo de etiquetas
-- Memoria ACM: montaje db-ai `agent-interaction-forms` (rw) sobre la base local del proyecto; `acm start` para abrirla, `acm recall` para consultarla (adaptador: `tools/acm.py` del ejemplo `agent-continuity` en database-virtual-filesystem)
+- Memoria ACM: montaje db-ai `agent-interaction-forms` (rw) sobre la base local del proyecto; `acm start` para abrirla y `acm aif` para el resto de operaciones, interfaz autodescriptiva con el envelope de descubrimiento (`{"aif":"0.2"}`) por stdin
