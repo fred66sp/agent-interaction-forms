@@ -621,6 +621,13 @@ func TestDiscovery(t *testing.T) {
 	}
 	absent(t, doc, "result")
 	absent(t, doc, "operation")
+	var request RequestTemplate
+	if err := json.Unmarshal(member(t, doc, "request"), &request); err != nil {
+		t.Fatal(err)
+	}
+	if request.AIF != Version || request.Operation != "<id>" || len(request.Input) != 0 {
+		t.Errorf("request = %+v, want la plantilla de emisión", request)
+	}
 	var operations []OperationInfo
 	if err := json.Unmarshal(member(t, doc, "operations"), &operations); err != nil {
 		t.Fatal(err)

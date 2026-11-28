@@ -344,7 +344,11 @@ func (e *Executor) discovery() *Discovery {
 	for _, op := range e.Operations {
 		ops = append(ops, OperationInfo{ID: op.ID, Description: op.Description})
 	}
-	return &Discovery{AIF: Version, Operations: ops}
+	return &Discovery{
+		AIF:        Version,
+		Request:    RequestTemplate{AIF: Version, Operation: "<id>", Input: map[string]any{}},
+		Operations: ops,
+	}
 }
 
 func descriptors(fields []Field) map[string]FieldDescriptor {

@@ -28,6 +28,9 @@ al publicar; la historia de cada cambio, commit a commit, vive en Git.
 - README, AGENTS.md y llms.txt alineados con el versionado vigente 0.2, el fin de la
   congelación únicamente para esta evolución autorizada y el carácter histórico de
   v0.1.1.
+- Descubrimiento completo: la respuesta sin `operation` incluye `request`, la
+  plantilla de emisión `{"aif":"0.2","operation":"<id>","input":{}}`, además de
+  `operations`; CJ-09 la exige y SPECIFICATION CL-05 la describe.
 
 ### Documentación
 

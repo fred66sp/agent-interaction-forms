@@ -1,6 +1,9 @@
 package aif
 
-import "encoding/json"
+import (
+	"bytes"
+	"encoding/json"
+)
 
 // FieldProblem is the descriptor of an invalid field (§3.2).
 type FieldProblem struct {
@@ -45,7 +48,14 @@ type Response struct {
 // encoding/json package sorts map keys, so the output is deterministic (R-02).
 func (r *Response) MarshalJSON() ([]byte, error) {
 	if r.Discovery != nil {
-		return json.Marshal(r.Discovery)
+		// Sin escape HTML: la plantilla de emisión debe leerse literal ("<id>").
+		var buf bytes.Buffer
+		enc := json.NewEncoder(&buf)
+		enc.SetEscapeHTML(false)
+		if err := enc.Encode(r.Discovery); err != nil {
+			return nil, err
+		}
+		return bytes.TrimSuffix(buf.Bytes(), []byte("\n")), nil
 	}
 	m := map[string]any{
 		"aif":    r.AIF,
@@ -95,10 +105,21 @@ func (r *Response) MarshalJSON() ([]byte, error) {
 }
 
 // Discovery is the CL-05 response: it is not an operation response and carries
-// neither result nor operation.
+// neither result nor operation at the root.
 type Discovery struct {
-	AIF        string          `json:"aif"`
+	AIF string `json:"aif"`
+	// Request is the literal envelope an agent submits; the discovery itself
+	// would otherwise describe only operations and leave the envelope to guess.
+	Request    RequestTemplate `json:"request"`
 	Operations []OperationInfo `json:"operations"`
+}
+
+// RequestTemplate is the emission shape shown by discovery. Operation holds the
+// `<id>` placeholder; input is filled with the operation's fields.
+type RequestTemplate struct {
+	AIF       string         `json:"aif"`
+	Operation string         `json:"operation"`
+	Input     map[string]any `json:"input"`
 }
 
 // OperationInfo is one line of the discovery response.

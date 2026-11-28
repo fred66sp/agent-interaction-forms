@@ -1523,12 +1523,13 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
       <div class="prose">
         <p>AIF no define la estructura de <code>outcome</code>. El agente puede tratarlo como un dato cuyo contenido no necesita interpretar o utilizarlo según la documentación de la operación. Qué hacer después de <code>executed</code> también depende del sistema, no de AIF.</p>
         <h3>Descubrimiento</h3>
-        <p>Si la petición omite <code>operation</code>, el ejecutor responde con la lista de operaciones y una descripción de una línea. Esta respuesta no es una operación: no lleva <code>result</code> ni <code>operation</code>.</p>
+        <p>Si la petición omite <code>operation</code>, el ejecutor responde con la lista de operaciones y una descripción de una línea. <code>request</code> es la plantilla de emisión: se sustituye <code>&lt;id&gt;</code> por el identificador elegido y <code>input</code> se rellena con los campos de la operación. Esta respuesta no es una operación: no lleva <code>result</code> ni <code>operation</code> en la raíz.</p>
       </div>
 
       <div class="code"><pre><code class="language-json">{"aif":"0.2"}</code></pre></div>
 
-      <div class="code"><pre><code class="language-json">{"aif":"0.2","operations":[
+      <div class="code"><pre><code class="language-json">{"aif":"0.2","request":{"aif":"0.2","operation":"&lt;id&gt;","input":{}},
+ "operations":[
   {"id":"record_observation",
    "description":"Registra una observación con título, tipo y confianza."}]}</code></pre></div>
 
@@ -1823,7 +1824,7 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
   "assertions": {
     "exit_code": 0,
     "discovery": true,
-    "must": ["aif", "operations"],
+    "must": ["aif", "request", "operations"],
     "must_not": ["result", "operation"],
     "operations_must_id": ["record_observation"],
     "writes": 0

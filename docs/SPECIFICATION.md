@@ -333,9 +333,12 @@ sobre una herramienta de línea de órdenes; el núcleo (§§1–6) no cambia.
   El código solo depende del `result`, de forma determinista (RNF-01); `stderr` no
   altera el código.
 - CL-05. Descubrimiento: invocado sin `operation`, el ejecutor responde con un
-  objeto JSON `{"aif":"0.2","operations":[{"id":..., "description": ...}]}` con una
-  entrada por operación y su indicación de una línea, y código 0. Esta respuesta no
-  es una respuesta de operación: no lleva `result` ni `operation`.
+  objeto JSON `{"aif":"0.2","request":{"aif":"0.2","operation":"<id>","input":{}},
+  "operations":[{"id":..., "description": ...}]}` con una entrada por operación y su
+  indicación de una línea, y código 0. `request` es la plantilla de emisión: en
+  `operation` se sustituye `<id>` por el identificador elegido e `input` se rellena
+  con los campos de la operación. Esta respuesta no es una respuesta de operación:
+  no lleva `result` ni `operation` en la raíz.
 - CL-06. Continuación: reenviar la petición completa (§5) — en CLI, la nueva
   invocación con el `input` íntegro corregido. El ejecutor no reserva estado entre
   invocaciones para el contrato.
