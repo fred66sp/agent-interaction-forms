@@ -66,7 +66,7 @@ cuantitativos demostrados: el experimento previo quedó **INCONCLUSO**
 |---|---|
 | [PRODUCT.md](docs/PRODUCT.md) | Visión de producto aprobada por el PO |
 | [PRD.md](docs/PRD.md) | Requisitos, alcance, criterios de la PoC y puerta GO/NO-GO (§7) |
-| [SPECIFICATION.md](docs/SPECIFICATION.md) | Contrato normativo v0.2.0: modelo, resultados y perfil CLI |
+| [SPECIFICATION.md](docs/SPECIFICATION.md) | Contrato normativo v0.2.1: modelo, resultados y perfil CLI |
 | [RESEARCH.md](docs/RESEARCH.md) | Investigación previa, evidencia propia y hueco diferencial |
 | [EXPERIMENT.md](docs/experiment/EXPERIMENT.md) | Protocolo aprobado: diseño, métricas y plazo |
 | [EXPERIMENT-RESULTS.md](docs/experiment/EXPERIMENT-RESULTS.md) | Resultados y lectura; **INCONCLUSO** |

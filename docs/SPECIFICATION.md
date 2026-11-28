@@ -3,8 +3,8 @@
 | Metadato | Valor |
 |---|---|
 | ID | AIF-SPEC |
-| Versión | 0.2.0 |
-| Fecha | 2026-11-26 |
+| Versión | 0.2.1 |
+| Fecha | 2026-11-28 |
 | Estado | Evolución v0.2 autorizada por el PO; texto pendiente de revisión |
 | Fuentes | [PRD.md](PRD.md) v0.2.0 · [RESEARCH.md](RESEARCH.md) v0.1.2 · [EXPERIMENT-RESULTS.md](experiment/EXPERIMENT-RESULTS.md) v1.0.0 · [PRODUCT.md](PRODUCT.md) v0.2 |
 | Congelación | La congelación documental anterior se levanta únicamente para esta evolución autorizada de v0.2; no aprueba una publicación. v0.1.1 queda como contrato histórico implementado. |
@@ -51,6 +51,15 @@ Una **petición** es un objeto JSON con estos miembros:
 | `aif` | DEBE | Versión del contrato que usa el consumidor. Literal `"0.2"` en esta especificación. |
 | `operation` | PUEDE faltar solo para descubrimiento (§7, CL-05) | Identificador de la operación, textual. |
 | `input` | PUEDE faltar | Objeto con los datos que el consumidor aporta, campo a campo. |
+
+La petición admite únicamente esos tres miembros de raíz. Cualquier otro miembro
+en la raíz DEBE rechazarse como `malformed_request` (§3.5), y el `reason` DEBE
+nombrar la clave: los datos de la operación van siempre dentro de `input`, nunca
+junto a él. La regla no depende de que la clave corresponda a un campo de la
+operación solicitada ni de que la petición declare `operation`: se aplica también
+al descubrimiento. La comprobación es posterior a la del detector de versión, de
+modo que una petición con una versión no soportada sigue siendo
+`unsupported_version`.
 
 Una **respuesta a una operación** es un objeto JSON con estos miembros:
 
@@ -200,13 +209,18 @@ está activo.
 
 `malformed_request` es la respuesta ante una entrada que el ejecutor no puede
 interpretar como petición conforme —no es JSON válido, no es un objeto, carece de
-`aif` o lleva claves duplicadas—: el contrato no queda establecido, la petición no
+`aif`, lleva claves duplicadas o trae en la raíz un miembro distinto de `aif`,
+`operation` e `input`—: el contrato no queda establecido, la petición no
 se procesa y no hay eco de `operation`. DEBE incluir `reason`: diagnóstico
-sintáctico determinista que identifica la causa («no es JSON válido», «no es un
-objeto», «carece de `aif`», «claves duplicadas»), y PUEDE incluir `supported`
+determinista que identifica la causa («no es JSON válido», «no es un
+objeto», «carece de `aif`», «claves duplicadas» o «miembro desconocido en la
+raíz: `<clave>`; los campos de la operación van dentro de `input`»), y PUEDE
+incluir `supported`
 cuando el ejecutor pueda declarar las versiones que atendería a una petición bien
-formada. Esta política es el rechazo explícito que RESEARCH §8 exige para este
-contrato.
+formada. Cuando la causa es un miembro de la raíz, el `reason` nombra una sola
+clave, la primera en orden lexicográfico de bytes si hay varias, para que el diagnóstico
+sea determinista (R-02). Esta política es el rechazo explícito que RESEARCH §8
+exige para este contrato.
 
 `unknown_operation` DEBE incluir `known_operations`: matriz de los
 identificadores de operación que el ejecutor atendería, y DEBE hacer eco de
@@ -509,6 +523,22 @@ La entrada es JSON válido y un objeto, pero carece de `aif`: el contrato no que
 establecido, no hay eco de `operation` (§3.5) y `supported` declara las versiones
 que el ejecutor atendería a una petición bien formada.
 
+```json
+{"aif":"0.2","operation":"record_observation",
+ "input":{"title":"X","kind":"learning"},"confidence":"confirmed"}
+```
+
+```json
+{"aif":"0.2","result":"malformed_request",
+ "reason":"miembro desconocido en la raíz: confidence; los campos de la operación van dentro de input",
+ "supported":["0.2"]}
+```
+
+`confidence` es un campo de `record_observation`, pero está en la raíz y no dentro
+de `input`: el ejecutor rechaza la petición en lugar de ignorarlo y responder como
+si el campo faltara (§1, §3.5). La misma causa alcanza a cualquier otra clave de
+la raíz y a una petición de descubrimiento que la lleve.
+
 ### 8.11 Restricción fina descrita con `schema` (§4, CJ-13)
 
 Precondición de este ejemplo: el ejecutor valida además una longitud máxima
@@ -601,7 +631,7 @@ que contenga todos los problemas posibles (§3.2).
 | CJ-08 | `input` con miembro desconocido | acceso concedido | `invalid` con `reason` identificando el miembro, salida 2, cero efecto de dominio | §3, RNF-05 |
 | CJ-09 | invocación sin `operation` (perfil CLI) | — | respuesta de descubrimiento, código 0, cada operación con `id` | CL-05, RF-12 |
 | CJ-10 | `operation` desconocida para el ejecutor | — | `unknown_operation`, `known_operations` presente, eco de `operation`, salida 3, cero efecto de dominio | §3.5, RF-01 |
-| CJ-11 | entrada no interpretable (no JSON, no objeto, sin `aif` —§8.10—, claves duplicadas) | — | `malformed_request` con `reason` determinista que identifica la causa, sin eco de `operation`, `input` no procesado, salida 3, cero efecto de dominio | §3.5, RESEARCH §8 |
+| CJ-11 | entrada no interpretable (no JSON, no objeto, sin `aif` —§8.10—, claves duplicadas, miembro de la raíz fuera del sobre —§8.10—) | — | `malformed_request` con `reason` determinista que identifica la causa, sin eco de `operation`, `input` no procesado, salida 3, cero efecto de dominio | §3.5, RESEARCH §8 |
 | CJ-12 | §8.9 | acceso concedido | una única respuesta con `missing` e `invalid` excluyentes por campo, `result` `invalid` por la precedencia (§3.2), `fields` cubre los tres campos, `collected` incluye todo campo conocido presente, no nulo, no sensible y no rechazado, salida 2, cero efecto de dominio | CA-03, RF-04/05 |
 | CJ-13 | petición cuyo `title` supera la longitud máxima declarada por el ejecutor (§8.11) | acceso concedido | `invalid` para `title` con `value`, `reason` y `schema` que contiene la regla incumplida en sintaxis JSON Schema 2020-12 (regla expresable fielmente, luego `schema` obligatorio), `fields` con `schema`, salida 2, cero efecto de dominio | §4, RF-03/08 |
 | CJ-14 | §8.12 | acceso concedido, regla de dominio declarada («una decisión no puede ser una hipótesis») | `invalid` para `confidence` con `value`, `reason` y `allowed`; `fields` presente; `collected` con `title` y `kind`; sin `missing` ni `outcome`; salida 2, cero escrituras; reenvío §8.13 con `confidence` `confirmed` → `executed`, salida 0, una escritura | CA-07, §3.2/§4, RF-04/08 |

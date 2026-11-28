@@ -637,6 +637,93 @@ func TestDiscovery(t *testing.T) {
 	}
 }
 
+// A root member outside the envelope is rejected, not dropped: a field placed
+// next to `input` instead of inside it must not turn into a plausible repair.
+func TestRootMemberOutsideEnvelopeIsMalformed(t *testing.T) {
+	tests := []struct {
+		name    string
+		request string
+		reason  string
+	}{
+		{
+			"campo de la operación pedida",
+			`{"aif":"0.2","operation":"test","name":"n"}`,
+			"miembro desconocido en la raíz: name; los campos de la operación van dentro de input",
+		},
+		{
+			"clave ajena a toda operación",
+			`{"aif":"0.2","operation":"test","trace_id":"t1"}`,
+			"miembro desconocido en la raíz: trace_id; los campos de la operación van dentro de input",
+		},
+		{
+			"dos claves, la primera lexicográfica",
+			`{"aif":"0.2","operation":"test","zeta":1,"alpha":2}`,
+			"miembro desconocido en la raíz: alpha; los campos de la operación van dentro de input",
+		},
+		{
+			// §3.5 fija el orden de bytes (sort.Strings): las mayúsculas preceden.
+			"dos claves, orden de bytes con mayúsculas",
+			`{"aif":"0.2","operation":"test","Zeta":1,"alfa":2}`,
+			"miembro desconocido en la raíz: Zeta; los campos de la operación van dentro de input",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			calls := 0
+			ex := testExecutor(t, &calls, nil)
+			doc := handleJSON(t, ex, tt.request)
+			assertResult(t, doc, ResultMalformedRequest)
+			if got := stringMember(t, doc, "reason"); got != tt.reason {
+				t.Errorf("reason = %q, want %q", got, tt.reason)
+			}
+			var supported []string
+			if err := json.Unmarshal(member(t, doc, "supported"), &supported); err != nil {
+				t.Fatal(err)
+			}
+			if want := []string{Version}; !reflect.DeepEqual(supported, want) {
+				t.Errorf("supported = %v, want %v", supported, want)
+			}
+			absent(t, doc, "operation")
+			absent(t, doc, "outcome")
+			if calls != 0 {
+				t.Errorf("Execute llamadas = %d, want 0", calls)
+			}
+		})
+	}
+}
+
+func TestEnvelopeOnlyRequestUnchanged(t *testing.T) {
+	calls := 0
+	ex := testExecutor(t, &calls, nil)
+	doc := handleJSON(t, ex, `{"aif":"0.2","operation":"test","input":{"name":"n","mode":"a","note":"x"}}`)
+	assertResult(t, doc, ResultExecuted)
+	if calls != 1 {
+		t.Errorf("Execute llamadas = %d, want 1", calls)
+	}
+}
+
+func TestEnvelopeOnlyDiscoveryUnchanged(t *testing.T) {
+	calls := 0
+	ex := testExecutor(t, &calls, nil)
+	if response := ex.Handle([]byte(`{"aif":"0.2"}`)); response.Discovery == nil {
+		t.Errorf("se esperaba una respuesta de descubrimiento: %+v", response)
+	}
+	if calls != 0 {
+		t.Errorf("Execute llamadas = %d, want 0", calls)
+	}
+}
+
+func TestUnsupportedVersionPrecedesRootMemberCheck(t *testing.T) {
+	calls := 0
+	ex := testExecutor(t, &calls, nil)
+	doc := handleJSON(t, ex, `{"aif":"0.1","foo":1}`)
+	assertResult(t, doc, ResultUnsupportedVersion)
+	absent(t, doc, "operation")
+	if calls != 0 {
+		t.Errorf("Execute llamadas = %d, want 0", calls)
+	}
+}
+
 func TestMalformedRequests(t *testing.T) {
 	deep := `{"aif":"0.2","operation":"test","input":{"tags":` +
 		strings.Repeat("[", MaxDepth+1) + strings.Repeat("]", MaxDepth+1) + `}}`

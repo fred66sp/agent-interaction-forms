@@ -1,6 +1,6 @@
 {
   "id": "CJ-11",
-  "description": "Entrada no interpretable: no JSON, no objeto, sin aif (§8.10) y claves duplicadas.",
+  "description": "Entrada no interpretable: no JSON, no objeto, sin aif (§8.10), claves duplicadas y miembros de la raíz fuera del sobre.",
   "requests": [
     {
       "text": "esto no es JSON",
@@ -17,6 +17,18 @@
     {
       "text": "{\"aif\":\"0.2\",\"aif\":\"0.2\"}",
       "reason": "claves duplicadas"
+    },
+    {
+      "text": "{\"aif\":\"0.2\",\"operation\":\"record_observation\",\"input\":{\"title\":\"X\",\"kind\":\"learning\"},\"confidence\":\"confirmed\"}",
+      "reason": "miembro desconocido en la raíz: confidence; los campos de la operación van dentro de input"
+    },
+    {
+      "text": "{\"aif\":\"0.2\",\"operation\":\"record_observation\",\"input\":{\"title\":\"X\",\"kind\":\"learning\",\"confidence\":\"confirmed\"},\"trace_id\":\"t1\"}",
+      "reason": "miembro desconocido en la raíz: trace_id; los campos de la operación van dentro de input"
+    },
+    {
+      "text": "{\"aif\":\"0.2\",\"trace_id\":\"t1\"}",
+      "reason": "miembro desconocido en la raíz: trace_id; los campos de la operación van dentro de input"
     }
   ],
   "preconditions": {

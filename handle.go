@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"sort"
 	"strings"
 )
 
@@ -69,6 +70,14 @@ func (e *Executor) Handle(raw []byte) *Response {
 	if version != Version {
 		return &Response{AIF: Version, Result: ResultUnsupportedVersion, Supported: []string{Version}}
 	}
+	var members map[string]json.RawMessage
+	if err := json.Unmarshal(raw, &members); err != nil {
+		return malformed(malformedSyntax)
+	}
+	if key, ok := unknownRootMember(members); ok {
+		return malformed("miembro desconocido en la raíz: " + key +
+			"; los campos de la operación van dentro de input")
+	}
 	if isNull(envelope.Operation) {
 		return &Response{AIF: Version, Discovery: e.discovery()}
 	}
@@ -92,6 +101,23 @@ func (e *Executor) Handle(raw []byte) *Response {
 		}
 	}
 	return e.evaluate(op, input)
+}
+
+// unknownRootMember returns the lexicographically first root member outside
+// the envelope of §1, so a member placed outside input is never dropped in
+// silence. Duplicates are rejected earlier by scanRequest.
+func unknownRootMember(members map[string]json.RawMessage) (string, bool) {
+	var unknown []string
+	for name := range members {
+		if name != "aif" && name != "operation" && name != "input" {
+			unknown = append(unknown, name)
+		}
+	}
+	if len(unknown) == 0 {
+		return "", false
+	}
+	sort.Strings(unknown)
+	return unknown[0], true
 }
 
 func (e *Executor) evaluate(op *Operation, input map[string]json.RawMessage) *Response {

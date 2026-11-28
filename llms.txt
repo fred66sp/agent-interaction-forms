@@ -7,7 +7,7 @@
 - [Visión de producto aprobada](docs/PRODUCT.md) (v0.1, aprobada por el PO — fuente canónica de visión)
 - [README del proyecto](README.md)
 - [PRD — requisitos y alcance](docs/PRD.md) (PARCIAL, pendiente de aprobación del PO)
-- [SPECIFICATION — contrato de interacción](docs/SPECIFICATION.md) (v0.2.0, APROBADO — evolución autorizada por el PO; no es una publicación)
+- [SPECIFICATION — contrato de interacción](docs/SPECIFICATION.md) (v0.2.1, APROBADO — evolución autorizada por el PO; no es una publicación)
 - [RESEARCH — investigación de origen](docs/RESEARCH.md)
 - [Protocolo del experimento GO/NO-GO](docs/experiment/EXPERIMENT.md) (aprobado por el PO; ejecutado, resultado INCONCLUSO)
 - [Plan del experimento](docs/experiment/EXPERIMENT-PLAN.md)

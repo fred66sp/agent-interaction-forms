@@ -18,6 +18,12 @@ al publicar; la historia de cada cambio, commit a commit, vive en Git.
   admite fragmentos JSON Schema 2020-12 para las reglas que `type` y `allowed` no
   expresan. v0.1.1 queda como contrato histórico implementado. La autorización no
   aprueba una publicación.
+- SPECIFICATION v0.2.1: la raíz de la petición admite solo `aif`, `operation` e
+  `input`; cualquier otro miembro es `malformed_request` con un `reason` que
+  nombra la clave —la primera en orden lexicográfico de bytes si hay varias—, también en
+  el descubrimiento y sin depender de que la clave sea campo de la operación
+  pedida. La comprobación sigue a la del detector de versión y CJ-11 cubre la
+  causa con el campo en la raíz y con una clave ajena.
 - Biblioteca `aif` actualizada al contrato 0.2: `InvalidError` estructurado que el
   dominio devuelve antes de producir efectos y que el ejecutor recompone en
   `invalid` —el dominio no compone `collected` ni la respuesta—, validación

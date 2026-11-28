@@ -1122,7 +1122,7 @@ func main() {
           <span class="k">AIF</span>
           <h3>El sobre (el objeto JSON de la petición) y la mecánica</h3>
           <ul>
-            <li>Comprueba tamaño, profundidad, claves duplicadas, <code>aif</code>, versión y tipo de <code>operation</code> e <code>input</code>.</li>
+            <li>Comprueba tamaño, profundidad, claves duplicadas, <code>aif</code>, versión, miembros de la raíz fuera del sobre y tipo de <code>operation</code> e <code>input</code>.</li>
             <li>Resuelve la operación y valida <code>Type</code>, <code>Allowed</code> y el hook <code>Validate</code> de cada campo; puede hacerlo de forma progresiva o exhaustiva e informa de todos los problemas detectados, sin prometer detección exhaustiva.</li>
             <li>Aplica exclusividad, precedencia y omisión de sensibles; <code>collected</code> copia los campos conocidos presentes, no nulos, no sensibles y no rechazados, sin certificar su validez.</li>
             <li>Serializa los miembros del resultado de forma determinista.</li>
@@ -1251,7 +1251,7 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
     </section>
 
     <div class="level" id="nivel-3">
-      <p class="level-band" style="--level:#7c3aed"><span class="n">Nivel 3 · Referencia técnica</span><span class="d">El contrato normativo y su implementación. Fuente: docs/SPECIFICATION.md v0.2.0.</span></p>
+      <p class="level-band" style="--level:#7c3aed"><span class="n">Nivel 3 · Referencia técnica</span><span class="d">El contrato normativo y su implementación. Fuente: docs/SPECIFICATION.md v0.2.1.</span></p>
     </div>
 
     <section id="modelo" class="section">
@@ -1445,7 +1445,7 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
             <tr><td><span class="r-deny">denied</span></td><td>El dominio niega la operación; nada se ejecutó.</td><td><code>reason</code></td><td>4</td></tr>
             <tr><td><span class="r-fail">failed</span></td><td>La ejecución no se completó o su estado es desconocido.</td><td><code>message</code> y, si el dominio lo aporta, <code>code</code></td><td>1</td></tr>
             <tr><td><span class="r-contract">unsupported_version</span></td><td>La versión de <code>aif</code> no es soportada; <code>input</code> no se procesa.</td><td><code>supported</code>; sin eco de <code>operation</code></td><td>3</td></tr>
-            <tr><td><span class="r-contract">malformed_request</span></td><td>La entrada no se puede interpretar como petición conforme.</td><td><code>reason</code> y, opcionalmente, <code>supported</code>; sin <code>operation</code></td><td>3</td></tr>
+            <tr><td><span class="r-contract">malformed_request</span></td><td>La entrada no se puede interpretar como petición conforme, incluido un miembro de la raíz fuera del sobre.</td><td><code>reason</code> y, opcionalmente, <code>supported</code>; sin <code>operation</code></td><td>3</td></tr>
             <tr><td><span class="r-contract">unknown_operation</span></td><td>El identificador no corresponde a ninguna operación del ejecutor.</td><td><code>known_operations</code> y eco de <code>operation</code></td><td>3</td></tr>
           </tbody>
         </table>
@@ -1500,6 +1500,10 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
             <tr><td><code>input</code></td><td>PUEDE faltar</td><td>Objeto con los datos, campo a campo. Puede ser <code>null</code>: equivale a vacío.</td></tr>
           </tbody>
         </table>
+      </div>
+
+      <div class="prose">
+        <p>La petición admite solo esos tres miembros de raíz. Cualquier otro responde <code>malformed_request</code> con un <code>reason</code> que nombra la clave, sea o no un campo de la operación pedida: los datos de la operación van dentro de <code>input</code>. La regla alcanza también al descubrimiento.</p>
       </div>
 
       <div class="table-wrap">
@@ -1772,7 +1776,7 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
         <div class="card">
           <span class="k">Diagnóstico</span>
           <h3>Causa, no prosa</h3>
-          <p><code>reason</code> identifica una causa mecánica: entrada vacía, JSON inválido, no es un objeto, carece de <code>aif</code>, tipo incorrecto o claves duplicadas.</p>
+          <p><code>reason</code> identifica una causa mecánica: entrada vacía, JSON inválido, no es un objeto, carece de <code>aif</code>, tipo incorrecto, claves duplicadas o un miembro de la raíz fuera del sobre, que se nombra.</p>
         </div>
       </div>
 
@@ -1805,7 +1809,7 @@ AIF_DEMO_STORE=/tmp/observaciones.jsonl \
             <tr><td><code>CJ-08</code></td><td>Miembro desconocido: <code>invalid</code> con <code>reason</code> que lo identifica.</td><td>2</td></tr>
             <tr><td><code>CJ-09</code></td><td>Invocación sin <code>operation</code>: descubrimiento con un <code>id</code> por operación.</td><td>0</td></tr>
             <tr><td><code>CJ-10</code></td><td>Operación desconocida: <code>known_operations</code> y eco del identificador.</td><td>3</td></tr>
-            <tr><td><code>CJ-11</code></td><td>Entrada no interpretable en cuatro formas: no JSON, no objeto, sin <code>aif</code> y claves duplicadas.</td><td>3</td></tr>
+            <tr><td><code>CJ-11</code></td><td>Entrada no interpretable en cinco formas: no JSON, no objeto, sin <code>aif</code>, claves duplicadas y miembro de la raíz fuera del sobre.</td><td>3</td></tr>
             <tr><td><code>CJ-12</code></td><td>Mezcla de ausente e inválido: <code>invalid</code> por precedencia, ambos informes, <code>collected</code> conservado.</td><td>2</td></tr>
             <tr><td><code>CJ-13</code></td><td>Restricción fina: <code>schema</code> con la regla incumplida en sintaxis JSON Schema 2020-12.</td><td>2</td></tr>
             <tr><td><code>CJ-14</code></td><td>Regla de dominio que rechaza antes del efecto: <code>invalid</code> reparable, sin escritura y con reenvío corregido.</td><td>2 → 0</td></tr>
@@ -1910,7 +1914,7 @@ go test ./conformance/ -run TestConformance -v</code></pre></div>
         </div>
         <div class="card">
           <h3><a href="../SPECIFICATION.md">SPECIFICATION.md</a></h3>
-          <p>Contrato AIF v0.2.0, APROBADO por el PO el 2026-11-26; implementación en curso, sin publicación. Norma de §§1–7 y 9–10; ejemplos en §8; trazabilidad y decisiones en §§11–12. v0.1.1 queda como contrato histórico.</p>
+          <p>Contrato AIF v0.2.1, evolución v0.2 aprobada por el PO el 2026-11-26; implementación en curso, sin publicación. Norma de §§1–7 y 9–10; ejemplos en §8; trazabilidad y decisiones en §§11–12. v0.1.1 queda como contrato histórico.</p>
         </div>
         <div class="card">
           <h3><a href="../PRD.md">PRD.md</a></h3>
@@ -1956,7 +1960,7 @@ go test ./conformance/ -run TestConformance -v</code></pre></div>
       </div>
 
       <div class="note">
-        <p><strong>Versiones.</strong> Contrato <code>aif: "0.2"</code>; especificación v0.2.0; implementación en curso. v0.1.1 queda como contrato histórico implementado. Esta página documenta ese estado y no anticipa versiones futuras: la idempotencia del núcleo, las sesiones y los perfiles HTTP quedan fuera del contrato.</p>
+        <p><strong>Versiones.</strong> Contrato <code>aif: "0.2"</code>; especificación v0.2.1; implementación en curso. v0.1.1 queda como contrato histórico implementado. Esta página documenta ese estado y no anticipa versiones futuras: la idempotencia del núcleo, las sesiones y los perfiles HTTP quedan fuera del contrato.</p>
       </div>
 
       <div class="next" style="display:grid;gap:18px;margin-top:26px;padding:22px;border-radius:var(--radius);border:1px solid color-mix(in srgb, var(--accent) 26%, var(--border));background:linear-gradient(120deg,color-mix(in srgb, var(--accent) 8%, var(--bg-elev)),var(--bg-elev) 60%);box-shadow:var(--shadow)">
@@ -1996,7 +2000,7 @@ go test ./conformance/ -run TestConformance -v</code></pre></div>
       <a href="../../CHANGELOG.md">CHANGELOG</a>
       <a href="https://github.com/fred66sp/agent-interaction-forms">GitHub</a>
     </nav>
-    <p class="footer-note">Documentación estática: sin tipografías, scripts ni peticiones externas. Visión: <code>docs/PRODUCT.md</code> v0.1. Fuente normativa del contrato: <code>docs/SPECIFICATION.md</code> v0.2.0. Esta página resume ambas y no las amplía.</p>
+    <p class="footer-note">Documentación estática: sin tipografías, scripts ni peticiones externas. Visión: <code>docs/PRODUCT.md</code> v0.1. Fuente normativa del contrato: <code>docs/SPECIFICATION.md</code> v0.2.1. Esta página resume ambas y no las amplía.</p>
   </div>
 </footer>
 
