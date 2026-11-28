@@ -60,6 +60,20 @@ Reglas de nomenclatura:
   `commandline`.
 - Nombra una parte del producto, no un proyecto entero ni una persona.
 
+### 1.4 Colores
+
+El color no identifica la etiqueta sino su clase, y por eso se repite dentro de una clase. La
+paleta que admite el producto es `blue`, `purple`, `green`, `yellow`, `orange` y `red`.
+
+| Clase | Etiquetas | Color | Qué comunica |
+|---|---|---|---|
+| Estructural | `ODD`, `epic`, `task` | `purple` | Forma y procedencia del trabajo |
+| Tipo | `feat`, `fix`, `docs`, `refactor`, `test`, `style`, `chore`, `improvement` | `blue` | Naturaleza del trabajo |
+| Ámbito | `cli`, `i18n`, `web`, `api` | `green` | Parte del producto a la que apunta |
+
+Una etiqueta nueva que no encaje en una clase se decide aquí antes de crear el color, y el
+catálogo se cambia con `tasks-ai tag edit <nombre> --color <color>`.
+
 ## 2. Asignación correcta a una tarea
 
 La asignación se hace con la lista entera: `tasks-ai update <ref> --tags "a,b,c"` pone
