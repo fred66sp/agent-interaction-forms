@@ -183,7 +183,7 @@ func reparable(op *Operation, result string, missing []string, invalid map[strin
 
 func validateField(f Field, value any) (string, bool) {
 	if f.Type != "" && !matchesType(value, f.Type) {
-		return "tipo no válido: se esperaba " + f.Type, false
+		return "tipo no válido: se esperaba " + f.Type + ", llegó " + typeName(value), false
 	}
 	if len(f.Allowed) > 0 {
 		s, ok := value.(string)
@@ -420,6 +420,24 @@ func matchesType(value any, want string) bool {
 		return ok
 	}
 	return false
+}
+
+// typeName names a decoded JSON value for a diagnostic reason, which is prose
+// and not contract (§3.2, R-03).
+func typeName(value any) string {
+	switch value.(type) {
+	case string:
+		return "cadena"
+	case json.Number:
+		return "número"
+	case bool:
+		return "booleano"
+	case map[string]any:
+		return "objeto"
+	case []any:
+		return "array"
+	}
+	return "valor de tipo desconocido"
 }
 
 func contains(allowed []string, value string) bool {

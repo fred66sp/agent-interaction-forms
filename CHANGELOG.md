@@ -31,6 +31,9 @@ al publicar; la historia de cada cambio, commit a commit, vive en Git.
   valores sensibles en toda la respuesta, rechazo de versiones distintas de `"0.2"`
   sin procesar `input`, y caso de conformidad CJ-14 para la regla de dominio
   aplicada antes del efecto.
+- Diagnóstico de tipo que dice qué llegó: el `reason` de un `invalid` por tipo declara
+  también el tipo recibido («se esperaba array, llegó cadena»); sigue siendo prosa, no
+  contrato, y no cambia ningún `result` ni la forma de la respuesta.
 - README, AGENTS.md y llms.txt alineados con el versionado vigente 0.2, el fin de la
   congelación únicamente para esta evolución autorizada y el carácter histórico de
   v0.1.1.

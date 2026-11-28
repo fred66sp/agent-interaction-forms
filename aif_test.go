@@ -226,6 +226,35 @@ func TestOptionalInvalidAndUnknownMember(t *testing.T) {
 	}
 }
 
+func TestTypeReasonNamesReceivedType(t *testing.T) {
+	cases := []struct{ want, received, value string }{
+		{"array", "cadena", `"x"`},
+		{"string", "número", `7`},
+		{"boolean", "objeto", `{}`},
+		{"object", "array", `[]`},
+		{"number", "booleano", `true`},
+	}
+	for _, c := range cases {
+		ex := &Executor{Operations: []*Operation{{
+			ID:     "test",
+			Fields: []Field{{Name: "v", Type: c.want}},
+			Execute: func(map[string]json.RawMessage) (json.RawMessage, error) {
+				return nil, nil
+			},
+		}}}
+		doc := handleJSON(t, ex, `{"aif":"0.2","operation":"test","input":{"v":`+c.value+`}}`)
+		assertResult(t, doc, ResultInvalid)
+		var invalid map[string]FieldProblem
+		if err := json.Unmarshal(member(t, doc, "invalid"), &invalid); err != nil {
+			t.Fatal(err)
+		}
+		want := "tipo no válido: se esperaba " + c.want + ", llegó " + c.received
+		if got := invalid["v"].Reason; got != want {
+			t.Errorf("reason = %q, want %q", got, want)
+		}
+	}
+}
+
 func TestCustomRulePublishesSchema(t *testing.T) {
 	ex := &Executor{Operations: []*Operation{{
 		ID: "test",
